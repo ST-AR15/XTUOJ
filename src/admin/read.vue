@@ -1,8 +1,7 @@
 <template>
-  <div class="app" id="app">
-    
-    <router-view/>
-  </div>
+    <div class="read" id="read">
+        <p>读取题目</p>
+    </div>
 </template>
 
 <script>

@@ -1,0 +1,19 @@
+/* ant-design-vue的css样式自定义 */
+
+/* ant-layout自定义 */
+.ant-layout {
+    background: transparent;
+}
+.ant-layout-header {
+    background: transparent;
+}
+.ant-layout-sider {
+    background: transparent;
+    min-height: 80vh;
+}
+.ant-layout-footer {
+    background: transparent;
+    /* width: 100vw;
+    position: fixed;
+    bottom: 0; */
+}

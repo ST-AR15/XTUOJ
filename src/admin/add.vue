@@ -44,11 +44,10 @@
 export default {
     data() {
         return {
-            // 题目名称
-            name: "",
-            timeLimit: 1000,
-            storageLimit: 128,
-            QType: "normal",
+            name: "",          // 题目名称
+            timeLimit: 1000,   // 时限，默认1000ms
+            storageLimit: 128, // 存限，默认128MB
+            QType: "normal",   // 题目类型，分普通验证（normal）和特别验证（special），默认普通
         }
     }
 }

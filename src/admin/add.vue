@@ -1,35 +1,47 @@
 <template>
     <div class="add" id="add">
-        <h2>新增题目</h2>
+        <h2 
+            style="border-left:10px solid #1890FF; padding-left:5px"
+        >新增题目</h2>
         <ul>
-            <li>
+            <li class="flex-between">
                 <span>题目名称</span>
-                <a-input :value="name"></a-input>
+                <a-input 
+                    class="inline-element"
+                    :value="name"
+                ></a-input>
             </li>
-            <li>
+            <li class="flex-between">
                 <span>时限</span>
                 <a-input 
+                    class="inline-element"
                     :value="timeLimit"
                     suffix="ms"
                 ></a-input>
             </li>
-            <li>
+            <li class="flex-between">
                 <span>存限</span>
                 <a-input
+                    class="inline-element"
                     :value="storageLimit"
                     suffix="MB"
                 ></a-input>
             </li>
-            <li>
+            <li class="flex-between">
                 <span>题目类型</span>
-                <a-radio-group v-model="QType">
+                <a-radio-group 
+                    v-model="QType"
+                >
                     <a-radio value="normal">普通验证</a-radio>
                     <a-radio value="special">特别验证</a-radio>
                 </a-radio-group>
             </li>
-            <li>
+            <li 
+                style="margin:10px;display:flex"
+            >
                 <span>题目内容</span>
                 <a-textarea
+                    style="max-width:700px; margin-left:20px"
                     :rows="4"
                 ></a-textarea>
             </li>
@@ -54,7 +66,18 @@ export default {
 </script>
 
 <style>
-    ul {
+    .add ul {
         list-style: none;
+        font-size: 18px;
+    }
+    .add .flex-between {
+        width: 300px;
+        display: flex;
+        justify-content: space-between;
+        margin: 10px;
+    }
+    .add .inline-element {
+        width: 200px;
+        display: inline-block;
     }
 </style>

@@ -4,6 +4,7 @@
             style="border-left:10px solid #1890FF; padding-left:5px"
         >新增题目</h2>
         <a-form-model
+            ref="addForm"
             :model="form"
             :label-col="labelCol"
             :wrapper-col="wrapperCol"
@@ -13,22 +14,21 @@
                 <a-input 
                     v-model="form.name"
                     class="inline-element"
+                    placeholder="题目名称"
                 ></a-input>
             </a-form-model-item>
 
-            <!-- todo a-input-number有BUG，要不然还是用普通的input -->
             <a-form-model-item label="时限">
-                    <a-input-number
+                    <a-input
                         placeholder="请输入500的倍数" 
                         class="inline-element"
-                        :value="form.timeLimit"
                         :min="0"
                         v-model="form.timeLimit"
-                        :formatter="value => `${value} ms`"
-                        :parser="value => value.replace(' ms', '')"
+                        type="number"
                         :step="500"
-                    ></a-input-number>
-                    <!-- todo 通过rules检测来添加这行话 -->
+                        suffix="ms"
+                    ></a-input>
+                    <!-- todo 添加动画 -->
                     <p v-show="form.timeLimit%500 != 0" style="line-height:12px; height:12px; position:absolute; margin: 0; white-space:nowrap">
                         <span>
                             我们会把这个数字取整到{{(parseInt(form.timeLimit/500)+1)*500}}，因为这个数必须是500的倍数
@@ -37,14 +37,13 @@
             </a-form-model-item>
 
             <a-form-model-item label="存限">
-                <a-input-number
+                <a-input
                     class="inline-element"
-                    :value="form.storageLimit"
                     :min="0"
                     v-model="form.storageLimit"
-                    :formatter="value => `${value} MB`"
-                    :parser="value => value.replace(' MB', '')"
-                ></a-input-number>
+                    type="number"
+                    suffix="MB"
+                ></a-input>
             </a-form-model-item>
 
             <a-form-model-item label="题目类型">
@@ -64,9 +63,16 @@
             </a-form-model-item>
 
             <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
-                <a-button type="primary">上传</a-button>
+                <a-button @click="submitForm" type="primary">上传</a-button>
+                <a-button @click="resetForm" style="margin-left:10px;">清空</a-button>
             </a-form-model-item>
         </a-form-model>
+        <a-modal
+            :title="modal.title"
+            :visible="modal.visible"
+        >
+            <p v-text="modal.text"></p>
+        </a-modal>
     </div>
 </template>
 
@@ -76,23 +82,60 @@ export default {
         return {
             labelCol: { span: 4 },
             wrapperCol: { span: 14 },
-            form: {                      // 表单数据
+            formDefult: {                // 默认的表单数据
                 name: "",                // 题目名称
                 timeLimit: 1000,         // 时限，默认1000ms
                 storageLimit: 128,       // 存限，默认128MB
                 QType: "normal",         // 题目类型，分普通验证（normal）和特别验证（special），默认普通
             },
+            form: {                      // 表单数据
+                name: "",                // 题目名称
+                timeLimit: 0,            // 时限，默认1000ms
+                storageLimit: 0,         // 存限，默认128MB
+                QType: "",               // 题目类型，分普通验证（normal）和特别验证（special），默认普通
+            },
             rules: {                     // 表单规则
-                name: [
+                name: [                  // 题目名称规则：比如输入内容，否则提示“请输入题目名称”
                     { required: true, message: '请输入题目名称', trigger: 'change' },
                 ],
+            },
+            modal: {
+                visible: false,
+                title: "",
+                text: "",
             }
         }
     },
     methods: {
-        submit() {
-            console.log("qwq");
-        }
+        submitForm() {     //提交表单
+            let that = this;
+            this.$refs.addForm.validate(valid => {
+                if(valid) {
+                    let timeLimit;
+                    if(that.form.timeLimit%500 != 0) {  // 修改无效的时限
+                        timeLimit = (parseInt(that.form.timeLimit/500)+1)*500;
+                        this.$message.info(`已将时限的${that.form.timeLimit}修改为${timeLimit}`);
+                    }
+                    let info = {    // 传给后端的info
+                        name: that.form.name,
+                        timeLimit: timeLimit,
+                        storageLimit: that.form.storageLimit,
+                        QType: that.form.QType,
+                    };
+                    console.log(info);
+                } else {
+                    return false;
+                }
+            })
+        },
+        resetForm() {  //清空表单
+            // this.$refs.addForm.resetFields();
+            this.form = this.formDefult;
+        },
+    },
+    mounted:function() {
+        // 让form的值变为默认值
+        this.form = this.formDefult;
     }
 }
 </script>

@@ -7,6 +7,9 @@ import index from '../index.vue'
 // 管理员页面
 import admin from '../admin/admin.vue'
 
+// 用户页面
+import user from '../user/user.vue'
+
 
 Vue.use(VueRouter)
 
@@ -25,6 +28,11 @@ const routes = [
     path: '/admin',
     name: 'admin',
     component: admin
+  },
+  {
+    path: '/user',
+    name: 'user',
+    component: user
   },
 ]
 

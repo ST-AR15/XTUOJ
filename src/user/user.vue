@@ -8,25 +8,26 @@
                 <a-menu
                     class="menu"
                     mode="horizontal"
+                    v-model="page"
                 >
-                    <a-menu-item @click="page = 'home'">
+                    <a-menu-item key="home" @click="page = 'home'">
                         <a-icon type="home" />
                         Home
                     </a-menu-item>
-                    <a-menu-item @click="page = 'problems'">
+                    <a-menu-item key="problems" @click="page = 'problems'">
                         Problems
                     </a-menu-item>
-                    <a-menu-item @click="page = 'contests'">
+                    <a-menu-item key="contests" @click="page = 'contests'">
                         Contests
                     </a-menu-item>
-                    <a-menu-item @click="page = 'statuss'">
+                    <a-menu-item key="status" @click="page = 'status'">
                         Status
                     </a-menu-item>
-                    <a-menu-item @click="page = 'ranklist'">
+                    <a-menu-item key="ranklist" @click="page = 'ranklist'">
                         Ranklist
                     </a-menu-item>
                 </a-menu>
-                <a-button class="login">Login{{page}}</a-button>
+                <a-button class="login">Login</a-button>
             </a-layout-header>
             <a-layout-content>
                 <home v-show="page == 'home'"/>

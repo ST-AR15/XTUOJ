@@ -9,21 +9,22 @@
                     class="menu"
                     mode="horizontal"
                     v-model="page"
+                    style="user-select:none"
                 >
-                    <a-menu-item key="home" @click="page = 'home'">
+                    <a-menu-item key="home" @click="page[0] = 'home'">
                         <a-icon type="home" />
                         Home
                     </a-menu-item>
-                    <a-menu-item key="problems" @click="page = 'problems'">
+                    <a-menu-item key="problems" @click="page[0] = 'problems'">
                         Problems
                     </a-menu-item>
-                    <a-menu-item key="contests" @click="page = 'contests'">
+                    <a-menu-item key="contests" @click="page[0] = 'contests'">
                         Contests
                     </a-menu-item>
-                    <a-menu-item key="status" @click="page = 'status'">
+                    <a-menu-item key="status" @click="page[0] = 'status'">
                         Status
                     </a-menu-item>
-                    <a-menu-item key="ranklist" @click="page = 'ranklist'">
+                    <a-menu-item key="ranklist" @click="page[0] = 'ranklist'">
                         Ranklist
                     </a-menu-item>
                 </a-menu>
@@ -56,7 +57,7 @@ export default {
     },
     data() {
         return {
-            page: 'home',       // 当前选择的页面
+            page: ['home'],       // 当前选择的页面
         }
     }
 }

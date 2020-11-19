@@ -7,6 +7,55 @@
                 style="width:1000px"
                 :pagination="pagination"
             >
+                <!-- 搜索 -->
+                <div
+                    slot="filterDropdown"
+                    slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
+                    style="padding: 8px"
+                    >
+                    <a-input
+                        v-ant-ref="c => (searchInput = c)"
+                        :placeholder="`搜索 ${column.dataIndex}`"
+                        :value="selectedKeys[0]"
+                        style="width: 188px; margin-bottom: 8px; display: block;"
+                        @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
+                        @pressEnter="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                    />
+                    <a-button
+                        type="primary"
+                        icon="search"
+                        size="small"
+                        style="width: 90px; margin-right: 8px"
+                        @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                    >
+                        搜索
+                    </a-button>
+                    <a-button size="small" style="width: 90px" @click="() => handleReset(clearFilters)">
+                        重置
+                    </a-button>
+                </div>
+                <!-- 高亮 -->
+                <template slot="customRender" slot-scope="text, record, index, column">
+                    <span v-if="searchText && searchedColumn === column.dataIndex">
+                        <template
+                        v-for="(fragment, i) in text
+                            .toString()
+                            .split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))"
+                        >
+                        <mark
+                            v-if="fragment.toLowerCase() === searchText.toLowerCase()"
+                            :key="i"
+                            class="highlight"
+                            >{{ fragment }}</mark
+                        >
+                        <template v-else>{{ fragment }}</template>
+                        </template>
+                    </span>
+                    <template v-else>
+                        {{ text }}
+                    </template>
+                </template>
+                <!-- ID -->
                 <span slot="ID"></span>
                 <span slot="title"></span>
                 <span slot="tips" slot-scope="tips" style="float:right">
@@ -24,10 +73,17 @@
                         style="border-radius: 10px;height:22px; line-height:22px"
                     >● <span>{{status}}</span></a-tag>
                 </span>
+                <!-- AC/Total -->
                 <span slot="AT"></span>
+                <!-- 表头 -->
                 <template slot="title">
                     Problem List
                 </template>
+                <!-- 搜索图标 -->
+                <a-icon
+                    slot="filterIcon"
+                    type="search"
+                />
             </a-table>
         </div>
     </div>
@@ -37,6 +93,7 @@
 export default {
     data() {
         return {
+            searchText: "",
             pagination: {       // 页面设置
                 pageSize:10,    // 每页题目数量
             },
@@ -44,11 +101,45 @@ export default {
                 {
                     title: "ID",
                     dataIndex: "ID",
-                    sorter: (a,b) => a.ID - b.ID,
+                    // sorter: (a,b) => a.ID - b.ID,
+                    scopedSlots: {
+                        filterDropdown: 'filterDropdown',
+                        filterIcon: 'filterIcon',
+                        customRender: 'customRender',
+                    },
+                    onFilter: (value, record) =>
+                        record.ID
+                        .toString()
+                        .toLowerCase()
+                        .includes(value.toLowerCase()),
+                    onFilterDropdownVisibleChange: visible => {
+                        if (visible) {
+                        setTimeout(() => {
+                            this.searchInput.focus();
+                        });
+                        }
+                    },
                 },
                 {
                     title: "Title",
                     dataIndex: "title",
+                    scopedSlots: {
+                        filterDropdown: 'filterDropdown',
+                        filterIcon: 'filterIcon',
+                        customRender: 'customRender',
+                    },
+                    onFilter: (value, record) =>
+                        record.title
+                        .toString()
+                        .toLowerCase()
+                        .includes(value.toLowerCase()),
+                    onFilterDropdownVisibleChange: visible => {
+                        if (visible) {
+                        setTimeout(() => {
+                            this.searchInput.focus();
+                        });
+                        }
+                    },
                 },
                 {
                     title: "",
@@ -92,7 +183,7 @@ export default {
                 {
                     key: "1000",
                     ID: 1000,
-                    title: "A+B",
+                    title: "A+BA",
                     tips: ["dp","geometry","math","greedy"],
                     status: "ATTEMPT",
                     AT: "0/0",
@@ -100,7 +191,7 @@ export default {
                 {
                     key: "1001",
                     ID: 1001,
-                    title: "A+B",
+                    title: "A+BW",
                     tips: ["dp","geometry","math","greedy"],
                     status: "ACCEPT",
                     AT: "0/0",
@@ -108,7 +199,7 @@ export default {
                 {
                     key: "1002",
                     ID: 1002,
-                    title: "A+B",
+                    title: "A+BE",
                     tips: ["dp","geometry","math","greedy"],
                     status: "ACCEPT",
                     AT: "0/0",
@@ -116,7 +207,7 @@ export default {
                 {
                     key: "1003",
                     ID: 1003,
-                    title: "A+B",
+                    title: "A+BR",
                     tips: ["dp","geometry","math","greedy"],
                     status: "ACCEPT",
                     AT: "0/0",
@@ -124,7 +215,7 @@ export default {
                 {
                     key: "1004",
                     ID: 1004,
-                    title: "A+B",
+                    title: "A+BB",
                     tips: ["dp","geometry","math","greedy"],
                     status: "ACCEPT",
                     AT: "0/0",
@@ -132,7 +223,7 @@ export default {
                 {
                     key: "1005",
                     ID: 1005,
-                    title: "A+B",
+                    title: "A+BW",
                     tips: ["dp","geometry","math","greedy"],
                     status: "ACCEPT",
                     AT: "0/0",
@@ -140,7 +231,7 @@ export default {
                 {
                     key: "1006",
                     ID: 1006,
-                    title: "A+B",
+                    title: "A+BF",
                     tips: ["dp","geometry","math","greedy"],
                     status: "ACCEPT",
                     AT: "0/0",
@@ -195,10 +286,25 @@ export default {
                 },
             ]
         }
+    },
+    methods: {
+        handleSearch(selectedKeys, confirm, dataIndex) {
+            confirm();
+            this.searchText = selectedKeys[0];
+            this.searchedColumn = dataIndex;
+        },
+
+        handleReset(clearFilters) {
+            clearFilters();
+            this.searchText = '';
+        },
     }
 }
 </script>
 
 <style>
-
+    .highlight {
+        background-color: rgb(255, 192, 105);
+        padding: 0px;
+    }
 </style>

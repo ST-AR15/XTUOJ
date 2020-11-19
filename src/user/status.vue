@@ -1,5 +1,7 @@
 <template>
-    <div class="status" id="status">Status</div>
+    <div class="status" id="status">
+        status
+    </div>
 </template>
 
 <script>

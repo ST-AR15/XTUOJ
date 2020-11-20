@@ -74,7 +74,11 @@
                     >● <span>{{status}}</span></a-tag>
                 </span>
                 <!-- AC/Total -->
-                <span slot="AT"></span>
+                <span slot="AT" slot-scope="text, record">
+                    <span v-text="record.accept"></span>
+                    /
+                    <span v-text="record.total"></span>
+                </span>
                 <!-- 表头 -->
                 <template slot="title">
                     Problem List
@@ -175,10 +179,9 @@ export default {
                 },
                 {
                     title: "AC/Total",
-                    dataIndex:"AT",
+                    scopedSlots: { customRender: 'AT' },
                 }
             ],
-            // todo 拆开AT
             questions: [
                 {
                     key: "1000",
@@ -186,7 +189,8 @@ export default {
                     title: "A+BA",
                     tips: ["dp","geometry","math","greedy"],
                     status: "ATTEMPT",
-                    AT: "0/0",
+                    accept: 100,
+                    total: 200,
                 },
                 {
                     key: "1001",
@@ -194,7 +198,8 @@ export default {
                     title: "A+BW",
                     tips: ["dp","geometry","math","greedy"],
                     status: "ACCEPT",
-                    AT: "0/0",
+                    accept: 100,
+                    total: 200,
                 },
                 {
                     key: "1002",
@@ -202,7 +207,8 @@ export default {
                     title: "A+BE",
                     tips: ["dp","geometry","math","greedy"],
                     status: "ACCEPT",
-                    AT: "0/0",
+                    accept: 100,
+                    total: 200,
                 },
                 {
                     key: "1003",
@@ -210,7 +216,8 @@ export default {
                     title: "A+BR",
                     tips: ["dp","geometry","math","greedy"],
                     status: "ACCEPT",
-                    AT: "0/0",
+                    accept: 100,
+                    total: 200,
                 },
                 {
                     key: "1004",
@@ -218,7 +225,8 @@ export default {
                     title: "A+BB",
                     tips: ["dp","geometry","math","greedy"],
                     status: "ACCEPT",
-                    AT: "0/0",
+                    accept: 100,
+                    total: 200,
                 },
                 {
                     key: "1005",
@@ -226,7 +234,8 @@ export default {
                     title: "A+BW",
                     tips: ["dp","geometry","math","greedy"],
                     status: "ACCEPT",
-                    AT: "0/0",
+                    accept: 100,
+                    total: 200,
                 },
                 {
                     key: "1006",
@@ -234,7 +243,8 @@ export default {
                     title: "A+BF",
                     tips: ["dp","geometry","math","greedy"],
                     status: "ACCEPT",
-                    AT: "0/0",
+                    accept: 100,
+                    total: 200,
                 },
                 {
                     key: "1007",
@@ -242,7 +252,8 @@ export default {
                     title: "A+B",
                     tips: ["math","greedy"],
                     status: "ACCEPT",
-                    AT: "0/0",
+                    accept: 100,
+                    total: 200,
                 },
                 {
                     key: "1008",
@@ -250,7 +261,8 @@ export default {
                     title: "A+B",
                     tips: ["dp","geometry"],
                     status: "ACCEPT",
-                    AT: "0/0",
+                    accept: 100,
+                    total: 200,
                 },
                 {
                     key: "1009",
@@ -258,7 +270,8 @@ export default {
                     title: "A+B",
                     tips: ["math","greedy"],
                     status: "ACCEPT",
-                    AT: "0/0",
+                    accept: 100,
+                    total: 200,
                 },
                 {
                     key: "1010",
@@ -266,7 +279,8 @@ export default {
                     title: "A+B",
                     tips: ["dp","geometry"],
                     status: "ACCEPT",
-                    AT: "0/0",
+                    accept: 100,
+                    total: 200,
                 },
                 {
                     key: "1011",
@@ -274,7 +288,8 @@ export default {
                     title: "A+B",
                     tips: ["math","greedy"],
                     status: "ACCEPT",
-                    AT: "0/0",
+                    accept: 100,
+                    total: 200,
                 },
                 {
                     key: "1012",
@@ -282,7 +297,7 @@ export default {
                     title: "A+B",
                     tips: ["dp"],
                     status: "ACCEPT",
-                    AT: "0/0",
+                    total: 200,
                 },
             ]
         }

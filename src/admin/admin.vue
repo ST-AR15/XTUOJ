@@ -18,9 +18,6 @@
                             <a-menu-item key="add" @click="page = 'add'">
                                 <span>新增题目</span>
                             </a-menu-item>
-                            <a-menu-item key="manage" @click="page = 'manage'">
-                                <span>题目数据管理</span>
-                            </a-menu-item>
                             <a-menu-item key="read" @click="page = 'read'">
                                 <span>读取题目</span>
                             </a-menu-item>
@@ -30,7 +27,6 @@
                 <a-layout-content>
                     <welcome v-show="page == 'welcome'"/>
                     <add v-show="page == 'add'"/>
-                    <manage v-show="page == 'manage'"/>
                     <read v-show="page == 'read'"/>
                 </a-layout-content>
             </a-layout>
@@ -44,13 +40,11 @@
 <script>
 import welcome from './welcome.vue'
 import add from './add.vue'
-import manage from './manage.vue'
 import read from './read.vue'
 export default {
     components: {
         welcome,
         add,
-        manage,
         read
     },
     data() {

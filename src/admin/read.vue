@@ -61,6 +61,7 @@
             <!-- ID -->
             <span slot="ID"></span>
             <span slot="title"></span>
+            <!-- 标签 -->
             <span slot="tips" slot-scope="tips" style="float:right">
                 <a-tag
                     v-for="(tip,i) in tips"
@@ -69,12 +70,6 @@
                 >
                     {{tip}}
                 </a-tag>
-            </span>
-            <span slot="status" slot-scope="status">
-                <a-tag
-                    :color="status=='ATTEMPT'? 'orange':status=='ACCEPT'? 'green':'blue'"
-                    style="border-radius: 10px;height:22px; line-height:22px"
-                >● <span>{{status}}</span></a-tag>
             </span>
             <!-- AC/Total -->
             <span slot="AT" slot-scope="text, record">
@@ -88,12 +83,60 @@
                 type="search"
             />
             <!-- 操作 -->
-            <span slot="operation">
-                <a-button style="padding:0 10px" type="primary">题目详情</a-button>
+            <span slot="operation" slot-scope="text, record">
+                <a-button style="padding:0 10px" type="primary" @click="getQuestionDetail({
+                    ID: record.ID,
+                    title: record.title,
+                    tips: record.tips,
+                })">题目详情</a-button>
                 <a-divider type="vertical" />
                 <a-button style="padding:0 10px" type="primary">数据管理</a-button>
             </span>
         </a-table>
+        <!-- 问题详情 - modal对话框 -->
+        <a-modal
+            :visible="questionDetailModal.visible"
+            :title="'问题' + questionDetailModal.ID + ' - ' + questionDetailModal.title + ' - 详情'"
+            @cancel="questionDetailModalCancel"
+        >
+            <p>
+                <span style="margin-right: 30px">ID</span>
+                <a-input 
+                    v-model="questionDetailModal.ID"
+                    :disabled="true"
+                    style="width:200px"
+                ></a-input>
+            </p>
+            <p>
+                <span style="margin-right: 20px">title</span>
+                <a-input 
+                    v-model="questionDetailModal.title"
+                    style="width:200px"
+                ></a-input>
+            </p>
+            <p>
+                <span style="margin-right: 20px">tips</span>
+                <template v-for="(tip, index) in questionDetailModal.tips">
+                    <a-tag :key="tip" closable @close="deleteTip(index)">
+                        {{ tip }}
+                    </a-tag>
+                </template>
+                <a-input
+                    v-if="tipInputVisible"
+                    ref="tipInput"
+                    type="text"
+                    size="small"
+                    :style="{ width: '78px' }"
+                    :value="inputValue"
+                    @change="inputTip"
+                    @blur="addTip"
+                    @keyup.enter="addTip"
+                />
+                <a-tag v-else style="background: #fff; borderStyle: dashed;" @click="showInput">
+                    <a-icon type="plus" /> 新标签
+                </a-tag>
+            </p>
+        </a-modal>
     </div>
 </template>
 
@@ -101,9 +144,17 @@
 export default {
     data() {
         return {
+            tipInputVisible: false,  // 添加tip时的input是否出现
+            inputValue: "",     // 添加标签时输入的内容
             searchText: "",
             pagination: {       // 页面设置
                 pageSize:10,    // 每页题目数量
+            },
+            questionDetailModal : {  // 问题详情的modal
+                visible: false,
+                ID: 0,
+                title: "",
+                tips: [],
             },
             columns: [          // 表格的表头
                 {
@@ -166,22 +217,6 @@ export default {
                     onFilter: (value, record) => record.tips.indexOf(value) >= 0,
                 },
                 {
-                    title: "Status",
-                    dataIndex: "status",
-                    scopedSlots: { customRender: 'status' },
-                    filters: [
-                        {
-                            text: 'ACCEPT',
-                            value: 'ACCEPT'
-                        },
-                        {
-                            text: 'ATTEMPT',
-                            value: 'ATTEMPT'
-                        },
-                    ],
-                    onFilter: (value, record) => record.status.indexOf(value) === 0,
-                },
-                {
                     title: "AC/Total",
                     scopedSlots: { customRender: 'AT' },
                 },
@@ -190,14 +225,12 @@ export default {
                     scopedSlots: { customRender: 'operation' },
                 }
             ],
-            // todo 拆开AT
             questions: [
                 {
                     key: "1000",
                     ID: 1000,
                     title: "A+BA",
                     tips: ["dp","geometry","math","greedy"],
-                    status: "ATTEMPT",
                     accept: 100,
                     total: 200,
                 },
@@ -206,7 +239,6 @@ export default {
                     ID: 1001,
                     title: "A+BW",
                     tips: ["dp","geometry","math","greedy"],
-                    status: "ACCEPT",
                     accept: 100,
                     total: 200,
                 },
@@ -215,7 +247,6 @@ export default {
                     ID: 1002,
                     title: "A+BE",
                     tips: ["dp","geometry","math","greedy"],
-                    status: "ACCEPT",
                     accept: 100,
                     total: 200,
                 },
@@ -224,7 +255,6 @@ export default {
                     ID: 1003,
                     title: "A+BR",
                     tips: ["dp","geometry","math","greedy"],
-                    status: "ACCEPT",
                     accept: 100,
                     total: 200,
                 },
@@ -233,7 +263,6 @@ export default {
                     ID: 1004,
                     title: "A+BB",
                     tips: ["dp","geometry","math","greedy"],
-                    status: "ACCEPT",
                     accept: 100,
                     total: 200,
                 },
@@ -242,7 +271,6 @@ export default {
                     ID: 1005,
                     title: "A+BW",
                     tips: ["dp","geometry","math","greedy"],
-                    status: "ACCEPT",
                     accept: 100,
                     total: 200,
                 },
@@ -251,7 +279,6 @@ export default {
                     ID: 1006,
                     title: "A+BF",
                     tips: ["dp","geometry","math","greedy"],
-                    status: "ACCEPT",
                     accept: 100,
                     total: 200,
                 },
@@ -260,7 +287,6 @@ export default {
                     ID: 1007,
                     title: "A+B",
                     tips: ["math","greedy"],
-                    status: "ACCEPT",
                     accept: 100,
                     total: 200,
                 },
@@ -269,7 +295,6 @@ export default {
                     ID: 1008,
                     title: "A+B",
                     tips: ["dp","geometry"],
-                    status: "ACCEPT",
                     accept: 100,
                     total: 200,
                 },
@@ -278,7 +303,6 @@ export default {
                     ID: 1009,
                     title: "A+B",
                     tips: ["math","greedy"],
-                    status: "ACCEPT",
                     accept: 100,
                     total: 200,
                 },
@@ -287,7 +311,6 @@ export default {
                     ID: 1010,
                     title: "A+B",
                     tips: ["dp","geometry"],
-                    status: "ACCEPT",
                     accept: 100,
                     total: 200,
                 },
@@ -296,7 +319,6 @@ export default {
                     ID: 10011,
                     title: "A+B",
                     tips: ["math","greedy"],
-                    status: "ACCEPT",
                     accept: 100,
                     total: 200,
                 },
@@ -305,7 +327,6 @@ export default {
                     ID: 1012,
                     title: "A+B",
                     tips: ["dp"],
-                    status: "ACCEPT",
                     accept: 100,
                     total: 200,
                 },
@@ -313,20 +334,54 @@ export default {
         }
     },
     methods: {
-        handleSearch(selectedKeys, confirm, dataIndex) {
+        handleSearch(selectedKeys, confirm, dataIndex) {  // 搜索
             confirm();
             this.searchText = selectedKeys[0];
             this.searchedColumn = dataIndex;
         },
 
-        handleReset(clearFilters) {
+        handleReset(clearFilters) {   // 重置
             clearFilters();
             this.searchText = '';
         },
+        getQuestionDetail(info) {  // 获取题目详情和修改
+            // 暂定：info是题目的ID等信息，点击题目详情后会调用API来获取题目的其他详情信息
+            this.questionDetailModal.ID = info.ID;
+            this.questionDetailModal.title = info.title;
+            this.questionDetailModal.tips = JSON.parse(JSON.stringify(info.tips));
+            this.questionDetailModal.visible = true;
+            console.log('打开对话框');
+        },
+        questionDetailModalCancel() { // 关闭问题详情
+            
+            this.questionDetailModal.visible = false;
+            console.log('关闭对话框');
+        },
+        deleteTip(i) {  // 删除标签
+            console.log('删除下标为' + i + '的标签' + this.questionDetailModal.tips[i])
+            let tips = this.questionDetailModal.tips;
+            tips.splice(i,1);
+            this.questionDetailModal.tips = tips;
+        },
+        showInput() { // 添加标签时显示input
+            this.tipInputVisible = true;     // 显示input
+            this.$nextTick(function() {      // 聚焦
+                this.$refs.tipInput.focus();
+            });
+        },
+        inputTip(e) {  // 添加标签时修改内容
+            this.inputValue = e.target.value;
+        },
+        addTip() { // 添加标签
+            this.tipInputVisible = false;     // 去掉input
+            if(this.inputValue != "") {       // 空值不要
+                this.questionDetailModal.tips.push(this.inputValue);
+                this.inputValue = "";
+            }
+        }
     }
 }
 </script>
 
 <style>
-
 </style>

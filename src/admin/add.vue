@@ -62,7 +62,7 @@
                 ></a-textarea> -->
                 <!-- <editor :contents="form.contents"/> -->
                 <!-- <editor /> -->
-                <vue-editor v-model="form.contents"></vue-editor>
+                <!-- <vue-editor v-model="form.contents"></vue-editor> -->
             </a-form-model-item>
 
             <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">

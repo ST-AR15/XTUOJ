@@ -56,10 +56,13 @@
             </a-form-model-item>
 
             <a-form-model-item label="题目内容">
-                <a-textarea
+                <!-- <a-textarea
                     style="max-width:700px;"
                     :rows="4"
-                ></a-textarea>
+                ></a-textarea> -->
+                <!-- <editor :contents="form.contents"/> -->
+                <!-- <editor /> -->
+                <vue-editor v-model="form.contents"></vue-editor>
             </a-form-model-item>
 
             <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
@@ -87,12 +90,14 @@ export default {
                 timeLimit: 1000,         // 时限，默认1000ms
                 storageLimit: 128,       // 存限，默认128MB
                 QType: "normal",         // 题目类型，分普通验证（normal）和特别验证（special），默认普通
+                contents: "测试",            // 题目内容
             },
             form: {                      // 表单数据
                 name: "",                // 题目名称
                 timeLimit: 0,            // 时限，默认1000ms
                 storageLimit: 0,         // 存限，默认128MB
                 QType: "",               // 题目类型，分普通验证（normal）和特别验证（special），默认普通
+                contents: "",            // 题目内容
             },
             rules: {                     // 表单规则
                 name: [                  // 题目名称规则：比如输入内容，否则提示“请输入题目名称”
@@ -132,6 +137,7 @@ export default {
             // this.$refs.addForm.resetFields();
             this.form = this.formDefult;
         },
+        
     },
     mounted:function() {
         // 让form的值变为默认值

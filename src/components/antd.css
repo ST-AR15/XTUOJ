@@ -17,3 +17,15 @@
     position: fixed;
     bottom: 0; */
 }
+
+/* 自定义的，type为green的a-button */
+.ant-btn-green {
+    background-color: #58C462;
+    color: #FFFFFF;
+    border-color: #58C462;
+}
+.ant-btn-green:hover{
+    background-color: #60d36c;
+    color: #FFFFFF;
+    border-color: #58C462;
+}

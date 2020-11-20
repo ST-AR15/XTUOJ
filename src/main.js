@@ -10,6 +10,7 @@ Vue.use(Antd, VueEditor)
 
 // 声明自己写的文件
 import '@/components/antd.css'
+import '@/components/tips.css'
 
 
 Vue.config.productionTip = false

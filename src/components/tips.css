@@ -1,0 +1,17 @@
+/* 为tips们定制颜色的css */
+#tip-dp {
+    background-color: #7afc87;
+    color: #1da02a;
+}
+#tip-geometry {
+    background-color: #fc7a9a;
+    color: #a71c3f;
+}
+#tip-math {
+    background-color: #f7ca90;
+    color:  #c4812b;
+}
+#tip-greedy {
+    background-color: #ab94fc;
+    color: #4625bd;
+}

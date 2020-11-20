@@ -66,6 +66,8 @@ export default {
 <style>
     .user {
         min-width: 1080px;
+        height: 100vh;
+        background-color: #F2F4F9;
     }
     .user .ant-layout-header {
         display: flex;
@@ -97,5 +99,6 @@ export default {
         color: rgb(81, 141, 225);
         font-weight: 700;
         margin-right: 60px;
+        padding: 0 20px;
     }
 </style>

@@ -4,7 +4,7 @@
             <a-table
                 :columns="columns"
                 :data-source="questions"
-                style="width:1000px"
+                style="width:1000px; background-color:#FCFDFE; margin:20px auto"
                 :pagination="pagination"
             >
                 <!-- 搜索 -->
@@ -15,23 +15,29 @@
                     >
                     <a-input
                         v-ant-ref="c => (searchInput = c)"
-                        :placeholder="`搜索 ${column.dataIndex}`"
+                        :placeholder="`搜索 ${column.title}`"
                         :value="selectedKeys[0]"
                         style="width: 188px; margin-bottom: 8px; display: block;"
                         @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
                         @pressEnter="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
                     />
                     <a-button
-                        type="primary"
-                        icon="search"
                         size="small"
-                        style="width: 90px; margin-right: 8px"
+                        style="width: 90px; margin-right: 8px;"
                         @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                        type="green"
                     >
                         搜索
+                        <a-icon type="search" />
                     </a-button>
-                    <a-button size="small" style="width: 90px" @click="() => handleReset(clearFilters)">
+                    <a-button 
+                        type="primary"
+                        size="small"
+                        style="width: 90px" 
+                        @click="() => handleReset(clearFilters)"
+                    >
                         重置
+                        <a-icon type="sync" />
                     </a-button>
                 </div>
                 <!-- 高亮 -->
@@ -58,15 +64,17 @@
                 <!-- ID -->
                 <span slot="ID"></span>
                 <span slot="title"></span>
+                <!-- tips -->
                 <span slot="tips" slot-scope="tips" style="float:right">
                     <a-tag
-                        v-for="(tip,i) in tips"
+                        v-for="tip in tips"
                         :key="tip"
-                        :color="i%2 ? 'geekblue' : 'green'"
+                        v-bind:id="'tip-' + tip"
                     >
                         {{tip}}
                     </a-tag>
                 </span>
+                <!-- status -->
                 <span slot="status" slot-scope="status">
                     <a-tag
                         :color="status=='ATTEMPT'? 'orange':status=='ACCEPT'? 'green':'blue'"
@@ -81,7 +89,7 @@
                 </span>
                 <!-- 表头 -->
                 <template slot="title">
-                    Problem List
+                    <h2 style="font-size: 22px">问题列表</h2>
                 </template>
                 <!-- 搜索图标 -->
                 <a-icon
@@ -125,7 +133,7 @@ export default {
                     },
                 },
                 {
-                    title: "Title",
+                    title: "题目名称",
                     dataIndex: "title",
                     scopedSlots: {
                         filterDropdown: 'filterDropdown',
@@ -162,7 +170,7 @@ export default {
                     onFilter: (value, record) => record.tips.indexOf(value) >= 0,
                 },
                 {
-                    title: "Status",
+                    title: "状态",
                     dataIndex: "status",
                     scopedSlots: { customRender: 'status' },
                     filters: [
@@ -318,6 +326,13 @@ export default {
 </script>
 
 <style>
+    .home * {
+        font-size: 15px;
+        letter-spacing: 1px;
+    }
+    .home .ant-table-title {
+        padding: 10px 20px;
+    }
     .highlight {
         background-color: rgb(255, 192, 105);
         padding: 0px;

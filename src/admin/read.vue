@@ -90,7 +90,10 @@
                     tips: record.tips,
                 })">题目详情</a-button>
                 <a-divider type="vertical" />
-                <a-button style="padding:0 10px" type="primary">数据管理</a-button>
+                <a-button style="padding:0 10px" type="primary" @click="getQuestionData({
+                    ID: record.ID,
+                    title: record.title,
+                })">数据管理</a-button>
             </span>
         </a-table>
         <!-- 问题详情 - modal对话框 -->
@@ -137,6 +140,36 @@
                 </a-tag>
             </p>
         </a-modal>
+        <!-- 数据管理 - modal对话框 -->
+        <a-modal
+            :visible="questionDataModal.visible"
+            :title="'问题' + questionDataModal.ID + ' - ' + questionDataModal.title + ' - 数据管理'"
+            @cancel="questionDataModalCancel"
+            width= "900px"
+        >
+            <div v-bind:key="i" v-for="(data,i) in questionDataModal.data.input" style="display:flex;width:700px;margin-bottom: 5px">
+                <a-textarea v-model="questionDataModal.data.input[i]"></a-textarea>
+                <div style="white-space: nowrap; margin: 0 20px">
+                    输入
+                    <a-divider type="vertical" />
+                    输出
+                </div>
+                <a-textarea v-model="questionDataModal.data.output[i]"></a-textarea>
+            </div>
+            <a-divider />
+            <div style="display:flex;align-items:center">
+                <div style="display:flex;width:700px;flex-shrink:0">
+                    <a-textarea v-model="dataInputIn"></a-textarea>
+                    <div style="white-space: nowrap; margin: 0 20px">
+                        输入
+                        <a-divider type="vertical" />
+                        输出
+                    </div>
+                    <a-textarea v-model="dataInputOut"></a-textarea>
+                </div>
+                <a-button type="primary" style="margin-left: 20px" @click="addData()">添加</a-button>
+            </div>
+        </a-modal>
     </div>
 </template>
 
@@ -145,7 +178,9 @@ export default {
     data() {
         return {
             tipInputVisible: false,  // 添加tip时的input是否出现
-            inputValue: "",     // 添加标签时输入的内容
+            inputValue: "",          // 添加标签时输入的内容
+            dataInputIn: "",         // 题目数据 - 输入的输入框
+            dataInputOut: "",        // 题目数据 - 输出的输入框
             searchText: "",
             pagination: {       // 页面设置
                 pageSize:10,    // 每页题目数量
@@ -155,6 +190,12 @@ export default {
                 ID: 0,
                 title: "",
                 tips: [],
+            },
+            questionDataModal: { // 问题数据管理的modal
+                visible: false,
+                ID: 0,
+                title: "",
+                data: {},
             },
             columns: [          // 表格的表头
                 {
@@ -352,9 +393,22 @@ export default {
             this.questionDetailModal.visible = true;
             console.log('打开对话框');
         },
+        getQuestionData(info) {  //获取题目数据和修改
+            this.questionDataModal.ID = info.ID;
+            this.questionDataModal.title = info.title;
+            // todo 这个要从后端调取，先随便写个
+            this.questionDataModal.data = {
+                input: ["2,2","3,3"],
+                output: ["3","4"]
+            };
+            this.questionDataModal.visible = true;
+        },
         questionDetailModalCancel() { // 关闭问题详情
-            
             this.questionDetailModal.visible = false;
+            console.log('关闭对话框');
+        },
+        questionDataModalCancel() {   // 关闭数据管理
+            this.questionDataModal.visible = false;
             console.log('关闭对话框');
         },
         deleteTip(i) {  // 删除标签
@@ -378,7 +432,14 @@ export default {
                 this.questionDetailModal.tips.push(this.inputValue);
                 this.inputValue = "";
             }
+        },
+        addData() { // 添加数据
+            this.questionDataModal.data.input.push(this.dataInputIn);
+            this.dataInputIn = "";
+            this.questionDataModal.data.output.push(this.dataInputOut);
+            this.dataInputOut = "";
         }
+        
     }
 }
 </script>

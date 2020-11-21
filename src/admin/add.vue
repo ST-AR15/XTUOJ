@@ -10,7 +10,7 @@
             :wrapper-col="wrapperCol"
             :rules="rules"
         >
-            <a-form-model-item label="题目名称" prop="name">
+            <a-form-model-item label="题目名称">
                 <a-input 
                     v-model="form.name"
                     class="inline-element"
@@ -65,9 +65,36 @@
                 <!-- <vue-editor v-model="form.contents"></vue-editor> -->
             </a-form-model-item>
 
+            <a-form-model-item label="题目数据">
+                <div v-bind:key="i" v-for="(data,i) in form.data.input" style="display:flex;width:700px">
+                    <a-textarea v-model="form.data.input[i]"></a-textarea>
+                    <div style="white-space: nowrap; margin: 0 20px">
+                        输入
+                        <a-divider type="vertical" />
+                        输出
+                    </div>
+                    <a-textarea v-model="form.data.output[i]"></a-textarea>
+                </div>
+                <a-divider />
+                <div style="display:flex;align-items:center">
+                    <div style="display:flex;width:700px;flex-shrink:0">
+                        <a-textarea v-model="dataInputIn"></a-textarea>
+                        <div style="white-space: nowrap; margin: 0 20px">
+                            输入
+                            <a-divider type="vertical" />
+                            输出
+                        </div>
+                        <a-textarea v-model="dataInputOut"></a-textarea>
+                    </div>
+                    <a-button type="primary" style="margin-left: 20px" @click="addData()">添加</a-button>
+                </div>
+            </a-form-model-item>
+            
+            <a-divider />
+
             <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
                 <a-button @click="submitForm" type="primary">上传</a-button>
-                <a-button @click="resetForm" style="margin-left:10px;">清空</a-button>
+                <a-button @click="resetForm" style="margin-left:10px;">重置</a-button>
             </a-form-model-item>
         </a-form-model>
         <a-modal
@@ -83,6 +110,8 @@
 export default {
     data() {
         return {
+            dataInputIn: "",             // 题目数据 - 输入的输入框
+            dataInputOut: "",            // 题目数据 - 输出的输入框
             labelCol: { span: 4 },
             wrapperCol: { span: 14 },
             formDefult: {                // 默认的表单数据
@@ -90,7 +119,11 @@ export default {
                 timeLimit: 1000,         // 时限，默认1000ms
                 storageLimit: 128,       // 存限，默认128MB
                 QType: "normal",         // 题目类型，分普通验证（normal）和特别验证（special），默认普通
-                contents: "测试",            // 题目内容
+                contents: "测试",        // 题目内容
+                data: {                  // 题目数据
+                    input: ["1,2","2,3"],
+                    output: ["2","3"],
+                }
             },
             form: {                      // 表单数据
                 name: "",                // 题目名称
@@ -98,6 +131,10 @@ export default {
                 storageLimit: 0,         // 存限，默认128MB
                 QType: "",               // 题目类型，分普通验证（normal）和特别验证（special），默认普通
                 contents: "",            // 题目内容
+                data: {                  // 题目数据
+                    input: [],
+                    output: [],
+                }
             },
             rules: {                     // 表单规则
                 name: [                  // 题目名称规则：比如输入内容，否则提示“请输入题目名称”
@@ -135,13 +172,21 @@ export default {
         },
         resetForm() {  //清空表单
             // this.$refs.addForm.resetFields();
-            this.form = this.formDefult;
+            // this.form = this.formDefult;
+            this.form = JSON.parse(JSON.stringify(this.formDefult));
+            console.log(this.formDefult);
         },
-        
+        addData() { // 添加题目数据
+            this.form.data.input.push(this.dataInputIn);
+            this.dataInputIn = "";
+            this.form.data.output.push(this.dataInputOut);
+            this.dataInputOut = "";
+            console.log(this.form.data);
+        }
     },
     mounted:function() {
         // 让form的值变为默认值
-        this.form = this.formDefult;
+        this.form = JSON.parse(JSON.stringify(this.formDefult));
     }
 }
 </script>

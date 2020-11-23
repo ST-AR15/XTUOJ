@@ -69,10 +69,10 @@ export default {
 </script>
 
 <style>
-    h1 {
+    .admin h1 {
         text-align: center;
     }
-    footer {
+    .admin footer {
         border-top-left-radius: 20px;
         border-top-right-radius: 20px;
         border-top: 1px solid #AAAAAA;

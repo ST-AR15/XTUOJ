@@ -122,11 +122,4 @@ export default {
         margin-right: 60px;
         padding: 0 20px;
     }
-
-    /* 问题页 */
-    .user .question {
-        position: absolute;
-        top: 0;
-        background-color: #F2F4F9;
-    }
 </style>

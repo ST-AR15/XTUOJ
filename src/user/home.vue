@@ -96,6 +96,10 @@
                     slot="filterIcon"
                     type="search"
                 />
+                <!-- 操作 -->
+                <span slot="buttons" slot-scope="text, record">
+                    <a-button type="primary" @click="goQuestion(record.ID)">查看</a-button>
+                </span>
             </a-table>
         </div>
     </div>
@@ -170,6 +174,10 @@ export default {
                     onFilter: (value, record) => record.tips.indexOf(value) >= 0,
                 },
                 {
+                    title: "来源",
+                    dataIndex: "source"
+                },
+                {
                     title: "状态",
                     dataIndex: "status",
                     scopedSlots: { customRender: 'status' },
@@ -188,6 +196,10 @@ export default {
                 {
                     title: "AC/Total",
                     scopedSlots: { customRender: 'AT' },
+                },
+                {
+                    title: "操作",
+                    scopedSlots: { customRender: 'buttons' },
                 }
             ],
             questions: [
@@ -199,6 +211,7 @@ export default {
                     status: "ATTEMPT",
                     accept: 100,
                     total: 200,
+                    source: "昶浩出题"
                 },
                 {
                     key: "1001",
@@ -321,6 +334,12 @@ export default {
             clearFilters();
             this.searchText = '';
         },
+
+        // 打开题目页面，传入题目ID
+        goQuestion(ID) {
+            console.log("打开题目" + ID);
+            this.$emit('goQuestion', ID);
+        }
     }
 }
 </script>

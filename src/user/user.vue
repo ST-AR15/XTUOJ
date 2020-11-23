@@ -34,12 +34,13 @@
                 </a-menu>
                 <a-button class="login">Login</a-button>
             </a-layout-header>
-            <a-layout-content>
-                <home v-show="page == 'home'"/>
+            <a-layout-content style="position: relative">
+                <home @goQuestion="goQuestion" v-show="page == 'home'"/>
                 <problems v-show="page == 'problems'" />
                 <contests v-show="page == 'contests'"/>
                 <status v-show="page == 'status'"/>
                 <ranklist v-show="page == 'ranklist'"/>
+                <question v-show="page == 'question'" :ID="ID" />
             </a-layout-content>
         </a-layout>
     </div>
@@ -51,17 +52,29 @@ import problems from './problems.vue'
 import contests from './contests.vue'
 import status from './status.vue'
 import ranklist from './ranklist.vue'
+import question from './question.vue'
 export default {
     components: {
         home,
         problems,
         contests,
         status,
-        ranklist
+        ranklist,
+        question,
     },
     data() {
         return {
             page: ['home'],       // 当前选择的页面
+            ID: 0,                // 传给question页面的ID
+        }
+    },
+    methods: {
+        goQuestion(ID) { // 打开问题
+            console.log("打开问题" + ID);
+            console.log(this.page[0]);
+            this.ID = ID;
+            this.page[0] = "question";
+            console.log(this.page[0]);
         }
     }
 }
@@ -104,5 +117,12 @@ export default {
         font-weight: 700;
         margin-right: 60px;
         padding: 0 20px;
+    }
+
+    /* 问题页 */
+    .user .question {
+        position: absolute;
+        top: 0;
+        background-color: #F2F4F9;
     }
 </style>

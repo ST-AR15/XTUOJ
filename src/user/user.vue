@@ -70,11 +70,9 @@ export default {
     },
     methods: {
         goQuestion(ID) { // 打开问题
-            console.log("打开问题" + ID);
-            console.log(this.page[0]);
             this.ID = ID;
             this.page[0] = "question";
-            console.log(this.page[0]);
+            this.$forceUpdate();
         }
     }
 }

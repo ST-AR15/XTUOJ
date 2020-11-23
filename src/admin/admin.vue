@@ -22,6 +22,15 @@
                                 <span>读取题目</span>
                             </a-menu-item>
                         </a-sub-menu>
+                        <a-sub-menu>
+                            <span slot="title">
+                                <a-icon type="code" theme="twoTone" />
+                                <span>比赛管理</span>
+                            </span>
+                            <a-menu-item @click="page = 'welcome'">
+                                <span>新建比赛</span>
+                            </a-menu-item>
+                        </a-sub-menu>
                     </a-menu>
                 </a-layout-sider>
                 <a-layout-content>

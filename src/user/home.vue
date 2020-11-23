@@ -338,7 +338,7 @@ export default {
         // 打开题目页面，传入题目ID
         goQuestion(ID) {
             console.log("打开题目" + ID);
-            this.$emit('goQuestion', ID);
+            this.$emit('goQuestion', ID,"home");
         }
     }
 }

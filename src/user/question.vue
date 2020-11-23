@@ -35,17 +35,18 @@
 
 <script>
 export default {
-    props: ['ID'],  //从父组件获得题目ID，然后在接口里获得全部值
+    props: ['ID','page'],  // 从父组件获得题目ID，然后在接口里获得全部值
+                           // 还要获取来的时候的页面
     data() {
         return {
             title: "1",
-            tips: ["1","2"],
+            tips: ["dp","geometry","math","greedy"],
             questionDetail: "123"
         }
     },
     methods: {
         back() {  //返回上一页的方法
-            console.log('xx');
+            this.$emit('goPage', this.page);
         }
     }
 }

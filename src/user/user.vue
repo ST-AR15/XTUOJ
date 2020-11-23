@@ -35,12 +35,12 @@
                 <a-button class="login">Login</a-button>
             </a-layout-header>
             <a-layout-content style="position: relative">
-                <home @goQuestion="goQuestion" v-show="page == 'home'"/>
+                <home @goQuestion="goQuestion"  v-show="page == 'home'"/>
                 <problems v-show="page == 'problems'" />
                 <contests v-show="page == 'contests'"/>
                 <status v-show="page == 'status'"/>
                 <ranklist v-show="page == 'ranklist'"/>
-                <question v-show="page == 'question'" :ID="ID" />
+                <question @goPage="openPage" v-show="page == 'question'" :ID="ID" :page="pagePre" />
             </a-layout-content>
         </a-layout>
     </div>
@@ -66,12 +66,18 @@ export default {
         return {
             page: ['home'],       // 当前选择的页面
             ID: 0,                // 传给question页面的ID
+            pagePre: ""           // 传给question页面的page
         }
     },
     methods: {
         goQuestion(ID) { // 打开问题
             this.ID = ID;
+            this.pagePre = this.page[0];
             this.page[0] = "question";
+            this.$forceUpdate();
+        },
+        openPage(page) {  //打开某页
+            this.page[0] = page;
             this.$forceUpdate();
         }
     }

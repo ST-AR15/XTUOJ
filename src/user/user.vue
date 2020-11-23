@@ -16,15 +16,19 @@
                         Home
                     </a-menu-item>
                     <a-menu-item key="problems" @click="page[0] = 'problems'">
+                        <a-icon type="profile" />
                         Problems
                     </a-menu-item>
                     <a-menu-item key="contests" @click="page[0] = 'contests'">
+                        <a-icon type="trophy" />
                         Contests
                     </a-menu-item>
                     <a-menu-item key="status" @click="page[0] = 'status'">
+                        <a-icon type="branches" />
                         Status
                     </a-menu-item>
                     <a-menu-item key="ranklist" @click="page[0] = 'ranklist'">
+                        <a-icon type="bar-chart" />
                         Ranklist
                     </a-menu-item>
                 </a-menu>

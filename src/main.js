@@ -4,8 +4,10 @@ import Antd from 'ant-design-vue'
 import 'ant-design-vue/dist/antd.css'
 import App from './App.vue'
 import router from './router'
-import VueEditor from 'vue-md-editor'
-Vue.use(Antd, VueEditor)
+// import VueEditor from 'vue-md-editor'
+import 'jquery'
+// import '../public/lib/editormd/editormd.min.js'
+Vue.use(Antd)
 // Vue.ues(VueEditor)
 
 // 声明自己写的文件

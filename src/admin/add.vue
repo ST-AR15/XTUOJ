@@ -63,6 +63,7 @@
                 <!-- <editor :contents="form.contents"/> -->
                 <!-- <editor /> -->
                 <!-- <vue-editor v-model="form.contents"></vue-editor> -->
+                <iframe width="1200" height="800" src="lib/editor.html" frameborder="0"></iframe>
             </a-form-model-item>
 
             <a-form-model-item label="题目数据">

@@ -1,7 +1,7 @@
 <template>
     <div class="question" id="question">
         <a-layout>
-            <a-layout-header>
+            <a-layout-header style="padding: 0">
                 <a-page-header 
                     title="返回"
                     @back="back"

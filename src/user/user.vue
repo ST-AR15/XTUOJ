@@ -13,26 +13,26 @@
                 >
                     <a-menu-item key="home" @click="page[0] = 'home'">
                         <a-icon type="home" />
-                        Home
+                        首页
                     </a-menu-item>
                     <a-menu-item key="problems" @click="page[0] = 'problems'">
                         <a-icon type="profile" />
-                        Problems
+                        问题
                     </a-menu-item>
                     <a-menu-item key="contests" @click="page[0] = 'contests'">
                         <a-icon type="trophy" />
-                        Contests
+                        竞赛
                     </a-menu-item>
                     <a-menu-item key="status" @click="page[0] = 'status'">
                         <a-icon type="branches" />
-                        Status
+                        状态
                     </a-menu-item>
                     <a-menu-item key="ranklist" @click="page[0] = 'ranklist'">
                         <a-icon type="bar-chart" />
-                        Ranklist
+                        排名
                     </a-menu-item>
                 </a-menu>
-                <a-button class="login">Login</a-button>
+                <a-button class="login">登录</a-button>
             </a-layout-header>
             <a-layout-content style="position: relative">
                 <home @goQuestion="goQuestion"  v-show="page == 'home'"/>

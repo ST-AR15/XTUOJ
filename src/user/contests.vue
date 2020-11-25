@@ -154,11 +154,7 @@ export default {
                     key: "1000",
                     ID: 1000,
                     title: "A+BA",
-                    source: "昶浩出题",
-                    status: "ATTEMPT",
-                    accept: 100,
-                    total: 200,
-                    
+                    source: "昶浩",
                 },
                 
             ]

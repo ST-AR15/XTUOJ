@@ -54,7 +54,7 @@ export default {
     components: {
         welcome,
         add,
-        read
+        read,
     },
     data() {
         return {

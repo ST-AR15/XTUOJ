@@ -15,7 +15,7 @@
 			    <textarea style="display:none;"></textarea>
 			</div>
 		</div>
-        <script src="https://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+        <script src="jquery/jquery.min.js"></script>
         <script src="editormd/editormd.min.js"></script>
         <script type="text/javascript">
 			var testEditor;
@@ -29,6 +29,13 @@
 					htmlDecode : "b,i,div,span,br,a,img,area,strong,h1,h2,h3,h4,h5,h6"  // Filter tags, and all on* attributes
                 });
             });
+            function getEditorMd() {
+                return testEditor.getMarkdown();
+            }
+            function getEditorHTML() {
+                return testEditor.getHTML();
+            }
+            // parent.getEditorHTML(getEditorHTML());
         </script>
     </body>
 </html>

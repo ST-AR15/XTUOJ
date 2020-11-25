@@ -64,6 +64,7 @@
                 <!-- <editor /> -->
                 <!-- <vue-editor v-model="form.contents"></vue-editor> -->
                 <iframe width="1200" height="800" src="lib/editor.html" frameborder="0"></iframe>
+                <a-button @click="getEditorHTML">测试</a-button>
             </a-form-model-item>
 
             <a-form-model-item label="题目数据">
@@ -108,7 +109,11 @@
 </template>
 
 <script>
+// import editor from '@/components/editor.vue'
 export default {
+    // components: {
+    //     editor
+    // },
     data() {
         return {
             dataInputIn: "",             // 题目数据 - 输入的输入框
@@ -183,6 +188,11 @@ export default {
             this.form.data.output.push(this.dataInputOut);
             this.dataInputOut = "";
             console.log(this.form.data);
+        },
+        getEditorHTML() {  //获取editor的HTML内容
+            // console.log(text);
+            // return text;
+            window.getEditorMd();
         }
     },
     mounted:function() {

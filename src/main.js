@@ -4,11 +4,9 @@ import Antd from 'ant-design-vue'
 import 'ant-design-vue/dist/antd.css'
 import App from './App.vue'
 import router from './router'
-// import VueEditor from 'vue-md-editor'
-import 'jquery'
-// import '../public/lib/editormd/editormd.min.js'
+// import mavonEditor from 'mavon-editor'
+// import 'mavon-editor/dist/css/index.css'
 Vue.use(Antd)
-// Vue.ues(VueEditor)
 
 // 声明自己写的文件
 import '@/components/antd.css'

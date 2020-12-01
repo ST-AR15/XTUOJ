@@ -27,7 +27,7 @@
                                 <a-icon type="code" theme="twoTone" />
                                 <span>比赛管理</span>
                             </span>
-                            <a-menu-item @click="page = 'welcome'">
+                            <a-menu-item @click="page = 'addContest'">
                                 <span>新建比赛</span>
                             </a-menu-item>
                         </a-sub-menu>
@@ -37,6 +37,7 @@
                     <welcome v-show="page == 'welcome'"/>
                     <add v-show="page == 'add'"/>
                     <read v-show="page == 'read'"/>
+                    <addContest v-show="page == 'addContest'"/>
                 </a-layout-content>
             </a-layout>
             <a-layout-footer>
@@ -50,11 +51,13 @@
 import welcome from './welcome.vue'
 import add from './add.vue'
 import read from './read.vue'
+import addContest from './addContest.vue'
 export default {
     components: {
         welcome,
         add,
         read,
+        addContest,
     },
     data() {
         return {

@@ -29,3 +29,8 @@
     color: #FFFFFF;
     border-color: #58C462;
 }
+
+/* 表格自定义 */
+.ant-table-pagination {
+    margin: 16px 20px !important;
+}

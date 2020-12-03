@@ -41,7 +41,7 @@
                     <p v-text="sampleOutput"></p>
                     
                 </a-layout-sider>
-                <a-layout-content>
+                <a-layout-content style="padding:10px;">
                     <div>
                         <p>
                             语言：
@@ -55,7 +55,7 @@
                         </p>
                     </div>
                     <!-- <a-textarea style="height:720px; resize: none" placeholder="Coding here……"></a-textarea> -->
-                    <mavon-editor style="height:700px;margin-bottom:20px" :subfield="false" :toolbarsFlag="false" placeholder="Code here……" :tabSize="4" v-model="code"></mavon-editor>
+                    <mavon-editor style="height:700px;margin-bottom:20px;z-index:1" :subfield="false" :toolbarsFlag="false" placeholder="Code here……" :tabSize="4" v-model="code"></mavon-editor>
                     <!-- <codemirror
                         ref="code"
                         :value="code"

@@ -33,6 +33,22 @@
             <a-form-model-item label="允许使用的编译器">
                 <a-checkbox-group v-model="form.compiler" :options="compilerList"></a-checkbox-group>
             </a-form-model-item>
+
+            <a-form-model-item label="题目">
+                <!-- <transition-group> -->
+                <div class="contests-question" style="display:flex;align-items:center;margin-top:5px;position:relative" v-bind:key="i" v-for="(data,i) in form.questions">
+                    <a-icon v-bind:style="{
+                        fontSize:'22px',
+                        cursor:'pointer',
+                        color:i==form.questions.length-1? 'black':'red',
+                        transform:i==form.questions.length-1?'':'rotate(45deg)'
+                    }" @click="chargeQuestion(i)" type="plus-circle" />
+                    <a-input class="inline-element" style="width:100px;margin:0 5px" v-model="data.ID" placeholder="请输入题目ID……"></a-input>
+                    <a-input class="inline-element" :value="data.name" placeholder="题目名称" :disabled="true"></a-input>
+                </div>
+                <!-- </transition-group> -->
+            </a-form-model-item>
+
         </a-form-model>
     </div>
 </template>
@@ -49,12 +65,35 @@ export default {
                 name: "比赛",
                 judge: "ICPC",
                 compiler: ["GCC","Java"],
+                questions: [
+                    {
+                        ID: 1000,
+                        name: "cnm",
+                    },
+                    {
+                        ID: 1001,
+                        name: "qqq"
+                    },
+                    {
+                        ID: 1002,
+                        name: "qqqww"
+                    },
+                ],
             },
         }
         
     },
     methods: {
-
+        chargeQuestion(i) {  //删除或者添加某个问题
+            if(i == this.form.questions.length-1) {  //如果是最后的问题，那就是添加
+                this.form.questions.push({
+                    ID: this.form.questions[i].ID + 1,
+                    name: ""
+                })
+            } else {
+                this.form.questions.splice(i,1);
+            }
+        }
     }
 }
 </script>
@@ -74,4 +113,11 @@ export default {
         width: 200px;
         display: inline-block;
     }
+    /* .v-enter,.v-leave-to{
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    .v-enter-active,.v-leave-active{
+        transition: all 0.6s ease;
+    } */
 </style>

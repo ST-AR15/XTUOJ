@@ -57,10 +57,18 @@
 
             <a-form-model-item label="题目内容">
                 <mavon-editor :tabSize="3" :toolbars="editorOption" v-model="questionDetail"></mavon-editor>
-                <a-button @click="getEditorHTML">测试</a-button>
+            </a-form-model-item>
+
+            <a-form-model-item label="输入">
+                <a-textarea v-model="form.inputTips"></a-textarea>
+            </a-form-model-item>
+
+            <a-form-model-item label="输出">
+                <a-textarea v-model="form.outputTips"></a-textarea>
             </a-form-model-item>
 
             <a-form-model-item label="题目数据">
+                <p style="text-align:center">第一个输入输出将被视为样例输入/样例输出</p>
                 <div v-bind:key="i" v-for="(data,i) in form.data.input" style="display:flex;width:700px">
                     <a-textarea v-model="form.data.input[i]"></a-textarea>
                     <div style="white-space: nowrap; margin: 0 20px">
@@ -157,6 +165,8 @@ export default {
                 storageLimit: 128,       // 存限，默认128MB
                 QType: "normal",         // 题目类型，分普通验证（normal）和特别验证（special），默认普通
                 contents: "测试",        // 题目内容
+                inputTips: "一个数字",    // 输入格式提示
+                outputTips: "一串字符",   // 输出格式提示
                 data: {                  // 题目数据
                     input: ["1,2","2,3"],
                     output: ["2","3"],
@@ -168,6 +178,8 @@ export default {
                 storageLimit: 0,         // 存限，默认128MB
                 QType: "",               // 题目类型，分普通验证（normal）和特别验证（special），默认普通
                 contents: "",            // 题目内容
+                inputTips: "",           // 输入格式提示
+                outputTips: "",          // 输出格式提示
                 data: {                  // 题目数据
                     input: [],
                     output: [],

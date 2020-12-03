@@ -48,7 +48,14 @@
                             </a-select>
                         </p>
                     </div>
-                    <a-textarea style="height:720px; resize: none" placeholder="Coding here……"></a-textarea>
+                    <!-- <a-textarea style="height:720px; resize: none" placeholder="Coding here……"></a-textarea> -->
+                    <mavon-editor style="height:700px;margin-bottom:20px" :subfield="false" :toolbarsFlag="false" placeholder="Code here……" :tabSize="4" v-model="code"></mavon-editor>
+                    <!-- <codemirror
+                        ref="code"
+                        :value="code"
+                        :options="codemirrorOptions"
+                        class="code">
+                    </codemirror> -->
                     <div>
                         <a-button type="primary">提交</a-button>
                     </div>
@@ -60,10 +67,20 @@
 </template>
 
 <script>
+import {mavonEditor} from 'mavon-editor'
+import 'mavon-editor/dist/css/index.css'
+// import { codemirror } from 'vue-codemirror'
+// import "codemirror/theme/ambiance.css";  
+// require("codemirror/mode/javascript/javascript"); 
 export default {
+    components: {
+        mavonEditor
+        // codemirror
+    },
     props: ['ID','page'],  // 从父组件获得题目ID，然后在接口里获得全部值
                            // 还要获取来的时候的页面
     data() {
+        
         return {
             language: "C",
             language_used: ["C","C++","Java","JavaScript","PHP","Ruby"],
@@ -71,7 +88,8 @@ export default {
             tips: ["dp","geometry","math","greedy"],
             questionDetail: "小蜗牛爬楼，假设白天能爬x米，晚上会下落y米（x>y），楼总高z米。小蜗牛要多少天才能爬上去？",
             sampleInput: "5 1 10",
-            sampleOutput: "3"
+            sampleOutput: "3",
+            code: "",  //当前输入的代码
         }
     },
     methods: {

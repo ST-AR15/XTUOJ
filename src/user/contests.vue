@@ -79,9 +79,19 @@
                 </span>
             </a-table>
         </div>
+        <div class="contest-questions" id="contest-questions">
+            <a-table
+                :columns="questionsColumns"
+                :data-source="questions"
+                style="width:1000px; background-color:#FCFDFE; margin:20px auto"
+                :pagination="pagination"
+            >
+
+            </a-table>
+        </div>
     </div>
 </template>
-
+ 
 <script>
 export default {
     data() {
@@ -149,6 +159,9 @@ export default {
                     scopedSlots: { customRender: 'buttons' },
                 }
             ],
+            questionsColumns: [ // 问题列表的表格的表头
+
+            ],
             contests: [
                 {
                     key: "1000",
@@ -156,6 +169,9 @@ export default {
                     title: "A+BA",
                     source: "昶浩",
                 },
+                
+            ],
+            questions: [
                 
             ]
         }

@@ -56,7 +56,7 @@
             </a-form-model-item>
 
             <a-form-model-item label="题目内容">
-                <mavon-editor :toolbars="editorOption" v-model="questionDetail"></mavon-editor>
+                <mavon-editor :tabSize="3" :toolbars="editorOption" v-model="questionDetail"></mavon-editor>
                 <a-button @click="getEditorHTML">测试</a-button>
             </a-form-model-item>
 

@@ -6,6 +6,9 @@ import App from './App.vue'
 import router from './router'
 // import mavonEditor from 'mavon-editor'
 // import 'mavon-editor/dist/css/index.css'
+// import VueCodeMirror from 'vue-codemirror'
+// import 'codemirror/lib/codemirror.css'
+// Vue.use(Antd,VueCodeMirror)
 Vue.use(Antd)
 
 // 声明自己写的文件

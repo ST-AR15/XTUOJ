@@ -41,14 +41,20 @@
                         fontSize:'22px',
                         cursor:'pointer',
                         color:i==form.questions.length-1? 'black':'red',
-                        transform:i==form.questions.length-1?'':'rotate(45deg)'
-                    }" @click="chargeQuestion(i)" type="plus-circle" />
+                        transform:i==form.questions.length-1?'':'rotate(45deg)',
+                        transition: 'all .6s'
+                    }" @click="chargeQuestion(i)" type="plus-circle" v-bind:title="i==form.questions.length-1?'新增':'删除'" />
                     <a-input class="inline-element" style="width:100px;margin:0 5px" v-model="data.ID" placeholder="请输入题目ID……"></a-input>
                     <a-input class="inline-element" :value="data.name" placeholder="题目名称" :disabled="true"></a-input>
                 </div>
                 <!-- </transition-group> -->
+                <p>当前题目数量：<span v-text="form.questions.length-1"></span></p>
             </a-form-model-item>
 
+            <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
+                <a-button @click="submitForm" type="primary">上传</a-button>
+                <a-button @click="resetForm" style="margin-left:10px;">重置</a-button>
+            </a-form-model-item>
         </a-form-model>
     </div>
 </template>
@@ -93,6 +99,12 @@ export default {
             } else {
                 this.form.questions.splice(i,1);
             }
+        },
+        submitForm() { // 上传表单
+
+        },
+        resetForm() { // 重置表单
+            
         }
     }
 }

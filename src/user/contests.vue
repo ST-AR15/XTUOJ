@@ -1,6 +1,8 @@
 <template>
     <div class="contests" id="contests">
-        <div class="contest-list" id="contest-list">
+        <!-- 竞赛列表 -->
+        <!-- <transition name="fade"> -->
+        <div v-show="pageNow == 'contests'" class="contest-list" id="contest-list">
             <a-table
                 :columns="columns"
                 :data-source="contests"
@@ -79,7 +81,8 @@
                 </span>
             </a-table>
         </div>
-        <div class="contest-questions" id="contest-questions">
+        <!-- 题目列表 -->
+        <div v-show="pageNow == 'questions'" class="contest-questions" id="contest-questions">
             <a-table
                 :columns="questionsColumns"
                 :data-source="questions"
@@ -89,6 +92,7 @@
 
             </a-table>
         </div>
+        <!-- </transition> -->
     </div>
 </template>
  
@@ -96,6 +100,7 @@
 export default {
     data() {
         return {
+            pageNow: "contests", // contests是竞赛列表，questions是问题列表
             searchText: "",
             pagination: {       // 页面设置
                 pageSize:10,    // 每页题目数量
@@ -187,6 +192,10 @@ export default {
             clearFilters();
             this.searchText = '';
         },
+    },
+    mounted:function() {
+        localStorage.ID = 1;
+        console.log(localStorage);
     }
 }
 </script>

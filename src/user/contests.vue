@@ -194,8 +194,7 @@ export default {
         },
     },
     mounted:function() {
-        localStorage.ID = 1;
-        console.log(localStorage);
+        // console.log(sessionStorage);
     }
 }
 </script>

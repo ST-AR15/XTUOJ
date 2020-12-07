@@ -36,6 +36,8 @@
 
             <a-form-model-item label="题目">
                 <transition-group name="cross">
+                    <!-- 可以把这个div设置成absolute，然后根据i来设置top属性，这样整个动画就能更加连贯 -->
+                    <!-- 后续需求如果需要就这样改 -->
                     <div class="contests-question" style="display:flex;align-items:center;margin-top:5px;position:relative" v-for="(data,i) in form.questions" :key="data.T">
                         <a-icon v-bind:style="{
                             fontSize:'22px',
@@ -97,7 +99,7 @@ export default {
             if(i == this.form.questions.length-1) {  //如果是最后的问题，那就是添加
                 this.form.questions.push({
                     T: this.form.questions[i].ID + 1,
-                    ID: this.form.questions[i].ID + 1,
+                    ID: parseInt(this.form.questions[i].ID) + 1,
                     name: ""
                 })
             } else {

@@ -97,11 +97,12 @@ export default {
     methods: {
         chargeQuestion(i) {  //删除或者添加某个问题
             if(i == this.form.questions.length-1) {  //如果是最后的问题，那就是添加
+                let timer = new Date();  // 时间，为后面的T做准备
                 this.form.questions.push({
-                    T: this.form.questions[i].ID + 1,
+                    T: timer.getTime(),
                     ID: parseInt(this.form.questions[i].ID) + 1,
                     name: ""
-                })
+                });
             } else {
                 this.form.questions.splice(i,1);
             }

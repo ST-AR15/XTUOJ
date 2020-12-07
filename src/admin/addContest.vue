@@ -35,19 +35,19 @@
             </a-form-model-item>
 
             <a-form-model-item label="题目">
-                <!-- <transition-group> -->
-                <div class="contests-question" style="display:flex;align-items:center;margin-top:5px;position:relative" v-bind:key="i" v-for="(data,i) in form.questions">
-                    <a-icon v-bind:style="{
-                        fontSize:'22px',
-                        cursor:'pointer',
-                        color:i==form.questions.length-1? 'black':'red',
-                        transform:i==form.questions.length-1?'':'rotate(45deg)',
-                        transition: 'all .6s'
-                    }" @click="chargeQuestion(i)" type="plus-circle" v-bind:title="i==form.questions.length-1?'新增':'删除'" />
-                    <a-input class="inline-element" style="width:100px;margin:0 5px" v-model="data.ID" placeholder="请输入题目ID……"></a-input>
-                    <a-input class="inline-element" :value="data.name" placeholder="题目名称" :disabled="true"></a-input>
-                </div>
-                <!-- </transition-group> -->
+                <transition-group name="cross">
+                    <div class="contests-question" style="display:flex;align-items:center;margin-top:5px;position:relative" v-for="(data,i) in form.questions" :key="data.T">
+                        <a-icon v-bind:style="{
+                            fontSize:'22px',
+                            cursor:'pointer',
+                            color:i==form.questions.length-1? 'black':'red',
+                            transform:i==form.questions.length-1?'':'rotate(45deg)',
+                            transition: 'all .6s'
+                        }" @click="chargeQuestion(i)" type="plus-circle" v-bind:title="i==form.questions.length-1?'新增':'删除'" />
+                        <a-input class="inline-element" style="width:100px;margin:0 5px" v-model="data.ID" placeholder="题目ID"></a-input>
+                        <a-input class="inline-element" :value="data.name" placeholder="题目名称" :disabled="true"></a-input>
+                    </div>
+                </transition-group>
                 <p>当前题目数量：<span v-text="form.questions.length-1"></span></p>
             </a-form-model-item>
 
@@ -73,14 +73,17 @@ export default {
                 compiler: ["GCC","Java"],
                 questions: [
                     {
+                        T: 1,
                         ID: 1000,
                         name: "cnm",
                     },
                     {
+                        T: 2,
                         ID: 1001,
                         name: "qqq"
                     },
                     {
+                        T: 3,
                         ID: 1002,
                         name: "qqqww"
                     },
@@ -93,6 +96,7 @@ export default {
         chargeQuestion(i) {  //删除或者添加某个问题
             if(i == this.form.questions.length-1) {  //如果是最后的问题，那就是添加
                 this.form.questions.push({
+                    T: this.form.questions[i].ID + 1,
                     ID: this.form.questions[i].ID + 1,
                     name: ""
                 })
@@ -125,11 +129,4 @@ export default {
         width: 200px;
         display: inline-block;
     }
-    /* .v-enter,.v-leave-to{
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    .v-enter-active,.v-leave-active{
-        transition: all 0.6s ease;
-    } */
 </style>

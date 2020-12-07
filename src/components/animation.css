@@ -1,0 +1,18 @@
+/* 动画效果 */
+
+/* fade:透明消失 */
+.fade-enter-active, .fade-leave-active {
+    transition: opacity 2s
+}
+.fade-enter, .fade-leave-to  {
+    opacity: 0
+}
+
+/* cross：竖直移动 */
+.cross-enter-active, .cross-leave-active {
+    transition: all .6s ease;
+}
+.cross-enter, .cross-leave-to  {
+    opacity: 0;
+    transform: translateX(-10px);
+}

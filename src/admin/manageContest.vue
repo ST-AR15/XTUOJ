@@ -74,9 +74,34 @@
             />
             <!-- 操作 -->
             <span slot="buttons" slot-scope="text, record">
-                <a-button type="primary" @click="namelistManage(record.ID)">名单管理</a-button>
+                <a-space>
+                    <a-button type="primary" @click="namelistManage(record.ID)">名单管理</a-button>
+                    <a-button type="primary" @click="questionsManage(record.ID)">题目管理</a-button>
+                </a-space>
             </span>
         </a-table>
+
+        <a-modal
+            :title="modal.ID + '名单管理'"
+            :visible="modal.isVisible"
+            @cancel="modal.isVisible = false"
+        >
+            <transition-group name="cross">
+                <div style="margin-top:5px" v-for="(data,i) in modal.questionList" :key="data.T">
+                    <a-space>
+                        <a-icon v-bind:style="{
+                            fontSize:'22px',
+                            cursor:'pointer',
+                            color:i==modal.questionList.length-1? 'black':'red',
+                            transform:i==modal.questionList.length-1?'':'rotate(45deg)',
+                            transition: 'all .6s'
+                        }" @click="chargeQuestion(i)" type="plus-circle" v-bind:title="i==modal.questionList.length-1?'新增':'删除'" />
+                        <a-input style="width:100px;margin:0 5px" v-model="data.ID" placeholder="题目ID"></a-input>
+                        <a-input :value="data.name" placeholder="题目名称" :disabled="true"></a-input>
+                    </a-space>
+                </div>
+            </transition-group>
+        </a-modal>
     </div>
 </template>
 
@@ -161,16 +186,48 @@ export default {
                     scopedSlots: { customRender: 'buttons' },
                 }
             ],
+            modal: {  // 对话框的内容
+                isVisible: true,
+                ID: 1000,
+                questionList: [
+                    {
+                        T:1,
+                        ID: 1000,
+                    },
+                    {
+                        T:2,
+                        ID: 1001,
+                    }
+                ]
+            }
         }
     },
     methods: {
-        namelistManage(contestID) {
+        namelistManage(contestID) {  // 管理名单
             console.log(contestID);
+        },
+        questionsManage(contestID) { // 管理题目
+            console.log(contestID);
+        },
+        chargeQuestion(i) { // 修改题目
+            if(i == this.modal.questionList.length-1) {  //如果是最后的问题，那就是添加
+                let timer = new Date();  // 时间，为后面的T做准备
+                this.modal.questionList.push({
+                    T: timer.getTime(),
+                    ID: parseInt(this.modal.questionList[i].ID) + 1,
+                    name: ""
+                });
+            } else {
+                this.modal.questionList.splice(i,1);
+            }
         }
     }
 }
 </script>
 
 <style>
-
+    /* .manageContest .inline-element {
+        width: 200px;
+        display: inline-block;
+    } */
 </style>

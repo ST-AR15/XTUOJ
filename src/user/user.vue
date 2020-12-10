@@ -91,6 +91,7 @@ export default {
         min-width: 1080px;
         height: 100vh;
         background-color: #F2F4F9;
+        overflow: hidden;
     }
     .user .ant-layout-header {
         display: flex;

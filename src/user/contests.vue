@@ -1,101 +1,103 @@
 <template>
     <div class="contests" id="contests">
         <!-- 竞赛列表 -->
-        <!-- <transition name="fade"> -->
-        <div v-show="pageNow == 'contests'" class="contest-list" id="contest-list">
-            <a-table
-                :columns="columns"
-                :data-source="contests"
-                style="width:1000px; background-color:#FCFDFE; margin:20px auto"
-                :pagination="pagination"
-            >
-                <!-- 搜索 -->
-                <div
-                    slot="filterDropdown"
-                    slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
-                    style="padding: 8px"
-                    >
-                    <a-input
-                        v-ant-ref="c => (searchInput = c)"
-                        :placeholder="`搜索 ${column.title}`"
-                        :value="selectedKeys[0]"
-                        style="width: 188px; margin-bottom: 8px; display: block;"
-                        @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
-                        @pressEnter="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
-                    />
-                    <a-button
-                        size="small"
-                        style="width: 90px; margin-right: 8px;"
-                        @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
-                        type="green"
-                    >
-                        搜索
-                        <a-icon type="search" />
-                    </a-button>
-                    <a-button 
-                        type="primary"
-                        size="small"
-                        style="width: 90px" 
-                        @click="() => handleReset(clearFilters)"
-                    >
-                        重置
-                        <a-icon type="sync" />
-                    </a-button>
-                </div>
-                <!-- 高亮 -->
-                <template slot="customRender" slot-scope="text, record, index, column">
-                    <span v-if="searchText && searchedColumn === column.dataIndex">
-                        <template
-                        v-for="(fragment, i) in text
-                            .toString()
-                            .split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))"
+        <transition name="cross">
+            <div v-show="pageNow == 'contests'" class="contest-list" id="contest-list">
+                <a-table
+                    :columns="columns"
+                    :data-source="contests"
+                    style="width:1000px; background-color:#FCFDFE; margin:20px auto"
+                    :pagination="pagination"
+                >
+                    <!-- 搜索 -->
+                    <div
+                        slot="filterDropdown"
+                        slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
+                        style="padding: 8px"
                         >
-                        <mark
-                            v-if="fragment.toLowerCase() === searchText.toLowerCase()"
-                            :key="i"
-                            class="highlight"
-                            >{{ fragment }}</mark
+                        <a-input
+                            v-ant-ref="c => (searchInput = c)"
+                            :placeholder="`搜索 ${column.title}`"
+                            :value="selectedKeys[0]"
+                            style="width: 188px; margin-bottom: 8px; display: block;"
+                            @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
+                            @pressEnter="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                        />
+                        <a-button
+                            size="small"
+                            style="width: 90px; margin-right: 8px;"
+                            @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                            type="green"
                         >
-                        <template v-else>{{ fragment }}</template>
+                            搜索
+                            <a-icon type="search" />
+                        </a-button>
+                        <a-button 
+                            type="primary"
+                            size="small"
+                            style="width: 90px" 
+                            @click="() => handleReset(clearFilters)"
+                        >
+                            重置
+                            <a-icon type="sync" />
+                        </a-button>
+                    </div>
+                    <!-- 高亮 -->
+                    <template slot="customRender" slot-scope="text, record, index, column">
+                        <span v-if="searchText && searchedColumn === column.dataIndex">
+                            <template
+                            v-for="(fragment, i) in text
+                                .toString()
+                                .split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))"
+                            >
+                            <mark
+                                v-if="fragment.toLowerCase() === searchText.toLowerCase()"
+                                :key="i"
+                                class="highlight"
+                                >{{ fragment }}</mark
+                            >
+                            <template v-else>{{ fragment }}</template>
+                            </template>
+                        </span>
+                        <template v-else>
+                            {{ text }}
                         </template>
-                    </span>
-                    <template v-else>
-                        {{ text }}
                     </template>
-                </template>
-                <!-- ID -->
-                <span slot="ID"></span>
-                <span slot="title"></span>
-                <!-- 表头 -->
-                <template slot="title">
-                    <h2 style="font-size: 22px">比赛列表</h2>
-                </template>
-                <!-- 搜索图标 -->
-                <a-icon
-                    slot="filterIcon"
-                    type="search"
-                />
-                <!-- 操作 -->
-                <span slot="buttons" slot-scope="text, record">
-                    <a-space>
-                        <a-button type="primary" @click="goQuestionList(record.ID)">查看</a-button>
-                        <a-button type="primary" @click="registerContest()">注册</a-button>
-                    </a-space>
-                </span>
-            </a-table>
-        </div>
-        <!-- 题目列表 -->
-        <div v-show="pageNow == 'questions'" class="contest-questions" id="contest-questions">
-            <a-table
-                :columns="questionsColumns"
-                :data-source="questions"
-                style="width:1000px; background-color:#FCFDFE; margin:20px auto"
-                :pagination="pagination"
-            >
+                    <!-- ID -->
+                    <span slot="ID"></span>
+                    <span slot="title"></span>
+                    <!-- 表头 -->
+                    <template slot="title">
+                        <h2 style="font-size: 22px">比赛列表</h2>
+                    </template>
+                    <!-- 搜索图标 -->
+                    <a-icon
+                        slot="filterIcon"
+                        type="search"
+                    />
+                    <!-- 操作 -->
+                    <span slot="buttons" slot-scope="text, record">
+                        <a-space>
+                            <a-button type="primary" @click="goQuestionList(record.ID)">查看</a-button>
+                            <a-button type="primary" @click="registerContest()">注册</a-button>
+                        </a-space>
+                    </span>
+                </a-table>
+            </div>
+        </transition>
+        <transition name="cross2">
+            <!-- 题目列表 -->
+            <div v-show="pageNow == 'questions'" class="contest-questions" id="contest-questions">
+                <a-table
+                    :columns="questionsColumns"
+                    :data-source="questions"
+                    style="width:1000px; background-color:#FCFDFE; margin:20px auto"
+                    :pagination="pagination"
+                >
 
-            </a-table>
-        </div>
-        <!-- </transition> -->
+                </a-table>
+            </div>
+        </transition>
     </div>
 </template>
  
@@ -204,7 +206,7 @@ export default {
             console.log(contestsID);
         },
         registerContest() {  // 注册某比赛
-
+            this.pageNow = "questions"
         }
     },
     mounted:function() {

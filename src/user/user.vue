@@ -32,7 +32,9 @@
                         排名
                     </a-menu-item>
                 </a-menu>
-                <a-button class="login">登录</a-button>
+                <!-- todo 两个按钮只显示一个，根据登录状态决定 -->
+                <a-button class="navButton">登录</a-button>
+                <a-button class="navButton">通知</a-button>
             </a-layout-header>
             <a-layout-content style="position: relative">
                 <home @goQuestion="goQuestion"  v-show="page == 'home'"/>
@@ -114,7 +116,7 @@ export default {
         height: 64px;
         margin: 0 5px;
     }
-    .user .ant-layout-header > .login {
+    .user .ant-layout-header > .navButton {
         position: absolute;
         right: 0;
         color: rgb(81, 141, 225);

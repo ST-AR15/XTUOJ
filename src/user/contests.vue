@@ -77,7 +77,10 @@
                 />
                 <!-- 操作 -->
                 <span slot="buttons" slot-scope="text, record">
-                    <a-button type="primary" @click="goQuestionList(record.ID)">查看</a-button>
+                    <a-space>
+                        <a-button type="primary" @click="goQuestionList(record.ID)">查看</a-button>
+                        <a-button type="primary" @click="registerContest()">注册</a-button>
+                    </a-space>
                 </span>
             </a-table>
         </div>
@@ -200,6 +203,9 @@ export default {
         goQuestionList(contestsID) { // 打开某个竞赛的问题列表
             console.log(contestsID);
         },
+        registerContest() {  // 注册某比赛
+
+        }
     },
     mounted:function() {
         // console.log(sessionStorage);

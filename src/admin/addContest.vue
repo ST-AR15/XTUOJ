@@ -10,6 +10,7 @@
             :model="form"
             :label-col="labelCol"
             :wrapper-col="wrapperCol"
+            :rules="rules"
         >
             <a-form-model-item label="比赛名称">
                 <a-input 
@@ -53,6 +54,18 @@
                 <p>当前题目数量：<span v-text="form.questions.length-1"></span></p>
             </a-form-model-item>
 
+            <a-form-model-item label="参加方式">
+                <a-radio-group v-model="form.join">
+                    <a-radio value="public">公开</a-radio>
+                    <a-radio value="private">私有</a-radio>
+                    <a-radio value="group">群组</a-radio>
+                </a-radio-group>
+                <div v-show="form.join == 'private'">
+                    <span>比赛密码:</span>
+                    <a-input v-model="form.password" class="inline-element" style="margin-left:10px" placeholder="私有比赛密码"></a-input>
+                </div>
+            </a-form-model-item>
+
             <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
                 <a-button @click="submitForm" type="primary">上传</a-button>
                 <a-button @click="resetForm" style="margin-left:10px;">重置</a-button>
@@ -70,7 +83,7 @@ export default {
             labelCol: { span: 4 },
             wrapperCol: { span: 14 },
             form: {
-                name: "比赛",
+                name: "",
                 judge: "ICPC",
                 compiler: ["GCC","Java"],
                 questions: [
@@ -89,6 +102,13 @@ export default {
                         ID: 1002,
                         name: "qqqww"
                     },
+                ],
+                join: "public",
+                password: "",
+            },
+            rules: {                     // 表单规则
+                name: [                  // 题目名称规则：比如输入内容，否则提示“请输入题目名称”
+                    { required: true, message: '请输入比赛名称', trigger: 'change' },
                 ],
             },
         }

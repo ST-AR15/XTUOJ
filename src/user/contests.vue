@@ -76,8 +76,8 @@
                     type="search"
                 />
                 <!-- 操作 -->
-                <span slot="buttons">
-                    <a-button type="primary">查看</a-button>
+                <span slot="buttons" slot-scope="text, record">
+                    <a-button type="primary" @click="goQuestionList(record.ID)">查看</a-button>
                 </span>
             </a-table>
         </div>
@@ -174,7 +174,12 @@ export default {
                     title: "A+BA",
                     source: "昶浩",
                 },
-                
+                {
+                    key: "1001",
+                    ID: 1001,
+                    title: "A+BA",
+                    source: "昶浩",
+                },
             ],
             questions: [
                 
@@ -191,6 +196,9 @@ export default {
         handleReset(clearFilters) {
             clearFilters();
             this.searchText = '';
+        },
+        goQuestionList(contestsID) { // 打开某个竞赛的问题列表
+            console.log(contestsID);
         },
     },
     mounted:function() {

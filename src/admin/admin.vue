@@ -30,6 +30,9 @@
                             <a-menu-item @click="page = 'addContest'">
                                 <span>新建比赛</span>
                             </a-menu-item>
+                            <a-menu-item @click="page = 'manageContest'">
+                                <span>管理比赛</span>
+                            </a-menu-item>
                         </a-sub-menu>
                     </a-menu>
                 </a-layout-sider>
@@ -38,6 +41,7 @@
                     <add v-show="page == 'add'"/>
                     <read v-show="page == 'read'"/>
                     <addContest v-show="page == 'addContest'"/>
+                    <manageContest v-show="page == 'manageContest'"/>
                 </a-layout-content>
             </a-layout>
             <a-layout-footer>
@@ -52,12 +56,14 @@ import welcome from './welcome.vue'
 import add from './add.vue'
 import read from './read.vue'
 import addContest from './addContest.vue'
+import manageContest from './manageContest.vue'
 export default {
     components: {
         welcome,
         add,
         read,
         addContest,
+        manageContest,
     },
     data() {
         return {

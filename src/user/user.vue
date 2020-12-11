@@ -54,7 +54,7 @@ import problems from './problems.vue'
 import contests from './contests.vue'
 import status from './status.vue'
 import ranklist from './ranklist.vue'
-import question from './question.vue'
+import question from '../components/questionlist.vue'
 export default {
     components: {
         home,

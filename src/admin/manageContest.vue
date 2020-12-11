@@ -187,7 +187,7 @@ export default {
                 }
             ],
             modal: {  // 对话框的内容
-                isVisible: true,
+                isVisible: false,
                 ID: 1000,
                 questionList: [
                     {
@@ -208,6 +208,7 @@ export default {
         },
         questionsManage(contestID) { // 管理题目
             console.log(contestID);
+            this.modal.isVisible = true;
         },
         chargeQuestion(i) { // 修改题目
             if(i == this.modal.questionList.length-1) {  //如果是最后的问题，那就是添加

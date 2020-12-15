@@ -1,6 +1,6 @@
 <template>
     <div class="home" id="home">
-        <questionlist />
+        <questionlist :buttons="buttons" />
     </div>
 </template>
 
@@ -10,11 +10,19 @@ export default {
   components: { questionlist },
     data() {
         return {
-            
+            buttons: [
+                {
+                    text: "查看",
+                }
+            ]
         }
     },
     methods: {
-        
+        // 打开题目页面，传入题目ID
+        goQuestion(ID) {
+            console.log("打开题目" + ID);
+            this.$emit('goQuestion', ID,"home");
+        }
     }
 }
 </script>

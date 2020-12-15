@@ -75,16 +75,13 @@
 <script>
 import {mavonEditor} from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
-// import { codemirror } from 'vue-codemirror'
-// import "codemirror/theme/ambiance.css";  
-// require("codemirror/mode/javascript/javascript"); 
 export default {
     components: {
         mavonEditor
-        // codemirror
     },
-    props: ['ID','page'],  // 从父组件获得题目ID，然后在接口里获得全部值
-                           // 还要获取来的时候的页面
+    props: {
+        ID: Number
+    },  // 从父组件获得题目ID，然后在接口里获得全部值
     data() {
         
         return {
@@ -102,7 +99,7 @@ export default {
     },
     methods: {
         back() {  //返回上一页的方法
-            this.$emit('goPage', this.page);
+            this.$emit('goQuestionlist');
         }
     }
 }

@@ -1,17 +1,22 @@
 <template>
     <div class="home" id="home">
-        <questionlist :buttons="buttons" @goQuestion="goQuestion" />
+        <questionlist v-show="displayNow == 'questionlist'" :buttons="buttons" @goQuestion="goQuestion" />
+        <question v-show="displayNow == 'question'" :ID="questionID" @back="goQuestionlist" />
     </div>
 </template>
 
 <script>
+import question from '../components/question.vue';
 import questionlist from '../components/questionlist.vue'
 export default {
     components: {
         questionlist,
+        question,
     },
     data() {
         return {
+            displayNow: "questionlist",
+            questionID: 1000,
             buttons: [
                 {
                     text: "查看",
@@ -25,8 +30,13 @@ export default {
         goQuestion(ID) {
             // console.log("打开题目" + ID);
             // this.$emit('goQuestion', ID,"home");
-            console.log("xxx" + ID);
+            this.questionID = ID;
+            this.displayNow = "question";
         },
+        // 回到题目列表
+        goQuestionlist() {
+            this.displayNow = "questionlist"
+        }
     }
 }
 </script>

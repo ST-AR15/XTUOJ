@@ -85,16 +85,19 @@ export default {
     data() {
         
         return {
-            language: "C",
-            language_used: ["C","C++","Java","JavaScript","PHP","Ruby"],
-            title: "小蜗牛爬楼",
-            tips: ["dp","geometry","math","greedy"],
-            questionDetail: "小蜗牛爬楼，假设白天能爬x米，晚上会下落y米（x>y），楼总高z米。小蜗牛要多少天才能爬上去？",
-            inputTips: "输入三个数字x,y,z",
-            outputTips: "输出一个数字，末尾不需要换行",
-            sampleInput: "5 1 10",
-            sampleOutput: "3",
-            code: "",  //当前输入的代码
+            question: {
+                language: "C",
+                language_allowed: ["C","C++","Java","JavaScript","PHP","Ruby"],
+                title: "小蜗牛爬楼",
+                tips: ["dp","geometry","math","greedy"],
+                questionDetail: "小蜗牛爬楼，假设白天能爬x米，晚上会下落y米（x>y），楼总高z米。小蜗牛要多少天才能爬上去？",
+                inputTips: "输入三个数字x,y,z",
+                outputTips: "输出一个数字，末尾不需要换行",
+                sampleInput: "5 1 10",
+                sampleOutput: "3",
+                code: "",  //当前输入的代码
+            }
+            
         }
     },
     methods: {

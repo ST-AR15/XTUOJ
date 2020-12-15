@@ -97,7 +97,13 @@
             />
             <!-- 操作 -->
             <span slot="buttons" slot-scope="text, record">
-                <a-button type="primary" @click="goQuestion(record.ID)">查看</a-button>
+                <a-space>
+                    <template v-for="(item,i) in buttons">
+                        <a-button type="primary" v-bind:key="i" @click="callbackMethod(item.method,record.ID)">
+                            {{ item.text }}
+                        </a-button>
+                    </template>
+                </a-space>
             </span>
         </a-table>
     </div>
@@ -105,6 +111,9 @@
 
 <script>
 export default {
+    props: {
+        buttons: Array
+    },
     data() {
         return {
             searchText: "",
@@ -332,7 +341,11 @@ export default {
             clearFilters();
             this.searchText = '';
         },
-
+        callbackMethod(fatherMethod,param) {
+            console.log(fatherMethod);
+            console.log(param);
+            this.$emit(fatherMethod, param);
+        }
         
     }
 }

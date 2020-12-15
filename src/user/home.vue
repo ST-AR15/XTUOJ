@@ -1,28 +1,32 @@
 <template>
     <div class="home" id="home">
-        <questionlist :buttons="buttons" />
+        <questionlist :buttons="buttons" @goQuestion="goQuestion" />
     </div>
 </template>
 
 <script>
 import questionlist from '../components/questionlist.vue'
 export default {
-  components: { questionlist },
+    components: {
+        questionlist,
+    },
     data() {
         return {
             buttons: [
                 {
                     text: "查看",
+                    method: "goQuestion"
                 }
-            ]
+            ],
         }
     },
     methods: {
         // 打开题目页面，传入题目ID
         goQuestion(ID) {
-            console.log("打开题目" + ID);
-            this.$emit('goQuestion', ID,"home");
-        }
+            // console.log("打开题目" + ID);
+            // this.$emit('goQuestion', ID,"home");
+            console.log("xxx" + ID);
+        },
     }
 }
 </script>

@@ -1,7 +1,7 @@
 <template>
     <div class="home" id="home">
-        <questionlist v-show="displayNow == 'questionlist'" :buttons="buttons" @goQuestion="goQuestion" />
-        <question v-show="displayNow == 'question'" :ID="questionID" @back="goQuestionlist" />
+        <questionlist v-if="displayNow == 'questionlist'" :buttons="buttons" @goQuestion="goQuestion" />
+        <question v-if="displayNow == 'question'" :ID="questionID" @back="goQuestionlist" />
     </div>
 </template>
 

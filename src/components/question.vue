@@ -96,7 +96,6 @@ export default {
             data: {},
             type: 'json'
         }).then(data => {
-            console.log(data);
             this.question.title = data[0].Tittle;
             // source
             this.question.questionDetail = data[0].Content;

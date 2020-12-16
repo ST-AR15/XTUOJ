@@ -122,7 +122,9 @@ export default {
             searchText: "",
             loading: false,
             pagination: {       // 页面设置
-                pageSize:10,    // 每页题目数量
+                pageSize:2,     // 每页题目数量
+                showQuickJumper: true,  // 快速跳转
+                total: 0,
             },
             columns: [          // 表格的表头
                 {
@@ -214,25 +216,25 @@ export default {
                 }
             ],
             questions: [
-                {
-                    key: "1000",
-                    ID: 1000,
-                    title: "A+BA",
-                    tips: ["dp","geometry","math","greedy"],
-                    status: "ATTEMPT",
-                    accept: 100,
-                    total: 200,
-                    source: "昶浩出题"
-                },
-                {
-                    key: "1001",
-                    ID: 1001,
-                    title: "A+BW",
-                    tips: ["dp","geometry","math","greedy"],
-                    status: "ACCEPT",
-                    accept: 100,
-                    total: 200,
-                },
+                // {
+                //     key: "1000",
+                //     ID: 1000,
+                //     title: "A+BA",
+                //     tips: ["dp","geometry","math","greedy"],
+                //     status: "ATTEMPT",
+                //     accept: 100,
+                //     total: 200,
+                //     source: "昶浩出题"
+                // },
+                // {
+                //     key: "1001",
+                //     ID: 1001,
+                //     title: "A+BW",
+                //     tips: ["dp","geometry","math","greedy"],
+                //     status: "ACCEPT",
+                //     accept: 100,
+                //     total: 200,
+                // },
             ],
         }
     },
@@ -247,14 +249,35 @@ export default {
             clearFilters();
             this.searchText = '';
         },
-        handleTableChange() {
+        handleTableChange(pagination) {
             this.loading = true; // 开始加载
-            
+            let page = pagination.current;
+            this.$reqwest({
+                url: 'http://172.22.114.116/api/showProblem/' + page,
+                method: 'get',
+                data: {},
+                type: 'json'
+            }).then(data => {
+                // 循环复制给数组questions
+                for(let i=(page-1)*this.pagination.pageSize,j=0;j<this.pagination.pageSize;j++,i++) {
+                    this.questions[i] = {};
+                    this.questions[i]["key"] = data[j].ProblemId;
+                    this.questions[i]["ID"] = data[j].ProblemId;
+                    this.questions[i]["title"] = data[j].Tittle;
+                }
+                console.log(this.questions);
+                this.loading = false;
+            })
         },
         callbackMethod(fatherMethod,param) {
             this.$emit(fatherMethod, param);
         }
     },
+    mounted: function() {
+        // todo 页面创建时要确认页数
+        this.pagination.total = 200;
+        this.handleTableChange({current:1});
+    }
 }
 </script>
 

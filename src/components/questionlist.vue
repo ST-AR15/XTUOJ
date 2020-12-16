@@ -6,6 +6,8 @@
             :data-source="questions"
             style="width:1000px; background-color:#FCFDFE; margin:20px auto"
             :pagination="pagination"
+            :loading="loading"
+            @change="handleTableChange"
         >
             <!-- 搜索 -->
             <div
@@ -118,6 +120,7 @@ export default {
     data() {
         return {
             searchText: "",
+            loading: false,
             pagination: {       // 页面设置
                 pageSize:10,    // 每页题目数量
             },
@@ -230,105 +233,7 @@ export default {
                     accept: 100,
                     total: 200,
                 },
-                {
-                    key: "1002",
-                    ID: 1002,
-                    title: "A+BE",
-                    tips: ["dp","geometry","math","greedy"],
-                    status: "ACCEPT",
-                    accept: 100,
-                    total: 200,
-                },
-                {
-                    key: "1003",
-                    ID: 1003,
-                    title: "A+BR",
-                    tips: ["dp","geometry","math","greedy"],
-                    status: "ACCEPT",
-                    accept: 100,
-                    total: 200,
-                },
-                {
-                    key: "1004",
-                    ID: 1004,
-                    title: "A+BB",
-                    tips: ["dp","geometry","math","greedy"],
-                    status: "ACCEPT",
-                    accept: 100,
-                    total: 200,
-                },
-                {
-                    key: "1005",
-                    ID: 1005,
-                    title: "A+BW",
-                    tips: ["dp","geometry","math","greedy"],
-                    status: "ACCEPT",
-                    accept: 100,
-                    total: 200,
-                },
-                {
-                    key: "1006",
-                    ID: 1006,
-                    title: "A+BF",
-                    tips: ["dp","geometry","math","greedy"],
-                    status: "ACCEPT",
-                    accept: 100,
-                    total: 200,
-                },
-                {
-                    key: "1007",
-                    ID: 1007,
-                    title: "A+B",
-                    tips: ["math","greedy"],
-                    status: "ACCEPT",
-                    accept: 100,
-                    total: 200,
-                },
-                {
-                    key: "1008",
-                    ID: 1008,
-                    title: "A+B",
-                    tips: ["dp","geometry"],
-                    status: "ACCEPT",
-                    accept: 100,
-                    total: 200,
-                },
-                {
-                    key: "1009",
-                    ID: 1009,
-                    title: "A+B",
-                    tips: ["math","greedy"],
-                    status: "ACCEPT",
-                    accept: 100,
-                    total: 200,
-                },
-                {
-                    key: "1010",
-                    ID: 1010,
-                    title: "A+B",
-                    tips: ["dp","geometry"],
-                    status: "ACCEPT",
-                    accept: 100,
-                    total: 200,
-                },
-                {
-                    key: "1011",
-                    ID: 10011,
-                    title: "A+B",
-                    tips: ["math","greedy"],
-                    status: "ACCEPT",
-                    accept: 100,
-                    total: 200,
-                },
-                {
-                    key: "1012",
-                    ID: 1012,
-                    title: "A+B",
-                    tips: ["dp"],
-                    status: "ACCEPT",
-                    total: 200,
-                },
-            ]
+            ],
         }
     },
     methods: {
@@ -342,11 +247,14 @@ export default {
             clearFilters();
             this.searchText = '';
         },
+        handleTableChange() {
+            this.loading = true; // 开始加载
+            
+        },
         callbackMethod(fatherMethod,param) {
             this.$emit(fatherMethod, param);
         }
-        
-    }
+    },
 }
 </script>
 

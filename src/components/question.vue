@@ -11,42 +11,34 @@
                 <a-layout-sider>
                     <!-- 题目ID和title -->
                     <h1>
-                        <span>ID</span>
-                        {{ ID }}:{{ title }}
+                        ID {{ ID }}:{{ question.title }}
                     </h1>
                     <!-- 题目标签 -->
                     <p>
                         <a-tag
-                            v-for="tip in tips"
+                            v-for="tip in question.tips"
                             :key="tip"
                             v-bind:id="'tip-' + tip"
                         >
                             {{tip}}
                         </a-tag>
                     </p>
+                    <p>
+                        时间限制：<span v-text="question.timeLimit"></span>ms
+                        内存限制：<span v-text="question.memoryLimit"></span>MB
+                    </p>
                     <!-- 题目内容 -->
-                    <h2>题目详情</h2>
-                    <p v-text="questionDetail"></p>
-                    <!-- 输入 -->
-                    <h2>输入</h2>
-                    <p v-text="inputTips"></p>
-                    <!-- 输出 -->
-                    <h2>输出</h2>
-                    <p v-text="outputTips"></p>
-                    <!-- 样例输入 -->
-                    <h2>样例输入</h2>
-                    <p v-text="sampleInput"></p>
-                    <!-- 样例输出 -->
-                    <h2>样例输出</h2>
-                    <p v-text="sampleOutput"></p>
+                    <!-- <h2>题目详情</h2> -->
+                    <mavon-editor v-model="question.questionDetail" :subfield="false" :toolbarsFlag="false" defaultOpen="preview"></mavon-editor>
+
                     
                 </a-layout-sider>
                 <a-layout-content style="padding:10px;">
                     <div>
                         <p>
                             语言：
-                            <a-select v-model="language" style="width: 120px" defult-value="c">
-                                <template v-for="item in language_used">
+                            <a-select v-model="question.language" style="width: 120px" defult-value="c">
+                                <template v-for="item in question.language_allowed">
                                     <a-select-option :key="item" :value="item">
                                         {{ item }}
                                     </a-select-option>
@@ -54,14 +46,7 @@
                             </a-select>
                         </p>
                     </div>
-                    <!-- <a-textarea style="height:720px; resize: none" placeholder="Coding here……"></a-textarea> -->
-                    <mavon-editor style="height:700px;margin-bottom:20px;z-index:1" :subfield="false" :toolbarsFlag="false" placeholder="Code here……" :tabSize="4" v-model="code"></mavon-editor>
-                    <!-- <codemirror
-                        ref="code"
-                        :value="code"
-                        :options="codemirrorOptions"
-                        class="code">
-                    </codemirror> -->
+                    <mavon-editor style="height:700px;margin-bottom:20px;z-index:1" :subfield="false" :toolbarsFlag="false" placeholder="Code here……" :tabSize="4" v-model="question.code"></mavon-editor>
                     <div>
                         <a-button type="primary">提交</a-button>
                     </div>
@@ -87,6 +72,8 @@ export default {
         return {
             question: {
                 language: "C",
+                timeLimit: 128,
+                memoryLimit: 128,
                 language_allowed: ["C","C++","Java","JavaScript","PHP","Ruby"],
                 title: "小蜗牛爬楼",
                 tips: ["dp","geometry","math","greedy"],
@@ -102,8 +89,29 @@ export default {
     },
     methods: {
         back() {  //返回上一页的方法
-            this.$emit('goQuestionlist');
+            // this.$emit('goQuestionlist');
         }
+    },
+    mounted: function() {
+        console.log("打开了题目" + this.ID);
+        this.$reqwest({
+            url: 'http://172.22.114.116/api/showProblemDetails/' + this.ID,
+            method: 'get',
+            data: {},
+            type: 'json'
+        }).then(data => {
+            console.log(data);
+            this.question.title = data[0].Tittle;
+            // source
+            this.question.questionDetail = data[0].Content;
+            // Indate
+            this.question.timeLimit = data[0].TimeLimit;
+            this.question.memoryLimit = data[0].MemoryLimit;
+            // defunct
+            // accept
+            // submit
+            // solve
+        })
     }
 }
 </script>

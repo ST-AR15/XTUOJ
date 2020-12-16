@@ -10,6 +10,7 @@
   "dependencies": {
     "ant-design-vue": "^1.7.2",
     "mavon-editor": "^2.9.0",
+    "reqwest": "^2.0.5",
     "vue": "^2.6.12",
     "vue-router": "^3.4.9"
   },

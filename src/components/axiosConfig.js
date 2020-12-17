@@ -10,9 +10,6 @@ axios.interceptors.request.use((req) => {
         message: error.message,
         description: '出现请求错误，请检查自己的网络连接或联系管理员。' + 'url: ' + error.config.url,
         duration: 0,
-        style: {
-            width: '600px',
-        },
         icon: '×',
     });
     return Promise.reject(error);
@@ -26,9 +23,6 @@ axios.interceptors.response.use((res) => {
         message: error.message,
         description: '出现网络错误，请检查自己的网络连接或联系管理员。' + 'url: ' + error.config.url,
         duration: 0,
-        style: {
-            width: '600px',
-        },
         icon: '×',
     });
     console.log(error);

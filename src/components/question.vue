@@ -90,18 +90,14 @@ export default {
     },
     mounted: function() {
         console.log("打开了题目" + this.ID);
-        this.$reqwest({
-            url: 'http://172.22.114.116/api/showProblemDetails/' + this.ID,
-            method: 'get',
-            data: {},
-            type: 'json'
-        }).then(data => {
-            this.question.title = data[0].Tittle;
+        let url = 'http://172.22.114.116/api/showProblemDetails/' + this.ID;
+        this.$axios.get(url).then(rep => {
+            this.question.title = rep.data[0].Tittle;
             // source
-            this.question.questionDetail = data[0].Content;
+            this.question.questionDetail = rep.data[0].Content;
             // Indate
-            this.question.timeLimit = data[0].TimeLimit;
-            this.question.memoryLimit = data[0].MemoryLimit;
+            this.question.timeLimit = rep.data[0].TimeLimit;
+            this.question.memoryLimit = rep.data[0].MemoryLimit;
             // defunct
             // accept
             // submit

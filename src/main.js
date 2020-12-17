@@ -4,31 +4,28 @@ import Antd from 'ant-design-vue'
 import 'ant-design-vue/dist/antd.css'
 import App from './App.vue'
 import router from './router'
-import reqwest from 'reqwest';
+import axios from 'axios'
 // import mavonEditor from 'mavon-editor'
 // import 'mavon-editor/dist/css/index.css'
 // import VueCodeMirror from 'vue-codemirror'
 // import 'codemirror/lib/codemirror.css'
 // Vue.use(Antd,VueCodeMirror)
 Vue.use(Antd)
-Vue.prototype.$reqwest = reqwest
+Vue.prototype.$axios = axios
 
 /**
- * reqwest使用：
- * this.$reqwest({
-            url: 'http://172.22.114.116/api/showProblemDetails/1002',
-            method: 'get',
-            data: {},
-            type: 'json'
-        }).then(data => {
-            console.log(data);
-        })
+ * axios使用：
+ * this.$axios.get(url,param).then(rep => {
+ *     console.log(rep);
+ * })
+ * 如果是用post就把get换成post
  */
 
 // 声明自己写的文件
 import '@/components/antd.css'
 import '@/components/tips.css'
 import '@/components/animation.css'
+import '@/components/axiosConfig'
 
 
 Vue.config.productionTip = false

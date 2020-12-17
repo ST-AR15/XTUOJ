@@ -252,20 +252,15 @@ export default {
         handleTableChange(pagination) {
             this.loading = true; // 开始加载
             let page = pagination.current;
-            this.$reqwest({
-                url: 'http://172.22.114.116/api/showProblem/' + page,
-                method: 'get',
-                data: {},
-                type: 'json'
-            }).then(data => {
+            let url = 'http://172.22.114.116/api/showProblem/' + page;
+            this.$axios.get(url).then(rep => {
                 // 循环复制给数组questions
                 for(let i=(page-1)*this.pagination.pageSize,j=0;j<this.pagination.pageSize;j++,i++) {
                     this.questions[i] = {};
-                    this.questions[i]["key"] = data[j].ProblemId;
-                    this.questions[i]["ID"] = data[j].ProblemId;
-                    this.questions[i]["title"] = data[j].Tittle;
+                    this.questions[i]["key"] = rep.data[j].ProblemId;
+                    this.questions[i]["ID"] = rep.data[j].ProblemId;
+                    this.questions[i]["title"] = rep.data[j].Tittle;
                 }
-                console.log(this.questions);
                 this.loading = false;
             })
         },
@@ -275,6 +270,7 @@ export default {
     },
     mounted: function() {
         // todo 页面创建时要确认页数
+        // todo 这个函数调用两次的BUG
         this.pagination.total = 200;
         this.handleTableChange({current:1});
     }

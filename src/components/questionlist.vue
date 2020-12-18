@@ -251,25 +251,29 @@ export default {
             this.searchText = '';
         },
         handleTableChange(pagination) {
-            this.loading = true; // 开始加载
             let page = pagination.current;
-            let url = 'http://172.22.114.116/api/showProblem/' + page;
-            this.$axios.get(url).then(rep => {
-                // 如果返回值是空的，就提示一下
-                if(rep.data.length == 0) {
-                    message.error("打开了不存在的页码！");
-                } else {
-                    // 循环复制给数组questions
-                    for(let i=(page-1)*this.pagination.pageSize,j=0;j<this.pagination.pageSize;j++,i++) {
-                        this.questions[i] = {};
-                        this.questions[i]["key"] = rep.data[j].ProblemId;
-                        this.questions[i]["ID"] = rep.data[j].ProblemId;
-                        this.questions[i]["title"] = rep.data[j].Tittle;
+            // 只有未加载过的页面才需要加载
+            if(this.questions[(page-1)*this.pagination.pageSize] == undefined) {
+                this.loading = true; // 开始加载
+                let url = 'http://172.22.114.116/api/showProblem/' + page;
+                this.$axios.get(url).then(rep => {
+                    // 如果返回值是空的，就提示一下
+                    if(rep.data.length == 0) {
+                        message.error("打开了不存在的页码！");
+                    } else {
+                        // 循环复制给数组questions
+                        for(let i=(page-1)*this.pagination.pageSize,j=0;j<this.pagination.pageSize;j++,i++) {
+                            this.questions[i] = {};
+                            this.questions[i]["key"] = rep.data[j].ProblemId;
+                            this.questions[i]["ID"] = rep.data[j].ProblemId;
+                            this.questions[i]["title"] = rep.data[j].Tittle;
+                        }
                     }
-                }
-                
-                this.loading = false;
-            })
+                    
+                    this.loading = false;
+                })
+            }
+            
         },
         callbackMethod(fatherMethod,param) {
             this.$emit(fatherMethod, param);

@@ -5,12 +5,14 @@ import 'ant-design-vue/dist/antd.css'
 import App from './App.vue'
 import router from './router'
 import axios from 'axios'
+import VueCodeMirror from 'vue-codemirror'
+import 'codemirror/lib/codemirror.css'
 // import mavonEditor from 'mavon-editor'
 // import 'mavon-editor/dist/css/index.css'
 // import VueCodeMirror from 'vue-codemirror'
 // import 'codemirror/lib/codemirror.css'
 // Vue.use(Antd,VueCodeMirror)
-Vue.use(Antd)
+Vue.use(Antd,VueCodeMirror)
 Vue.prototype.$axios = axios
 
 /**

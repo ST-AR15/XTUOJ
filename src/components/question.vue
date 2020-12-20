@@ -30,8 +30,6 @@
                     <!-- 题目内容 -->
                     <!-- <h2>题目详情</h2> -->
                     <mavon-editor v-model="question.questionDetail" :subfield="false" :toolbarsFlag="false" defaultOpen="preview"></mavon-editor>
-
-                    
                 </a-layout-sider>
                 <a-layout-content style="padding:10px;">
                     <div>
@@ -46,7 +44,13 @@
                             </a-select>
                         </p>
                     </div>
-                    <mavon-editor style="height:700px;margin-bottom:20px;z-index:1" :subfield="false" :toolbarsFlag="false" placeholder="Code here……" :tabSize="4" v-model="question.code"></mavon-editor>
+                    <!-- <mavon-editor style="height:700px;margin-bottom:20px;z-index:1" :subfield="false" :toolbarsFlag="false" placeholder="Code here……" :tabSize="4" v-model="question.code"></mavon-editor> -->
+                    <codemirror
+                        ref="mycode"
+                        :value="curCode"
+                        :options="cmOptions"
+                        >
+                    </codemirror>
                     <div>
                         <a-button type="primary">提交</a-button>
                     </div>
@@ -58,11 +62,16 @@
 </template>
 
 <script>
-import {mavonEditor} from 'mavon-editor'
+import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
+import { codemirror } from 'vue-codemirror'
+import 'codemirror/theme/ambiance.css'
+require('codemirror/mode/javascript/javascript')
+require('codemirror/mode/clike/clike')
 export default {
     components: {
-        mavonEditor
+        mavonEditor,
+        codemirror
     },
     props: {
         ID: Number
@@ -70,6 +79,15 @@ export default {
     data() {
         
         return {
+            curCode:'',
+            cmOptions:{
+                value:'',
+                mode:"text/javascript",
+                indentUnit: 4,
+                readOnly:false,
+                lineNumbers: true,
+                matchBrackets: true,
+            },
             question: {
                 language: "C",
                 timeLimit: 128,

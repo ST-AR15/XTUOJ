@@ -73,7 +73,7 @@
                 <span> MB</span>
             </span>
             <!-- Time -->
-            <span slot="time" slot-scope="time">
+            <span slot="time" slot-scope="time" style="white-space:nowrap">
                 <span v-text="time"></span>
                 <span> ms</span>
             </span>
@@ -240,7 +240,7 @@ export default {
                     time: 32,
                     language: "javascript",
                     codeLength: 256,
-                    submitTime: "11111"
+                    submitTime: Date(),
                 },
                 {
                     key: "1000001",
@@ -252,7 +252,7 @@ export default {
                     time: 32,
                     language: "javascript",
                     codeLength: 256,
-                    submitTime: "11111"
+                    submitTime: Date(),
                 },
                 {
                     key: "1000002",
@@ -264,7 +264,7 @@ export default {
                     time: 32,
                     language: "javascript",
                     codeLength: 256,
-                    submitTime: "11111"
+                    submitTime: Date(),
                 }
             ]
             

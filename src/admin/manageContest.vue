@@ -77,10 +77,11 @@
                 <a-space>
                     <a-button type="primary" @click="namelistManage(record.ID)">名单管理</a-button>
                     <a-button type="primary" @click="questionsManage(record.ID)">题目管理</a-button>
+                    <a-button type="primary" @click="sendNotice(record.ID)">发送通知</a-button>
                 </a-space>
             </span>
         </a-table>
-
+        <!-- 名单管理modal -->
         <a-modal
             :title="modal.ID + '名单管理'"
             :visible="modal.isVisible"
@@ -102,11 +103,24 @@
                 </div>
             </transition-group>
         </a-modal>
+        <!-- 发送通知modal -->
+        <a-modal
+            title="发送通知"
+            :visible="noticeModal.isVisible"
+            @cancel="noticeModal.isVisible = false"
+        >
+            <mavon-editor :tabSize="3"></mavon-editor>
+        </a-modal>
     </div>
 </template>
 
 <script>
+import {mavonEditor} from 'mavon-editor'
+import 'mavon-editor/dist/css/index.css'
 export default {
+    components: {
+        mavonEditor
+    },
     data() {
         return {
             pagination: {       // 页面设置
@@ -199,6 +213,9 @@ export default {
                         ID: 1001,
                     }
                 ]
+            },
+            noticeModal: { // 发送通知对话框
+                isVisible: false,
             }
         }
     },
@@ -221,6 +238,10 @@ export default {
             } else {
                 this.modal.questionList.splice(i,1);
             }
+        },
+        sendNotice(i) { // 发送通知
+            this.noticeModal.isVisible = true;
+            console.log(i);
         }
     }
 }

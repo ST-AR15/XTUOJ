@@ -5,12 +5,17 @@
         >
             创建比赛
         </h2>
+        <a-radio-group style="margin-left:218px;margin-bottom:20px" v-model="creatMode">
+            <a-radio value="new">新建</a-radio>
+            <a-radio value="clone">克隆</a-radio>
+        </a-radio-group>
         <a-form-model
             ref="addForm"
             :model="form"
             :label-col="labelCol"
             :wrapper-col="wrapperCol"
             :rules="rules"
+            v-show="creatMode=='new'"
         >
             <a-form-model-item label="比赛名称">
                 <a-input 
@@ -71,6 +76,13 @@
                 <a-button @click="resetForm" style="margin-left:10px;">重置</a-button>
             </a-form-model-item>
         </a-form-model>
+        <div v-if="creatMode=='clone'">
+            <div class="flex-between" style="white-space:nowrap;margin-left:218px">
+                <span>对象比赛ID</span>
+                <a-input style="margin-left:20px"></a-input>
+            </div>
+            <a-button style="margin-left:218px" type="primary">确认</a-button>
+        </div>
     </div>
 </template>
 
@@ -78,6 +90,7 @@
 export default {
     data() {
         return {
+            creatMode: "new",  // new是新建比赛，clone是克隆比赛
             compilerList: ["GCC","Java","C++","Python"],  // 可使用的编译器列表
             isCheckAllCompiler: false, // 目前是否全选编辑器
             labelCol: { span: 4 },

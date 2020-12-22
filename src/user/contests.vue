@@ -80,6 +80,7 @@
                         <a-space>
                             <a-button type="primary" @click="goQuestionList(record.ID)">查看</a-button>
                             <a-button type="primary" @click="registerContest()">注册</a-button>
+                            <a-button type="primary" @click="startContest()">开始比赛</a-button>
                         </a-space>
                     </span>
                 </a-table>
@@ -205,9 +206,12 @@ export default {
         goQuestionList(contestsID) { // 打开某个竞赛的问题列表
             console.log(contestsID);
         },
-        registerContest() {  // 注册某比赛
+        registerContest() {  // 注册比赛
+            this.$message.info('注册成功！');
+        },
+        startContest() {  // 参加某比赛（展示题目列表）
             this.pageNow = "questions"
-        }
+        },
     },
     mounted:function() {
         // console.log(sessionStorage);

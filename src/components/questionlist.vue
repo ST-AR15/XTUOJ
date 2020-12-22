@@ -81,6 +81,7 @@
                 <a-tag
                     :color="status=='ATTEMPT'? 'orange':status=='ACCEPT'? 'green':'blue'"
                     style="border-radius: 10px;height:22px; line-height:22px"
+                    v-if="status"
                 >● <span>{{status}}</span></a-tag>
             </span>
             <!-- AC/Total -->
@@ -282,7 +283,7 @@ export default {
     mounted: function() {
         // todo 页面创建时要确认页数
         // todo 这个函数调用两次的BUG
-        this.pagination.total = 200;
+        this.pagination.total = 6;
         this.handleTableChange({current:1});
     }
 }

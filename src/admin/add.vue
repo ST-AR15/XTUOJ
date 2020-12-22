@@ -68,7 +68,6 @@
             </a-form-model-item>
 
             <a-form-model-item label="题目数据">
-                <p style="text-align:center">第一个输入输出将被视为样例输入/样例输出</p>
                 <div v-bind:key="i" v-for="(data,i) in form.data.input" style="display:flex;width:700px">
                     <a-textarea v-model="form.data.input[i]"></a-textarea>
                     <div style="white-space: nowrap; margin: 0 20px">

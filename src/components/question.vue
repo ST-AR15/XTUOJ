@@ -51,7 +51,7 @@
                         :options="cmOptions"
                         >
                     </codemirror>
-                    <div>
+                    <div style="margin-top:50px">
                         <a-button type="primary">提交</a-button>
                     </div>
                 </a-layout-content>

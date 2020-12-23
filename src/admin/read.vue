@@ -126,7 +126,6 @@ export default {
             this.searchText = '';
         },
         getQuestionDetail(info) {  // 获取题目详情和修改
-            console.log(info);
             // 暂定：info是题目的ID等信息，点击题目详情后会调用API来获取题目的其他详情信息
             this.questionDetailModal.ID = info.ID;
             this.questionDetailModal.title = info.title;

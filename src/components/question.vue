@@ -74,7 +74,8 @@ export default {
         codemirror
     },
     props: {
-        ID: Number
+        ID: Number,
+        backMethod: String,
     },  // 从父组件获得题目ID，然后在接口里获得全部值
     data() {
         
@@ -103,7 +104,7 @@ export default {
     },
     methods: {
         back() {  //返回上一页的方法
-            // this.$emit('goQuestionlist');
+            this.$emit("back");
         }
     },
     mounted: function() {

@@ -72,8 +72,8 @@ export default {
         }
     },
     methods: {
-        goQuestion(ID) { // 打开问题
-            this.ID = ID;
+        goQuestion(param) { // 打开问题
+            this.ID = param.ID;
             this.pagePre = this.page[0];
             this.page[0] = "question";
             this.$forceUpdate();

@@ -27,14 +27,15 @@ export default {
     },
     methods: {
         // 打开题目页面，传入题目ID
-        goQuestion(ID) {
+        goQuestion(param) {
             // console.log("打开题目" + ID);
             // this.$emit('goQuestion', ID,"home");
-            this.questionID = ID;
+            this.questionID = param.ID;
             this.displayNow = "question";
         },
         // 回到题目列表
         goQuestionlist() {
+            console.log('cnm');
             this.displayNow = "questionlist"
         }
     }

@@ -99,6 +99,7 @@
                         }" @click="chargeQuestion(i)" type="plus-circle" v-bind:title="i==modal.questionList.length-1?'新增':'删除'" />
                         <a-input style="width:100px;margin:0 5px" v-model="data.ID" placeholder="题目ID"></a-input>
                         <a-input :value="data.name" placeholder="题目名称" :disabled="true"></a-input>
+                        <a-button type="danger">重判</a-button>
                     </a-space>
                 </div>
             </transition-group>

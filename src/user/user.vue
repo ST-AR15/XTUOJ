@@ -37,12 +37,11 @@
                 <a-button class="navButton">通知</a-button>
             </a-layout-header>
             <a-layout-content style="position: relative">
-                <home @goQuestion="goQuestion"  v-show="page == 'home'"/>
+                <home v-show="page == 'home'"/>
                 <problems v-show="page == 'problems'" />
                 <contests v-show="page == 'contests'"/>
                 <status v-show="page == 'status'"/>
                 <ranklist v-show="page == 'ranklist'"/>
-                <question @goPage="openPage" v-show="page == 'question'" :ID="ID" :page="pagePre" />
             </a-layout-content>
         </a-layout>
     </div>
@@ -54,7 +53,6 @@ import problems from './problems.vue'
 import contests from './contests.vue'
 import status from './status.vue'
 import ranklist from './ranklist.vue'
-import question from '../components/questionlist.vue'
 export default {
     components: {
         home,
@@ -62,22 +60,13 @@ export default {
         contests,
         status,
         ranklist,
-        question,
     },
     data() {
         return {
             page: ['home'],       // 当前选择的页面
-            ID: 0,                // 传给question页面的ID
-            pagePre: ""           // 传给question页面的page
         }
     },
     methods: {
-        goQuestion(param) { // 打开问题
-            this.ID = param.ID;
-            this.pagePre = this.page[0];
-            this.page[0] = "question";
-            this.$forceUpdate();
-        },
         openPage(page) {  //打开某页
             this.page[0] = page;
             this.$forceUpdate();

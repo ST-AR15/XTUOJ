@@ -47,7 +47,7 @@
                     <!-- <mavon-editor style="height:700px;margin-bottom:20px;z-index:1" :subfield="false" :toolbarsFlag="false" placeholder="Code here……" :tabSize="4" v-model="question.code"></mavon-editor> -->
                     <codemirror
                         ref="mycode"
-                        :value="curCode"
+                        :value="question.code"
                         :options="cmOptions"
                         >
                     </codemirror>
@@ -80,7 +80,6 @@ export default {
     data() {
         
         return {
-            curCode:'',
             cmOptions:{
                 value:'',
                 mode:"text/javascript",

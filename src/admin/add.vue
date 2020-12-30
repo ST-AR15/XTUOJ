@@ -56,7 +56,7 @@
             </a-form-model-item>
 
             <a-form-model-item label="题目内容">
-                <mavon-editor :tabSize="3" :toolbars="editorOption" v-model="questionDetail"></mavon-editor>
+                <mavon-editor :tabSize="3" :toolbars="editorOption" v-model="form.contents"></mavon-editor>
             </a-form-model-item>
 
             <a-form-model-item label="输入">
@@ -68,7 +68,7 @@
             </a-form-model-item>
 
             <a-form-model-item label="题目数据">
-                <div v-bind:key="i" v-for="(data,i) in form.data.input" style="display:flex;width:700px">
+                <div v-bind:key="i" v-for="(data,i) in form.data.input" style="display:flex;width:700px;">
                     <a-textarea v-model="form.data.input[i]"></a-textarea>
                     <div style="white-space: nowrap; margin: 0 20px">
                         输入
@@ -100,10 +100,16 @@
             </a-form-model-item>
         </a-form-model>
         <a-modal
-            :title="modal.title"
+            title="添加成功!"
             :visible="modal.visible"
+            :footer="null"
+            @cancel="modal.visible = false"
         >
-            <p v-text="modal.text"></p>
+            <p>请选择操作：</p>
+            <a-space>    
+                <a-button @click="resetForm(); modal.visible = false" type="primary">继续添加</a-button>
+                <a-button type="primary">跳转到该题目</a-button>
+            </a-space>
         </a-modal>
     </div>
 </template>
@@ -118,7 +124,6 @@ export default {
     },
     data() {
         return {
-            questionDetail: "",          // 问题详情 - 输入框
             editorOption: {              // 富文本输入框的设置
                 bold: true, // 粗体
                 italic: true, // 斜体
@@ -191,8 +196,6 @@ export default {
             },
             modal: {
                 visible: false,
-                title: "",
-                text: "",
             }
         }
     },
@@ -206,13 +209,35 @@ export default {
                         timeLimit = (parseInt(that.form.timeLimit/500)+1)*500;
                         this.$message.info(`已将时限的${that.form.timeLimit}修改为${timeLimit}`);
                     }
-                    let info = {    // 传给后端的info
-                        name: that.form.name,
-                        timeLimit: timeLimit,
-                        storageLimit: that.form.storageLimit,
-                        QType: that.form.QType,
+                    // 把DetailOut和DetailIn变成字符串
+                    // 声明生成字符串的方法
+                    let arrayToString = function(arr) {
+                        let str = "";
+                        for(let i=0;i<arr.length;i++) {
+                            str += (arr[i] + "\r\n");
+                        }
+                        return str;
                     };
-                    console.log(info);
+                    // 声明这两个变量
+                    let detailOut = arrayToString(that.form.data.output);
+                    let detailIn = arrayToString(that.form.data.input);
+                    let info = {    // 传给后端的info
+                        Tittle: that.form.name,
+                        // source
+                        Content: that.form.contents,
+                        TimeLimit: that.form.timeLimit,
+                        MemoryLimit: that.form.storageLimit,
+                        IsBan: "false", // 写死为false
+                        DetailOut: detailOut,
+                        DetailIn: detailIn,
+                    };
+                    // url
+                    let url = "http://172.22.114.116/api/problem";
+                    that.$axios.post(url,info).then(rep => {
+                        console.log(rep);
+                        // 弹出对话框
+                        that.modal.visible = true;
+                    })
                 } else {
                     return false;
                 }

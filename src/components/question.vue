@@ -108,18 +108,21 @@ export default {
     },
     mounted: function() {
         console.log("打开了题目" + this.ID);
-        let url = 'http://172.22.114.116/api/showProblemDetails/' + this.ID;
+        let url = 'http://172.22.114.116/api/problem/' + this.ID;
         this.$axios.get(url).then(rep => {
-            this.question.title = rep.data[0].Tittle;
+            const data = rep.data.data;
+            // Pid
+            this.question.title = data.Tittle;
             // source
-            this.question.questionDetail = rep.data[0].Content;
-            // Indate
-            this.question.timeLimit = rep.data[0].TimeLimit;
-            this.question.memoryLimit = rep.data[0].MemoryLimit;
-            // defunct
-            // accept
-            // submit
-            // solve
+            this.question.questionDetail = data.Content;
+            this.question.timeLimit = data.TimeLimit;
+            this.question.memoryLimit = data.MemoryLimit;
+            // IsBan
+            // Accept
+            // Submit
+            // Solved
+            // created_at
+            // update_at
         })
     }
 }

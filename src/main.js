@@ -27,6 +27,7 @@ Vue.prototype.$axios = axios
 import '@/components/antd.css'
 import '@/components/tips.css'
 import '@/components/animation.css'
+import '@/components/mavonEditor.css'
 import '@/components/axiosConfig'
 
 

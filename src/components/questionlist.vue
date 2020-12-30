@@ -124,7 +124,7 @@ export default {
             searchText: "",
             loading: false,
             pagination: {       // 页面设置
-                pageSize:2,     // 每页题目数量
+                pageSize:5,     // 每页题目数量
                 showQuickJumper: true,  // 快速跳转
                 total: 0,
             },
@@ -252,25 +252,36 @@ export default {
             this.searchText = '';
         },
         handleTableChange(pagination) {
-            let page = pagination.current;
+            // 变量
+            let page = {
+                page: pagination.current,
+            };
             // 只有未加载过的页面才需要加载
-            if(this.questions[(page-1)*this.pagination.pageSize] == undefined) {
+            if(this.questions[(pagination.current-1)*this.pagination.pageSize] == undefined) {
                 this.loading = true; // 开始加载
-                let url = 'http://172.22.114.116/api/showProblem/' + page;
-                this.$axios.get(url).then(rep => {
+                // 声明url
+                let url = 'http://172.22.114.116/api/problem';
+                // 开始请求。get请求需要把变量写在param里
+                this.$axios.get(url, {
+                    params: page,
+                }).then(rep => {
+                    // 把返回值里的data取出
+                    const data = rep.data.info.data;
                     // 如果返回值是空的，就提示一下
-                    if(rep.data.length == 0) {
+                    if(rep.data.info.data.length == 0) {
                         message.error("打开了不存在的页码！");
                     } else {
                         // 循环复制给数组questions
-                        for(let i=(page-1)*this.pagination.pageSize,j=0;j<this.pagination.pageSize;j++,i++) {
+                        for(let i=(pagination.current-1)*this.pagination.pageSize,j=0;j<data.length;j++,i++) {
                             this.questions[i] = {};
-                            this.questions[i]["key"] = rep.data[j].ProblemId;
-                            this.questions[i]["ID"] = rep.data[j].ProblemId;
-                            this.questions[i]["title"] = rep.data[j].Tittle;
+                            this.questions[i]["key"] = data[j].Pid;
+                            this.questions[i]["ID"] = data[j].Pid;
+                            this.questions[i]["title"] = data[j].Tittle;
                         }
                     }
-                    
+                    this.loading = false;
+                }).catch(error => {
+                    console.log(error);
                     this.loading = false;
                 })
             }
@@ -281,10 +292,34 @@ export default {
         }
     },
     mounted: function() {
-        // todo 页面创建时要确认页数
-        // todo 这个函数调用两次的BUG
-        this.pagination.total = 6;
-        this.handleTableChange({current:1});
+        let that = this;
+        // 加载第一页的内容，并确认每一页的内容数量和总页数
+        // 开始加载
+        that.loading = true;
+        // url
+        let url = 'http://172.22.114.116/api/problem';
+        // 开始请求
+        this.$axios.get(url, {
+            params: 1,
+        }).then(rep => {
+            const data = rep.data.info.data;
+            // 设置页码相关的东西
+            that.pagination.total = rep.data.info.total;
+            that.pagination.pageSize = data.length;
+            // 循环复制给数组questions
+            for(let i=0;i<that.pagination.pageSize;i++) {
+                that.questions[i] = {};
+                that.questions[i]["key"] = data[i].Pid;
+                that.questions[i]["ID"] = data[i].Pid;
+                that.questions[i]["title"] = data[i].Tittle;
+            }
+            // 结束加载
+            that.loading = false;
+        }).catch(error => {
+            // 如果检测到错误，也停止加载
+            console.log(error);
+            that.loading = false;
+        })
     }
 }
 </script>

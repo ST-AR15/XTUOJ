@@ -92,7 +92,10 @@
             </span>
             <!-- 表头 -->
             <template slot="title">
-                <h2 style="font-size: 22px">问题列表</h2>
+                <h2 style="font-size: 22px">
+                    问题列表
+                    <a-icon class="refreshIcon" type="redo" @click="refresh()" />
+                </h2>
             </template>
             <!-- 搜索图标 -->
             <a-icon
@@ -127,6 +130,7 @@ export default {
                 pageSize:5,     // 每页题目数量
                 showQuickJumper: true,  // 快速跳转
                 total: 0,
+                current: 1,
             },
             columns: [          // 表格的表头
                 {
@@ -252,6 +256,8 @@ export default {
             this.searchText = '';
         },
         handleTableChange(pagination) {
+            // 修改页码
+            this.pagination.current = pagination.current;
             // 变量
             let page = {
                 page: pagination.current,
@@ -289,37 +295,47 @@ export default {
         },
         callbackMethod(fatherMethod,param) {
             this.$emit(fatherMethod, param);
+        },
+        refresh() { // 刷新表格
+            let that = this;
+            // 变到第一页
+            that.pagination.current = 1;
+            // 初始化结果数组
+            this.questions = [];
+            // 加载第一页的内容，并确认每一页的内容数量和总页数
+            // 开始加载
+            that.loading = true;
+            // url
+            let url = 'http://172.22.114.116/api/problem';
+            // 开始请求
+            this.$axios.get(url, {
+                params: 1,
+            }).then(rep => {
+                const data = rep.data.info.data;
+                // 设置页码相关的东西
+                that.pagination.total = rep.data.info.total;
+                that.pagination.pageSize = data.length;
+                // 循环复制给数组questions
+                for(let i=0;i<that.pagination.pageSize;i++) {
+                    that.questions[i] = {};
+                    that.questions[i]["key"] = data[i].Pid;
+                    that.questions[i]["ID"] = data[i].Pid;
+                    that.questions[i]["title"] = data[i].Tittle;
+                }
+                // 结束加载
+                that.loading = false;
+            }).catch(error => {
+                // 如果检测到错误，也停止加载
+                console.log(error);
+                that.loading = false;
+            })
+            console.log(that.pagination.current);
         }
     },
     mounted: function() {
         let that = this;
-        // 加载第一页的内容，并确认每一页的内容数量和总页数
-        // 开始加载
-        that.loading = true;
-        // url
-        let url = 'http://172.22.114.116/api/problem';
-        // 开始请求
-        this.$axios.get(url, {
-            params: 1,
-        }).then(rep => {
-            const data = rep.data.info.data;
-            // 设置页码相关的东西
-            that.pagination.total = rep.data.info.total;
-            that.pagination.pageSize = data.length;
-            // 循环复制给数组questions
-            for(let i=0;i<that.pagination.pageSize;i++) {
-                that.questions[i] = {};
-                that.questions[i]["key"] = data[i].Pid;
-                that.questions[i]["ID"] = data[i].Pid;
-                that.questions[i]["title"] = data[i].Tittle;
-            }
-            // 结束加载
-            that.loading = false;
-        }).catch(error => {
-            // 如果检测到错误，也停止加载
-            console.log(error);
-            that.loading = false;
-        })
+        // 刷新表格
+        that.refresh();
     }
 }
 </script>
@@ -335,5 +351,13 @@ export default {
     .highlight {
         background-color: rgb(255, 192, 105);
         padding: 0px;
+    }
+    .refreshIcon {
+        margin-left: 20px;
+        cursor: pointer;
+        transition: transform .6s;
+    }
+    .refreshIcon:hover {
+        transform: rotate(360deg);
     }
 </style>

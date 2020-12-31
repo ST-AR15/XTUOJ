@@ -1,5 +1,7 @@
 import axios from 'axios'
 import { notification } from 'ant-design-vue'
+axios.defaults.timeout = 10000;
+
 // 请求拦截器，请求发生前发生的事
 // todo 两个拦截器的icon都不对
 axios.interceptors.request.use((req) => {

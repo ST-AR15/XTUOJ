@@ -28,6 +28,11 @@
                         v-model="questionDetailModal.questionDetail.title"
                     ></a-input>
                 </a-form-model-item>
+                <a-form-model-item label="来源">
+                    <a-input 
+                        v-model="questionDetailModal.questionDetail.source"
+                    ></a-input>
+                </a-form-model-item>
                 <a-form-model-item label="题目内容">
                     <mavonEditor :tabSize="3" v-model="questionDetailModal.questionDetail.content"></mavonEditor>
                 </a-form-model-item>
@@ -140,7 +145,7 @@ export default {
                     ID: NaN,
                     title: "",
                     tips: [],
-                    source: "",
+                    source: " ",
                     content: "",
                     timeLimit: NaN,
                     memoryLimit: NaN,
@@ -182,7 +187,7 @@ export default {
                 const data = rep.data.data;
                 that.questionDetailModal.questionDetail.ID = data.Pid;
                 that.questionDetailModal.questionDetail.title = data.Tittle;
-                that.questionDetailModal.questionDetail.source = data.Source;
+                that.questionDetailModal.questionDetail.source = data.Source==null? data.Source:"admin";
                 that.questionDetailModal.questionDetail.content = data.Content;
                 that.questionDetailModal.questionDetail.timeLimit = data.TimeLimit;
                 that.questionDetailModal.questionDetail.memoryLimit = data.MemoryLimit;
@@ -222,7 +227,19 @@ export default {
             console.log('关闭对话框');
         },
         submitChange() { // 提交问题修改
-            
+            const url = this.$baseUrl + '/api/problem/' + this.questionDetailModal.questionDetail.ID;
+            const info = {
+                Tittle: this.questionDetailModal.questionDetail.title,
+                Source: this.questionDetailModal.questionDetail.source,
+                Content: this.questionDetailModal.questionDetail.content,
+                TimeLimit: this.questionDetailModal.questionDetail.timeLimit,
+                MemoryLimit: this.questionDetailModal.questionDetail.memoryLimit,
+                IsBan: this.questionDetailModal.questionDetail.IsBan,
+            }
+            console.log(info);
+            this.$axios.put(url, info).then(rep => {
+                console.log(rep);
+            })
         },
         questionDataModalCancel() {   // 关闭数据管理
             this.questionDataModal.visible = false;

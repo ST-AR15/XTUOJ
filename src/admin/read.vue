@@ -1,6 +1,5 @@
 <template>
     <div class="read" id="read">
-        <p v-text="baseUrl"></p>
         <questionlist ref="questionlist" :buttons="buttons" @getQuestionDetail="getQuestionDetail" @getQuestionData="getQuestionData" @deleteQuestion="deleteQuestion" />
         <!-- 问题详情 - modal对话框 -->
         <a-modal

@@ -1,49 +1,76 @@
 <template>
     <div class="read" id="read">
+        <p v-text="baseUrl"></p>
         <questionlist ref="questionlist" :buttons="buttons" @getQuestionDetail="getQuestionDetail" @getQuestionData="getQuestionData" @deleteQuestion="deleteQuestion" />
         <!-- 问题详情 - modal对话框 -->
         <a-modal
             :visible="questionDetailModal.visible"
-            :title="'问题' + questionDetailModal.ID + ' - ' + questionDetailModal.title + ' - 详情'"
+            :title="'问题' + questionDetailModal.questionDetail.ID + ' - ' + questionDetailModal.questionDetail.title + ' - 详情'"
             @cancel="questionDetailModalCancel"
+            @ok="submitChange"
+            okText="修改"
+            :width="1000"
         >
-            <p>
-                <span style="margin-right: 30px">ID</span>
-                <a-input 
-                    v-model="questionDetailModal.ID"
-                    :disabled="true"
-                    style="width:200px"
-                ></a-input>
-            </p>
-            <p>
-                <span style="margin-right: 20px">title</span>
-                <a-input 
-                    v-model="questionDetailModal.title"
-                    style="width:200px"
-                ></a-input>
-            </p>
-            <p>
-                <span style="margin-right: 20px">tips</span>
-                <template v-for="(tip, index) in questionDetailModal.tips">
-                    <a-tag :key="tip" closable @close="deleteTip(index)">
-                        {{ tip }}
+            <a-form-model
+                ref="changeForm"
+                :model="questionDetailModal.questionDetail"
+                :label-col="questionDetailModal.labelCol"
+                :wrapper-col="questionDetailModal.wrapperCol"
+                :rules="questionDetailModal.rules"
+            >
+                <a-form-model-item label="ID">
+                    <a-input 
+                        v-model="questionDetailModal.questionDetail.ID"
+                        :disabled="true"
+                    ></a-input>
+                </a-form-model-item>
+                <a-form-model-item label="题目名称">
+                    <a-input 
+                        v-model="questionDetailModal.questionDetail.title"
+                    ></a-input>
+                </a-form-model-item>
+                <a-form-model-item label="题目内容">
+                    <mavonEditor :tabSize="3" v-model="questionDetailModal.questionDetail.content"></mavonEditor>
+                </a-form-model-item>
+                <a-form-model-item label="时限">
+                    <a-input 
+                        v-model="questionDetailModal.questionDetail.timeLimit"
+                    ></a-input>
+                </a-form-model-item>
+                <a-form-model-item label="存限">
+                    <a-input 
+                        v-model="questionDetailModal.questionDetail.memoryLimit"
+                    ></a-input>
+                </a-form-model-item>
+                <a-form-model-item label="IsBan">
+                    <a-switch
+                        v-model="questionDetailModal.questionDetail.IsBan"
+                    ></a-switch>
+                </a-form-model-item>
+                <a-form-model-item label="tips">
+                    <template v-for="(tip, index) in questionDetailModal.questionDetail.tips">
+                        <a-tag :key="tip" closable @close="deleteTip(index)">
+                            {{ tip }}
+                        </a-tag>
+                    </template>
+                    <a-input
+                        v-if="tipInputVisible"
+                        ref="tipInput"
+                        type="text"
+                        size="small"
+                        :style="{ width: '78px' }"
+                        :value="inputValue"
+                        @change="inputTip"
+                        @blur="addTip"
+                        @keyup.enter="addTip"
+                    />
+                    <a-tag v-else style="background: #fff; borderStyle: dashed;" @click="showInput">
+                        <a-icon type="plus" /> 新标签
                     </a-tag>
-                </template>
-                <a-input
-                    v-if="tipInputVisible"
-                    ref="tipInput"
-                    type="text"
-                    size="small"
-                    :style="{ width: '78px' }"
-                    :value="inputValue"
-                    @change="inputTip"
-                    @blur="addTip"
-                    @keyup.enter="addTip"
-                />
-                <a-tag v-else style="background: #fff; borderStyle: dashed;" @click="showInput">
-                    <a-icon type="plus" /> 新标签
-                </a-tag>
-            </p>
+                </a-form-model-item>
+            </a-form-model>
+            
+            
         </a-modal>
         <!-- 数据管理 - modal对话框 -->
         <a-modal
@@ -80,10 +107,13 @@
 
 <script>
 import questionlist from '../components/questionlist.vue'
+import { mavonEditor } from 'mavon-editor'
+import 'mavon-editor/dist/css/index.css'
 import { message } from 'ant-design-vue'
 export default {
     components: {
         questionlist,
+        mavonEditor
     },
     data() {
         return {
@@ -107,9 +137,23 @@ export default {
             dataInputOut: "",        // 题目数据 - 输出的输入框
             questionDetailModal : {  // 问题详情的modal
                 visible: false,
-                ID: 0,
-                title: "",
-                tips: [],
+                questionDetail: {
+                    ID: NaN,
+                    title: "",
+                    tips: [],
+                    source: "",
+                    content: "",
+                    timeLimit: NaN,
+                    memoryLimit: NaN,
+                    IsBan: false,
+                },
+                labelCol: { span: 4 },
+                wrapperCol: { span: 19 },
+                rules: {                     // 表单规则
+                name: [                  // 题目名称规则：比如输入内容，否则提示“请输入题目名称”
+                    { required: true, message: '请输入题目名称', trigger: 'change' },
+                ],
+            },
             },
             questionDataModal: { // 问题数据管理的modal
                 visible: false,
@@ -131,7 +175,21 @@ export default {
             this.searchText = '';
         },
         getQuestionDetail(info) {  // 获取题目详情和修改
-            // 暂定：info是题目的ID等信息，点击题目详情后会调用API来获取题目的其他详情信息
+            let that = this;
+            // 使用info.ID来调取题目信息
+            let baseUrl = "http://172.22.114.116/api/problem/";
+            let url = baseUrl + info.ID;
+            this.$axios.get(url).then(rep => {
+                // 把获取到的信息赋值给questionDetail
+                const data = rep.data.data;
+                that.questionDetailModal.questionDetail.ID = data.Pid;
+                that.questionDetailModal.questionDetail.title = data.Tittle;
+                that.questionDetailModal.questionDetail.source = data.Source;
+                that.questionDetailModal.questionDetail.content = data.Content;
+                that.questionDetailModal.questionDetail.timeLimit = data.TimeLimit;
+                that.questionDetailModal.questionDetail.memoryLimit = data.MemoryLimit;
+                that.questionDetailModal.questionDetail.IsBan = data.IsBan;
+            })
             this.questionDetailModal.ID = info.ID;
             this.questionDetailModal.title = info.title;
             if(info.tips) {
@@ -165,6 +223,9 @@ export default {
         questionDetailModalCancel() { // 关闭问题详情
             this.questionDetailModal.visible = false;
             console.log('关闭对话框');
+        },
+        submitChange() { // 提交问题修改
+            
         },
         questionDataModalCancel() {   // 关闭数据管理
             this.questionDataModal.visible = false;

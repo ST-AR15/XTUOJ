@@ -1,6 +1,6 @@
 <template>
     <div class="read" id="read">
-        <questionlist :buttons="buttons" @getQuestionDetail="getQuestionDetail" @getQuestionData="getQuestionData" />
+        <questionlist ref="questionlist" :buttons="buttons" @getQuestionDetail="getQuestionDetail" @getQuestionData="getQuestionData" @deleteQuestion="deleteQuestion" />
         <!-- 问题详情 - modal对话框 -->
         <a-modal
             :visible="questionDetailModal.visible"
@@ -80,6 +80,7 @@
 
 <script>
 import questionlist from '../components/questionlist.vue'
+import { message } from 'ant-design-vue'
 export default {
     components: {
         questionlist,
@@ -95,6 +96,10 @@ export default {
                     text: "数据管理",
                     method: "getQuestionData"
                 },
+                {
+                    text: "删除题目",
+                    method: "deleteQuestion"
+                }
             ],
             tipInputVisible: false,  // 添加tip时的input是否出现
             inputValue: "",          // 添加标签时输入的内容
@@ -144,6 +149,18 @@ export default {
                 output: ["3","4"]
             };
             this.questionDataModal.visible = true;
+        },
+        deleteQuestion(info) { // 删除题目
+            let baseUrl = "http://172.22.114.116/api/problem/";
+            let url = baseUrl + info.ID;
+            this.$axios.delete(url).then(rep => {
+                if(parseInt(rep.status/100) == 2) { // 返回2开头的成功码
+                    // 提示操作结果
+                    message.info('删除成功');
+                    // 刷新表格
+                    this.$refs.questionlist.refresh();
+                }
+            })
         },
         questionDetailModalCancel() { // 关闭问题详情
             this.questionDetailModal.visible = false;

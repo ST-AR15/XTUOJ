@@ -7,56 +7,59 @@
                     @back="back"
                 />
             </a-layout-header>
-            <a-layout>
-                <a-layout-sider>
-                    <!-- 题目ID和title -->
-                    <h1>
-                        ID {{ ID }}:{{ question.title }}
-                    </h1>
-                    <!-- 题目标签 -->
-                    <p>
-                        <a-tag
-                            v-for="tip in question.tips"
-                            :key="tip"
-                            v-bind:id="'tip-' + tip"
-                        >
-                            {{tip}}
-                        </a-tag>
-                    </p>
-                    <p>
-                        时间限制：<span v-text="question.timeLimit"></span>ms
-                        内存限制：<span v-text="question.memoryLimit"></span>MB
-                    </p>
-                    <!-- 题目内容 -->
-                    <!-- <h2>题目详情</h2> -->
-                    <mavon-editor v-model="question.questionDetail" :subfield="false" :toolbarsFlag="false" defaultOpen="preview"></mavon-editor>
-                </a-layout-sider>
-                <a-layout-content style="padding:10px;">
-                    <div>
+            <a-spin
+                :spinning="loading"
+            >
+                <a-layout>
+                    <a-layout-sider>
+                        <!-- 题目ID和title -->
+                        <h1>
+                            ID {{ ID }}:{{ question.title }}
+                        </h1>
+                        <!-- 题目标签 -->
                         <p>
-                            语言：
-                            <a-select v-model="question.language" style="width: 120px" defult-value="c">
-                                <template v-for="item in question.language_allowed">
-                                    <a-select-option :key="item" :value="item">
-                                        {{ item }}
-                                    </a-select-option>
-                                </template>
-                            </a-select>
+                            <a-tag
+                                v-for="tip in question.tips"
+                                :key="tip"
+                                v-bind:id="'tip-' + tip"
+                            >
+                                {{tip}}
+                            </a-tag>
                         </p>
-                    </div>
-                    <!-- <mavon-editor style="height:700px;margin-bottom:20px;z-index:1" :subfield="false" :toolbarsFlag="false" placeholder="Code here……" :tabSize="4" v-model="question.code"></mavon-editor> -->
-                    <codemirror
-                        ref="mycode"
-                        :value="question.code"
-                        :options="cmOptions"
-                        >
-                    </codemirror>
-                    <div style="margin-top:50px">
-                        <a-button type="primary">提交</a-button>
-                    </div>
-                </a-layout-content>
-                
-            </a-layout>
+                        <p>
+                            时间限制：<span v-text="question.timeLimit"></span>ms
+                            内存限制：<span v-text="question.memoryLimit"></span>MB
+                        </p>
+                        <!-- 题目内容 -->
+                        <!-- <h2>题目详情</h2> -->
+                        <mavon-editor v-model="question.questionDetail" :subfield="false" :toolbarsFlag="false" defaultOpen="preview"></mavon-editor>
+                    </a-layout-sider>
+                    <a-layout-content style="padding:10px;">
+                        <div>
+                            <p>
+                                语言：
+                                <a-select v-model="question.language" style="width: 120px" defult-value="c">
+                                    <template v-for="item in question.language_allowed">
+                                        <a-select-option :key="item" :value="item">
+                                            {{ item }}
+                                        </a-select-option>
+                                    </template>
+                                </a-select>
+                            </p>
+                        </div>
+                        <!-- <mavon-editor style="height:700px;margin-bottom:20px;z-index:1" :subfield="false" :toolbarsFlag="false" placeholder="Code here……" :tabSize="4" v-model="question.code"></mavon-editor> -->
+                        <codemirror
+                            ref="mycode"
+                            :value="question.code"
+                            :options="cmOptions"
+                            >
+                        </codemirror>
+                        <div style="margin-top:50px">
+                            <a-button type="primary">提交</a-button>
+                        </div>
+                    </a-layout-content>
+                </a-layout>
+            </a-spin>
         </a-layout>
     </div>
 </template>
@@ -80,6 +83,7 @@ export default {
     data() {
         
         return {
+            loading: true, // 加载状态
             cmOptions:{
                 value:'',
                 mode:"text/javascript",
@@ -93,9 +97,9 @@ export default {
                 timeLimit: 128,
                 memoryLimit: 128,
                 language_allowed: ["C","C++","Java","JavaScript","PHP","Ruby"],
-                title: "小蜗牛爬楼",
-                tips: ["dp","geometry","math","greedy"],
-                questionDetail: "小蜗牛爬楼，假设白天能爬x米，晚上会下落y米（x>y），楼总高z米。小蜗牛要多少天才能爬上去？",
+                title: "题目打开中",
+                tips: [],
+                questionDetail: "请稍候……",
                 code: "",  //当前输入的代码
             }
             
@@ -108,6 +112,7 @@ export default {
     },
     mounted: function() {
         console.log("打开了题目" + this.ID);
+        this.loading = true; // 加载题目
         let url = this.$baseUrl + '/api/problem/' + this.ID;
         this.$axios.get(url).then(rep => {
             const data = rep.data.data;
@@ -123,6 +128,7 @@ export default {
             // Solved
             // created_at
             // update_at
+            this.loading = false; // 加载题目
         })
     }
 }

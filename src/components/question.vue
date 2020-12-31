@@ -108,7 +108,7 @@ export default {
     },
     mounted: function() {
         console.log("打开了题目" + this.ID);
-        let url = 'http://172.22.114.116/api/problem/' + this.ID;
+        let url = this.$baseUrl + '/api/problem/' + this.ID;
         this.$axios.get(url).then(rep => {
             const data = rep.data.data;
             // Pid

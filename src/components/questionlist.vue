@@ -266,7 +266,7 @@ export default {
             if(this.questions[(pagination.current-1)*this.pagination.pageSize] == undefined) {
                 this.loading = true; // 开始加载
                 // 声明url
-                let url = 'http://172.22.114.116/api/problem';
+                let url = this.$baseUrl + '/api/problem';
                 // 开始请求。get请求需要把变量写在param里
                 this.$axios.get(url, {
                     params: page,
@@ -306,10 +306,12 @@ export default {
             // 开始加载
             that.loading = true;
             // url
-            let url = 'http://172.22.114.116/api/problem';
+            let url = this.$baseUrl + '/api/problem';
             // 开始请求
             this.$axios.get(url, {
-                params: 1,
+                params: {
+                    page: 1,
+                },
             }).then(rep => {
                 const data = rep.data.info.data;
                 // 设置页码相关的东西

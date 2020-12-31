@@ -12,8 +12,13 @@ import 'codemirror/lib/codemirror.css'
 // import VueCodeMirror from 'vue-codemirror'
 // import 'codemirror/lib/codemirror.css'
 // Vue.use(Antd,VueCodeMirror)
+
+// const baseUrl = "http://172.22.114.116/api/problem"  // 校园网环境
+const baseUrl = "http://47.106.68.121:8887"          // 公网url
+
 Vue.use(Antd,VueCodeMirror)
 Vue.prototype.$axios = axios
+Vue.prototype.$baseUrl = baseUrl
 
 /**
  * axios使用：

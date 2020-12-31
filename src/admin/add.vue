@@ -232,7 +232,7 @@ export default {
                         DetailIn: detailIn,
                     };
                     // url
-                    let url = "http://172.22.114.116/api/problem";
+                    let url = this.$baseUrl + "/api/problem";
                     that.$axios.post(url,info).then(rep => {
                         console.log(rep);
                         // 弹出对话框

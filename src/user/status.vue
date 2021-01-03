@@ -78,18 +78,23 @@
                 <span> ms</span>
             </span>
             <!-- 代码长度（codeLength） -->
-            <span 
+            <a-tooltip
                 slot="codeLength" 
                 slot-scope="codeLength" 
-                v-bind:title="true? '点击查看代码':''" 
-                v-bind:style="{ 
-                    cursor: true? 'pointer':'default',
-                    color: true? '#40A9FF':'#000000'
-                }"
             >
-                <span v-text="codeLength"></span>
-                <span> b</span>
-            </span>
+                <template slot="title">
+                    点击查看代码
+                </template>
+                <span 
+                    v-bind:style="{ 
+                        cursor: true? 'pointer':'default',
+                        color: true? '#40A9FF':'#000000'
+                    }"
+                >
+                    <span v-text="codeLength"></span>
+                    <span> b</span>
+                </span>
+            </a-tooltip>
         </a-table>
     </div>
 </template>

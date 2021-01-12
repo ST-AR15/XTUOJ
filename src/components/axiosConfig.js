@@ -7,7 +7,7 @@ const baseUrl = "http://47.106.68.121:8887"          // 公网url
 Vue.prototype.$baseUrl = baseUrl
 
 // 请求拦截器，请求发生前发生的事
-// todo 两个拦截器的icon都不对
+// TODO: 两个拦截器的icon都不对
 axios.interceptors.request.use((req) => {
     
     return req;

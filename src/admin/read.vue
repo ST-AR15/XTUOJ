@@ -204,7 +204,7 @@ export default {
         getQuestionData(info) {  //获取题目数据和修改
             this.questionDataModal.ID = info.ID;
             this.questionDataModal.title = info.title;
-            // todo 这个要从后端调取，先随便写个
+            // TODO 这个要从后端调取，先随便写个
             this.questionDataModal.data = {
                 input: ["2,2","3,3"],
                 output: ["3","4"]

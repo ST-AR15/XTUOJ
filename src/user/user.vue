@@ -32,7 +32,7 @@
                         排名
                     </a-menu-item>
                 </a-menu>
-                <!-- todo 两个按钮只显示一个，根据登录状态决定 -->
+                <!-- TODO 两个按钮只显示一个，根据登录状态决定 -->
                 <a-button class="navButton">登录</a-button>
                 <a-button class="navButton">通知</a-button>
             </a-layout-header>

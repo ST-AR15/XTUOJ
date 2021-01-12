@@ -28,7 +28,7 @@
                         :step="500"
                         suffix="ms"
                     ></a-input>
-                    <!-- todo 添加动画 -->
+                    <!-- TODO 添加动画 -->
                     <p v-show="form.timeLimit%500 != 0" style="line-height:12px; height:12px; position:absolute; margin: 0; white-space:nowrap">
                         <span>
                             我们会把这个数字取整到{{(parseInt(form.timeLimit/500)+1)*500}}，因为这个数必须是500的倍数

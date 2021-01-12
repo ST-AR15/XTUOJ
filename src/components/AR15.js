@@ -74,6 +74,6 @@ export function keys(o) {
         if(o.hasOwnProperty(prop)) {               // 判断是否是自有属性
             result.push(prop);                     // 将属性名添加至数组中
         }
-        return result;                             // 返回这个数组
     }
+    return result;                                 // 返回这个数组
 }

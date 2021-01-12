@@ -189,6 +189,7 @@ export default {
                     output: [],
                 }
             },
+            // TODO 这个添加名字的规则失效了？？
             rules: {                     // 表单规则
                 name: [                  // 题目名称规则：比如输入内容，否则提示“请输入题目名称”
                     { required: true, message: '请输入题目名称', trigger: 'change' },

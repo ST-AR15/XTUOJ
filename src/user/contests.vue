@@ -2,7 +2,7 @@
     <div class="contests" id="contests">
         <!-- 竞赛列表 -->
         <transition name="cross">
-            <div v-show="pageNow == 'contests'" class="contest-list" id="contest-list">
+            <div v-show="pageNow == 'contests'" class="contest-list contents-item" id="contest-list">
                 <a-table
                     :columns="columns"
                     :data-source="contests"
@@ -88,15 +88,22 @@
         </transition>
         <transition name="cross2">
             <!-- 题目列表 -->
-            <div v-show="pageNow == 'questions'" class="contest-questions" id="contest-questions">
-                <a-table
-                    :columns="questionsColumns"
-                    :data-source="questions"
-                    style="width:1000px; background-color:#FCFDFE; margin:20px auto"
-                    :pagination="pagination"
-                >
-
-                </a-table>
+            <div v-show="pageNow == 'questions'" class="contest-questions contents-item" id="contest-questions">
+                <div class="contents-inner" style="margin:20px auto; width: 1000px; background-color:#FCFDFE">
+                    <a-page-header
+                        style="width: 1000px"
+                        title="返回"
+                        @back="pageNow = 'contests'"
+                    ></a-page-header>
+                    <a-table
+                        :columns="questionsColumns"
+                        :data-source="questions"
+                        style="width:1000px; background-color:#FCFDFE; margin:20px auto"
+                        :pagination="pagination"
+                    >
+                        
+                    </a-table>
+                </div>
             </div>
         </transition>
     </div>
@@ -230,5 +237,9 @@ export default {
     .highlight {
         background-color: rgb(255, 192, 105);
         padding: 0px;
+    }
+    .contents-item {
+        position: absolute;
+        width: 100%;
     }
 </style>

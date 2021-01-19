@@ -1,6 +1,6 @@
 <template>
     <div class="home" id="home">
-        <questionlist v-if="displayNow == 'questionlist'" :buttons="buttons" @goQuestion="goQuestion" />
+        <questionlist v-show="displayNow == 'questionlist'" :buttons="buttons" @goQuestion="goQuestion" />
         <question v-if="displayNow == 'question'" :ID="questionID" @back="goQuestionlist" />
     </div>
 </template>
@@ -35,7 +35,6 @@ export default {
         },
         // 回到题目列表
         goQuestionlist() {
-            console.log('cnm');
             this.displayNow = "questionlist"
         }
     }

@@ -50,12 +50,22 @@
                         <!-- <mavon-editor style="height:700px;margin-bottom:20px;z-index:1" :subfield="false" :toolbarsFlag="false" placeholder="Code here……" :tabSize="4" v-model="question.code"></mavon-editor> -->
                         <codemirror
                             ref="mycode"
-                            :value="question.code"
+                            v-model="question.code"
                             :options="cmOptions"
                             >
                         </codemirror>
                         <div style="margin-top:50px">
-                            <a-button type="primary">提交</a-button>
+                            <a-space>
+                                <a-button type="primary" @click="submit">提交</a-button>
+                                <!-- TODO 根据文件后缀自动转换语言 -->
+                                <a-upload
+                                    name="codeFile"
+                                    :beforeUpload="uploadFile"
+                                    :showUploadList="false"
+                                >
+                                    <a-button type="primary">上传文件</a-button>
+                                </a-upload>
+                            </a-space>
                         </div>
                     </a-layout-content>
                 </a-layout>
@@ -108,6 +118,26 @@ export default {
     methods: {
         back() {  //返回上一页的方法
             this.$emit("back");
+        },
+        uploadFile(file) {  // 上传文件
+            console.log('cnm');
+            // 暂时设定的逻辑是，把文件读取出来，然后誊写到代码框里
+            // TODO 理论上这里应该设置一下文件上传后根据文件后缀修改语言（编译器）？或者没必要？
+            const reader = new FileReader();
+            reader.readAsText(file);
+            reader.onload = (result) => {
+                console.log(result.target.result);
+                // 如果之前有代码，则提示已经替换
+                if(this.question.code) {
+                    this.$message.info('已经替换了之前的代码，可通过ctrl+z撤销');
+                }
+                this.question.code = result.target.result;
+            }
+            // 返回false表示不调用默认的上传接口
+            return false;
+        },
+        submit() {  // 提交代码
+            console.log(this.question.code)
         }
     },
     mounted: function() {

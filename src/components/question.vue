@@ -96,7 +96,8 @@ export default {
             loading: true, // 加载状态
             cmOptions:{
                 value:'',
-                mode:"text/javascript",
+                mode:"text/x-csrc",
+                // mode详细：https://codemirror.net/mode/clike/，clike换成python之类就能获得对应的内容
                 indentUnit: 4,
                 readOnly:false,
                 lineNumbers: true,
@@ -137,7 +138,7 @@ export default {
             return false;
         },
         submit() {  // 提交代码
-            console.log(this.question.code)
+            console.log(this.question.code);
         }
     },
     mounted: function() {

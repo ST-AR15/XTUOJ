@@ -313,9 +313,10 @@ export default {
                     page: 1,
                 },
             }).then(rep => {
-                const data = rep.data.info.data;
+                console.log(rep);
+                const data = rep.data.data.data;
                 // 设置页码相关的东西
-                that.pagination.total = rep.data.info.total;
+                that.pagination.total = rep.data.data.total;
                 that.pagination.pageSize = data.length;
                 // 循环复制给数组questions
                 for(let i=0;i<that.pagination.pageSize;i++) {

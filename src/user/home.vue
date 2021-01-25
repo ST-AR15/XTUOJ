@@ -1,23 +1,18 @@
 <template>
     <div class="home" id="home">
-        <questionlist v-show="displayNow == 'questionlist'" :buttons="buttons" @goQuestion="goQuestion" />
-        <questionlist v-show="displayNow == 'questionlist'" :buttons="buttons" @goQuestion="goQuestion" />
-        <question v-if="displayNow == 'question'" :ID="questionID" @back="goQuestionlist" />
+        <questionlist :buttons="buttons" @goQuestion="goQuestion" />
+        <questionlist :buttons="buttons" @goQuestion="goQuestion" />
     </div>
 </template>
 
 <script>
-import question from '../components/question.vue';
 import questionlist from '../components/questionlist.vue'
 export default {
     components: {
         questionlist,
-        question,
     },
     data() {
         return {
-            displayNow: "questionlist",
-            questionID: 1000,
             buttons: [
                 {
                     text: "查看",
@@ -34,10 +29,6 @@ export default {
             this.questionID = param.ID;
             this.displayNow = "question";
         },
-        // 回到题目列表
-        goQuestionlist() {
-            this.displayNow = "questionlist"
-        }
     }
 }
 </script>

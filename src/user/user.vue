@@ -38,15 +38,17 @@
             </a-layout-header>
             <a-layout-content>
                 <div class="container">
-                    <home v-show="page == 'home'"/>
-                    <problems v-show="page == 'problems'" />
-                    <contests v-show="page == 'contests'"/>
-                    <status v-show="page == 'status'"/>
-                    <ranklist v-show="page == 'ranklist'"/>
-                    <question v-if="isQuestion" />
-                </div>
-                <div class="footer">
-                    XTU Online Judge ©2021 Created by XieYong
+                    <div class="page">
+                        <home v-show="page == 'home'"/>
+                        <problems v-show="page == 'problems'" />
+                        <contests v-show="page == 'contests'"/>
+                        <status v-show="page == 'status'"/>
+                        <ranklist v-show="page == 'ranklist'"/>
+                        <question v-if="isQuestion" :ID="questionID" @back="isQuestion = false" />
+                    </div>
+                    <div class="footer">
+                        XTU Online Judge ©2021 Created by Graduates of network engineering in 2017
+                    </div>
                 </div>
             </a-layout-content>
         </a-layout>
@@ -73,6 +75,7 @@ export default {
         return {
             page: ['home'],       // 当前选择的页面
             isQuestion: false,    // 是否展示问题
+            questionID: 1000,     // 需要展示的问题ID
         }
     },
     methods: {
@@ -88,7 +91,7 @@ export default {
     /* 整个页面 */
     .user {
         min-width: 1000px;
-        min-height: 100vh;
+        height: 100vh;
         background-color: #F2F4F9;
         overflow: hidden;
     }
@@ -133,24 +136,31 @@ export default {
     }
     /* content */
     .user .ant-layout-content {
-        position: relative;
+        position: absolute;
         top: 64px;  /* 因为设定了header的高度是64px */
         left: 0;
         overflow: hidden;
         width: 100%;
         height: calc(100vh - 64px);
-        overflow-y: scroll;
     }
     .user .container {
         width: 100%;
+        height: 100%;
+        overflow-x: hidden;
+        position: absolute;
+    }
+    .user .page {
         position: relative;
-        min-height: calc(100vh - 64px - 64px);  /* 减去header和footer的高度 */
+        width: 100%;
+        min-height: calc(100vh - 64px - 64px);
+        padding: 20px 0;
     }
     /* footer，为了让滚动逻辑正常，这个footer是写在content里面的 */
     .user .footer {
         width: 100%;
         height: 64px;
         line-height: 64px;
+        position: relative;
         text-align: center;
         padding: 10px 0;
     }

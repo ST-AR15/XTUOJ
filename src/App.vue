@@ -1,5 +1,5 @@
 <template>
-  <div class="app" id="app">
+  <div class="app" id="app" style="overflow: hidden">
     <a-config-provider :locale="zh_CN">
       <router-view/>
     </a-config-provider>

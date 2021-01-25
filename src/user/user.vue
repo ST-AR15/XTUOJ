@@ -39,12 +39,12 @@
             <a-layout-content>
                 <div class="container">
                     <div class="page">
-                        <home v-show="page == 'home'"/>
+                        <home @goQuestion="goQuestion" v-show="page == 'home'"/>
                         <problems v-show="page == 'problems'" />
                         <contests v-show="page == 'contests'"/>
                         <status v-show="page == 'status'"/>
                         <ranklist v-show="page == 'ranklist'"/>
-                        <question v-if="isQuestion" :ID="questionID" @back="isQuestion = false" />
+                        <question v-show="page == 'question'" :ID="questionID" @back="page = 'home'" />
                     </div>
                     <div class="footer">
                         XTU Online Judge ©2021 Created by Graduates of network engineering in 2017
@@ -82,12 +82,17 @@ export default {
         openPage(page) {  //打开某页
             this.page[0] = page;
             this.$forceUpdate();
+        },
+        goQuestion(id) {  // 打开某题
+            this.questionID = id;
+            this.page[0] = 'question';
+            this.$forceUpdate();
         }
     }
 }
 </script>
 
-<style>
+<style scoped>
     /* 整个页面 */
     .user {
         min-width: 1000px;

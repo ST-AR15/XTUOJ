@@ -1,7 +1,6 @@
 <template>
     <div class="home" id="home">
         <questionlist :buttons="buttons" @goQuestion="goQuestion" />
-        <questionlist :buttons="buttons" @goQuestion="goQuestion" />
     </div>
 </template>
 
@@ -26,8 +25,10 @@ export default {
         goQuestion(param) {
             // console.log("打开题目" + ID);
             // this.$emit('goQuestion', ID,"home");
-            this.questionID = param.ID;
-            this.displayNow = "question";
+            // this.questionID = param.ID;
+            // this.displayNow = "question";
+            // 调用父类的打开问题的方法，传入ID
+            this.$emit('goQuestion', param.ID);
         },
     }
 }

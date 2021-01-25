@@ -77,6 +77,9 @@ export default {
         line-height: 42px;
         display: flex;
         justify-content: space-around;
-        transition: transform .6s;
+        transition: all .6s;
+    }
+    .listItem:hover {
+        background-color: aqua;
     }
 </style>

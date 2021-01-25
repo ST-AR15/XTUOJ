@@ -167,18 +167,22 @@ export default {
 
 <style>
 .question {
-    width: 1000px;
+    width: 100%;
     background-color: #FAFAFA;
     position: relative;
     margin: 0 auto;
+}
+.question .ant-layout {
+    width: 100%;
+    overflow: hidden;
 }
 .question .ant-layout-sider {
     max-width: 400px !important;
     min-width: 400px !important;
     width: 400px !important;
-    min-height: 800px;
-    max-height: 800px;
-    height: 800px;
+    min-height: 100%;
+    max-height: 100%;
+    height: 100%;
     overflow-y: scroll;
     padding: 5px;
 }

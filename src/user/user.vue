@@ -36,12 +36,18 @@
                 <a-button class="navButton">登录</a-button>
                 <a-button class="navButton">通知</a-button>
             </a-layout-header>
-            <a-layout-content style="position: relative">
-                <home v-show="page == 'home'"/>
-                <problems v-show="page == 'problems'" />
-                <contests v-show="page == 'contests'"/>
-                <status v-show="page == 'status'"/>
-                <ranklist v-show="page == 'ranklist'"/>
+            <a-layout-content>
+                <div class="container">
+                    <home v-show="page == 'home'"/>
+                    <problems v-show="page == 'problems'" />
+                    <contests v-show="page == 'contests'"/>
+                    <status v-show="page == 'status'"/>
+                    <ranklist v-show="page == 'ranklist'"/>
+                    <question v-if="isQuestion" />
+                </div>
+                <div class="footer">
+                    XTU Online Judge ©2021 Created by XieYong
+                </div>
             </a-layout-content>
         </a-layout>
     </div>
@@ -53,6 +59,7 @@ import problems from './problems.vue'
 import contests from './contests.vue'
 import status from './status.vue'
 import ranklist from './ranklist.vue'
+import question from '@/components/question.vue'
 export default {
     components: {
         home,
@@ -60,10 +67,12 @@ export default {
         contests,
         status,
         ranklist,
+        question,
     },
     data() {
         return {
             page: ['home'],       // 当前选择的页面
+            isQuestion: false,    // 是否展示问题
         }
     },
     methods: {
@@ -76,19 +85,27 @@ export default {
 </script>
 
 <style>
+    /* 整个页面 */
     .user {
-        min-width: 1080px;
-        height: 100vh;
+        min-width: 1000px;
+        min-height: 100vh;
         background-color: #F2F4F9;
         overflow: hidden;
     }
+    /* header */
     .user .ant-layout-header {
         display: flex;
         align-items: center;
         border-bottom: 1px solid #E8E8E8;
-        position: relative;
+        /* position: relative; */
         background-color: rgb(252, 253, 254);
         color: rgb(90, 90, 90);
+        overflow: hidden;
+        height: 64px; /* 一开始不打算写死高度的- -为了后面的内容还是写一下吧，毕竟这样才能让它保持在最顶上 */
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
     }
     .user .ant-layout-header > .logo {
         min-width: 180px;
@@ -113,5 +130,28 @@ export default {
         font-weight: 700;
         margin-right: 60px;
         padding: 0 20px;
+    }
+    /* content */
+    .user .ant-layout-content {
+        position: relative;
+        top: 64px;  /* 因为设定了header的高度是64px */
+        left: 0;
+        overflow: hidden;
+        width: 100%;
+        height: calc(100vh - 64px);
+        overflow-y: scroll;
+    }
+    .user .container {
+        width: 100%;
+        position: relative;
+        min-height: calc(100vh - 64px - 64px);  /* 减去header和footer的高度 */
+    }
+    /* footer，为了让滚动逻辑正常，这个footer是写在content里面的 */
+    .user .footer {
+        width: 100%;
+        height: 64px;
+        line-height: 64px;
+        text-align: center;
+        padding: 10px 0;
     }
 </style>

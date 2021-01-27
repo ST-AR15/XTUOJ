@@ -1,5 +1,5 @@
 <template>
-  <div class="app" id="app" style="overflow: hidden">
+  <div class="app" id="app">
     <a-config-provider :locale="zh_CN">
       <router-view/>
     </a-config-provider>
@@ -22,5 +22,9 @@ export default {
 </script>
 
 <style>
-
+.app {
+  min-width: 1000px;
+  position: relative;
+  overflow: hidden;
+}
 </style>

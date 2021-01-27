@@ -39,12 +39,24 @@
             <a-layout-content>
                 <div class="container">
                     <div class="page">
-                        <home @goQuestion="goQuestion" v-show="page == 'home'"/>
-                        <problems v-show="page == 'problems'" />
-                        <contests v-show="page == 'contests'"/>
-                        <status v-show="page == 'status'"/>
-                        <ranklist v-show="page == 'ranklist'"/>
-                        <question v-show="page == 'question'" :ID="questionID" @back="page = 'home'" />
+                        <transition name="cross">
+                            <home @goQuestion="goQuestion" v-show="page == 'home'"/>
+                        </transition>
+                        <transition name="cross">
+                            <problems v-show="page == 'problems'" />
+                        </transition>
+                        <transition name="cross">
+                            <contests v-show="page == 'contests'"/>
+                        </transition>
+                        <transition name="cross">
+                            <status v-show="page == 'status'"/>
+                        </transition>
+                        <transition name="cross">
+                            <ranklist v-show="page == 'ranklist'"/>
+                        </transition>
+                        <transition name="cross">
+                            <question v-show="page == 'question'" :ID="questionID" @back="page = 'home'" />
+                        </transition>
                     </div>
                     <div class="footer">
                         XTU Online Judge ©2021 Created by Graduates of network engineering in 2017
@@ -99,6 +111,7 @@ export default {
         height: 100vh;
         background-color: #F2F4F9;
         overflow: hidden;
+        position: relative;
     }
     /* header */
     .user .ant-layout-header {

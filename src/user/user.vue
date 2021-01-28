@@ -33,8 +33,10 @@
                     </a-menu-item>
                 </a-menu>
                 <!-- TODO 两个按钮只显示一个，根据登录状态决定 -->
-                <a-button class="navButton">登录</a-button>
-                <a-button class="navButton">通知</a-button>
+                <div class="login">
+                    <a-button class="navButton">登录</a-button>
+                    <a-button class="navButton">通知</a-button>
+                </div>
             </a-layout-header>
             <a-layout-content>
                 <div class="container">
@@ -121,7 +123,7 @@ export default {
         /* position: relative; */
         background-color: rgb(252, 253, 254);
         color: rgb(90, 90, 90);
-        overflow: hidden;
+        /* overflow: hidden; */
         height: 64px; /* 一开始不打算写死高度的- -为了后面的内容还是写一下吧，毕竟这样才能让它保持在最顶上 */
         width: 100%;
         position: fixed;
@@ -144,12 +146,14 @@ export default {
         height: 64px;
         margin: 0 5px;
     }
-    .user .ant-layout-header > .navButton {
+    .user .login {
         position: absolute;
         right: 0;
+        margin-right: 60px;
+    }
+    .user .login > button {
         color: rgb(81, 141, 225);
         font-weight: 700;
-        margin-right: 60px;
         padding: 0 20px;
     }
     /* content */

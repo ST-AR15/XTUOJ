@@ -34,6 +34,32 @@
 
 ## 页面设计
 
+### user
+
+user页面的设计如下：
+
+```html
+<div class="user">
+    <a-layout>
+        <a-layout-header>
+            <div class=logo></div>
+            <a-menu></a-menu>
+            <div class="button"></div>
+        </a-layout-header>
+        <a-layout-content>
+            <div class="container">
+                <div class="page"></div>
+                <div class="footer"></div>
+            </div>
+        </a-layout-content>
+    </a-layout>
+</div>
+```
+
+
+
+## 组件设计
+
 ### 通用组件（components）
 
 #### questionlist.vue

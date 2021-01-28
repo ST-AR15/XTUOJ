@@ -91,7 +91,6 @@ export default {
         backMethod: String,
     },  // 从父组件获得题目ID，然后在接口里获得全部值
     data() {
-        
         return {
             loading: true, // 加载状态
             cmOptions:{
@@ -139,29 +138,35 @@ export default {
         },
         submit() {  // 提交代码
             console.log(this.question.code);
+        },
+        openQuestion() {  // 加载问题
+            console.log("打开了题目" + this.ID);
+            this.loading = true; // 开始加载题目
+            let url = this.$baseUrl + '/api/problem/' + this.ID;
+            this.$axios.get(url).then(rep => {
+                const data = rep.data.data;
+                // Pid
+                this.question.title = data.Tittle;
+                // source
+                this.question.questionDetail = data.Content;
+                this.question.timeLimit = data.TimeLimit;
+                this.question.memoryLimit = data.MemoryLimit;
+                // IsBan
+                // Accept
+                // Submit
+                // Solved
+                // created_at
+                // update_at
+                this.loading = false; // 加载题目完成
+            })
         }
     },
-    mounted: function() {
-        console.log("打开了题目" + this.ID);
-        this.loading = true; // 加载题目
-        let url = this.$baseUrl + '/api/problem/' + this.ID;
-        this.$axios.get(url).then(rep => {
-            const data = rep.data.data;
-            // Pid
-            this.question.title = data.Tittle;
-            // source
-            this.question.questionDetail = data.Content;
-            this.question.timeLimit = data.TimeLimit;
-            this.question.memoryLimit = data.MemoryLimit;
-            // IsBan
-            // Accept
-            // Submit
-            // Solved
-            // created_at
-            // update_at
-            this.loading = false; // 加载题目
-        })
-    }
+    watch: {
+        ID: function(){
+            console.log("ID changed");
+            this.openQuestion();
+        }
+    },
 }
 </script>
 

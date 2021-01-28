@@ -57,7 +57,7 @@
                             <ranklist v-show="page == 'ranklist'"/>
                         </transition>
                         <transition name="cross">
-                            <question v-show="page == 'question'" :ID="questionID" @back="page = 'home'" />
+                            <question v-show="page == 'question'" :ID="questionID" @back="back" />
                         </transition>
                     </div>
                     <div class="footer">
@@ -100,6 +100,11 @@ export default {
         goQuestion(id) {  // 打开某题
             this.questionID = id;
             this.page[0] = 'question';
+            this.$forceUpdate();
+        },
+        back() {  // 回到之前的页面
+            console.log(this.page);
+            this.page[0] = 'home';
             this.$forceUpdate();
         }
     }

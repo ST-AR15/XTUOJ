@@ -1,17 +1,20 @@
 <template>
     <div class="question" id="question">
-        <a-layout>
-            <a-layout-header style="padding: 0">
-                <a-page-header 
-                    title="返回"
-                    @back="back"
-                />
-            </a-layout-header>
-            <a-spin
-                :spinning="loading"
-            >
-                <a-layout>
-                    <a-layout-sider>
+        <a-page-header 
+            title="返回"
+            @back="back"
+        />
+        <div class="container">
+            <div class="left" v-bind:style="{ width: leftW + 'px' }">
+                <div class="menu">
+                    <a-menu mode="horizontal" v-model="leftInner">
+                        <a-menu-item key="question">问题</a-menu-item>
+                        <a-menu-item key="discuss">讨论</a-menu-item>
+                        <a-menu-item key="submit">提交情况</a-menu-item>
+                    </a-menu>
+                </div>
+                <div class="leftContainer">
+                    <section v-show="leftInner[0] == 'question'" class="questionSection">
                         <!-- 题目ID和title -->
                         <h1>
                             ID {{ ID }}:{{ question.title }}
@@ -33,44 +36,57 @@
                         <!-- 题目内容 -->
                         <!-- <h2>题目详情</h2> -->
                         <mavon-editor v-model="question.questionDetail" :subfield="false" :toolbarsFlag="false" defaultOpen="preview"></mavon-editor>
-                    </a-layout-sider>
-                    <a-layout-content style="padding:10px;">
-                        <div>
-                            <p>
-                                语言：
-                                <a-select v-model="question.language" style="width: 120px" defult-value="c">
-                                    <template v-for="item in question.language_allowed">
-                                        <a-select-option :key="item" :value="item">
-                                            {{ item }}
-                                        </a-select-option>
-                                    </template>
-                                </a-select>
-                            </p>
-                        </div>
-                        <!-- <mavon-editor style="height:700px;margin-bottom:20px;z-index:1" :subfield="false" :toolbarsFlag="false" placeholder="Code here……" :tabSize="4" v-model="question.code"></mavon-editor> -->
-                        <codemirror
-                            ref="mycode"
-                            v-model="question.code"
-                            :options="cmOptions"
-                            >
-                        </codemirror>
-                        <div style="margin-top:50px">
-                            <a-space>
-                                <a-button type="primary" @click="submit">提交</a-button>
-                                <!-- TODO 根据文件后缀自动转换语言 -->
-                                <a-upload
-                                    name="codeFile"
-                                    :beforeUpload="uploadFile"
-                                    :showUploadList="false"
-                                >
-                                    <a-button type="primary">上传文件</a-button>
-                                </a-upload>
-                            </a-space>
-                        </div>
-                    </a-layout-content>
-                </a-layout>
-            </a-spin>
-        </a-layout>
+                    </section>
+                    <section v-show="leftInner[0] == 'discuss'" class="discussSection">
+                        
+                    </section>
+                    <section v-show="leftInner[0] == 'submit'" class="submitSection"></section>
+                </div>
+                <div class="buttons">
+                    <a-space>
+                        <a-input></a-input>
+                        <a-button>跳转</a-button>
+                    </a-space>
+                </div>
+            </div>
+            <div class="bar" draggable="true" @dragend="dragBar">
+            </div>
+            <div class="right"  v-bind:style="{ width: rightW + 'px' }">
+                <div style="height: 48px">
+                    <p>
+                        语言：
+                        <a-select v-model="question.language" style="width: 120px" defult-value="c">
+                            <template v-for="item in question.language_allowed">
+                                <a-select-option :key="item" :value="item">
+                                    {{ item }}
+                                </a-select-option>
+                            </template>
+                        </a-select>
+                    </p>
+                </div>
+                <!-- <mavon-editor style="height:700px;margin-bottom:20px;z-index:1" :subfield="false" :toolbarsFlag="false" placeholder="Code here……" :tabSize="4" v-model="question.code"></mavon-editor> -->
+                <codemirror
+                    ref="mycode"
+                    v-model="question.code"
+                    :options="cmOptions"
+                    style="height: calc(100% - 48px - 64px); position: relative"
+                    >
+                </codemirror>
+                <div class="buttons">
+                    <a-space>
+                        <a-button type="primary" @click="submit">提交</a-button>
+                        <!-- TODO 根据文件后缀自动转换语言 -->
+                        <a-upload
+                            name="codeFile"
+                            :beforeUpload="uploadFile"
+                            :showUploadList="false"
+                        >
+                            <a-button type="primary">上传文件</a-button>
+                        </a-upload>
+                    </a-space>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -92,6 +108,9 @@ export default {
     },  // 从父组件获得题目ID，然后在接口里获得全部值
     data() {
         return {
+            leftInner: ["question"],
+            leftW: 500,   // 左边宽度
+            rightW: 500,   // 右边宽度
             loading: true, // 加载状态
             cmOptions:{
                 value:'',
@@ -159,6 +178,13 @@ export default {
                 // update_at
                 this.loading = false; // 加载题目完成
             })
+        },
+        dragBar(e) {  // 拖拽
+            console.log(e);
+            console.log(this.leftW);
+            this.leftW = e.clientX;
+            this.rightW = window.innerWidth - 20 - this.leftW;
+            
         }
     },
     watch: {
@@ -167,6 +193,14 @@ export default {
             this.openQuestion();
         }
     },
+    mounted() {
+        let that = this;
+        that.rightW = window.innerWidth - 20 - that.leftW;
+        window.onresize = function() {
+            that.rightW = window.innerWidth - 20 - that.leftW;
+        }
+    }
+    
 }
 </script>
 
@@ -176,34 +210,68 @@ export default {
     background-color: #FAFAFA;
     position: relative;
     margin: 0 auto;
-}
-.question .ant-layout {
-    width: 100%;
     overflow: hidden;
 }
-.question .ant-layout-sider {
-    max-width: 400px !important;
-    min-width: 400px !important;
-    width: 400px !important;
-    min-height: 100%;
-    max-height: 100%;
-    height: 100%;
-    overflow-y: scroll;
-    padding: 5px;
+.question > .container {
+    width: 100%;
+    height: calc(100% - 64px);
+    overflow: hidden;
+    display: flex;
 }
-.question h1 {
+.question > .container > div {
+    height: 100%;
+    position: relative;
+}
+.question .left {
+    min-width: 500px;
+}
+.question .leftContainer {
+    /* 48是menu,64是buttons */
+    height: calc(100% - 48px - 64px);
+    overflow: auto;
+}
+.question .leftContainer > section {
+    overflow: visible;
+}
+.question .bar {
+    width: 10px;
+    cursor: col-resize;
+    background-color: blanchedalmond;
+    transition: all .6s;
+}
+.question .bar:hover {
+    background-color: burlywood;
+}
+.question .right {
+    min-width: 300px;
+}
+.question .questionSection > h1 {
     font-size: 26px;
     border-left: 8px solid #1890FF;
     padding-left: 4px;
 }
-.question h2 {
+.question .questionSection > h2 {
     font-size: 26px;
     margin-top: 45px;
     border-left: 8px solid #1890FF;
     padding-left: 4px;
     user-select: none;
 }
-.question p {
+.question .questionSection > p {
     font-size: 20px;
+}
+.question .buttons {
+    width: 100%;
+    height: 64px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    border-top: 1px solid #e8e8e8;
+}
+.question .buttons > input {
+    width: 120px;
+}
+.CodeMirror {
+    height: 100% !important;
 }
 </style>

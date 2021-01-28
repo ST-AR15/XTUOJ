@@ -60,9 +60,10 @@
                             <question v-show="page == 'question'" :ID="questionID" @back="back" />
                         </transition>
                     </div>
-                    <div class="footer">
+                    <!-- 当页面需要展示question的时候，footer是不需要展示的，因为整个页面都需要展示题目 -->
+                    <!-- <div class="footer" v-if="page != 'question'">
                         XTU Online Judge ©2021 Created by Graduates of network engineering in 2017
-                    </div>
+                    </div> -->
                 </div>
             </a-layout-content>
         </a-layout>
@@ -180,7 +181,14 @@ export default {
         position: relative;
         width: 100%;
         min-height: calc(100vh - 64px - 64px);
-        padding: 20px 0;
+        /* padding: 20px 0; */
+    }
+    .user .page > div {
+        position: absolute;
+        width: 100%;
+    }
+    .user .page > .question {
+        height: calc(100vh - 64px); /* question页面要占据整个展示区域 */
     }
     /* footer，为了让滚动逻辑正常，这个footer是写在content里面的 */
     .user .footer {

@@ -68,7 +68,10 @@
                     <span slot="title"></span>
                     <!-- 表头 -->
                     <template slot="title">
-                        <h2 style="font-size: 22px">比赛列表</h2>
+                        <!-- <a-space> -->
+                            <h2 style="font-size: 22px; display: inline-block; margin-right: 10px">比赛列表</h2>
+                            <a-button type="primary" @click="createContest">创建比赛</a-button>
+                        <!-- </a-space> -->
                     </template>
                     <!-- 搜索图标 -->
                     <a-icon
@@ -219,6 +222,10 @@ export default {
         startContest() {  // 参加某比赛（展示题目列表）
             this.pageNow = "questions"
         },
+        createContest() {  // 创建比赛
+        // TODO 完成创建比赛
+
+        }
     },
     mounted:function() {
         // console.log(sessionStorage);

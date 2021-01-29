@@ -74,6 +74,7 @@
                 </codemirror>
                 <div class="buttons">
                     <a-space>
+                        <a-button type="primary" @click="question.code = ''">重置</a-button>
                         <a-button type="primary" @click="submit">提交</a-button>
                         <!-- TODO 根据文件后缀自动转换语言 -->
                         <a-upload
@@ -189,6 +190,8 @@ export default {
     },
     watch: {
         ID: function(){
+            // 重置代码
+            this.question.code = "";
             console.log("ID changed");
             this.openQuestion();
         }

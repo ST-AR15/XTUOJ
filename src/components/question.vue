@@ -98,6 +98,10 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="contextPagination" v-show="data.isRecomment">
+                                    <span>{{ commentPost.find(o => o.postId == data.Rid).postId }}</span>
+                                    <a-pagination :hideOnSinglePage="true" v-model="data.page" :defaultPageSize="10" simple />
+                                </div>
                             </div>
                         </div>
                     </section>
@@ -207,6 +211,7 @@ export default {
                     ip: null,
                     isRecomment: false,
                     isReply: false,
+                    page: 1,
                 },
                 {
                     Rid: 5,

@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 // 首页
-import index from '../index.vue'
+// import index from '../index.vue'
 
 // 管理员页面
 import admin from '../admin/admin.vue'
@@ -19,18 +19,18 @@ const routes = [
   //   name: 'Home',
   //   component: Home
   // },
-  {
-    path: '/',
-    name: 'index',
-    component: index
-  },
+  // {
+  //   path: '/',
+  //   name: 'index',
+  //   component: index
+  // },
   {
     path: '/admin',
     name: 'admin',
     component: admin
   },
   {
-    path: '/user',
+    path: '/',
     name: 'user',
     component: user
   },

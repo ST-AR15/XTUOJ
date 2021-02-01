@@ -123,7 +123,9 @@
                                 </a-select-option>
                             </template>
                         </a-select>
+                        <span style="color: #999999; margin-left: 15px;">*可以通过拖拽文件/文本的方式来快速填写代码</span>
                     </p>
+                    
                 </div>
                 <!-- <mavon-editor style="height:700px;margin-bottom:20px;z-index:1" :subfield="false" :toolbarsFlag="false" placeholder="Code here……" :tabSize="4" v-model="question.code"></mavon-editor> -->
                 <codemirror
@@ -366,7 +368,7 @@ export default {
     position: relative;
 }
 .question .left {
-    min-width: 500px;
+    min-width: 400px;
 }
 .question .leftContainer {
     /* 48是menu,64是buttons */
@@ -387,7 +389,7 @@ export default {
     background-color: burlywood;
 }
 .question .right {
-    min-width: 300px;
+    min-width: 400px;
 }
 .question .questionSection > h1 {
     font-size: 26px;

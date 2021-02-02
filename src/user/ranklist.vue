@@ -1,6 +1,7 @@
 <template>
     <div class="ranklist" id="ranklist">
         <h1>排行榜</h1>
+        
         <div class="list" v-bind:style="{
             height: list.length*42 + 'px'
         }">
@@ -61,14 +62,23 @@ export default {
 
 <style>
     .ranklist {
-        width: 75vw;
         position: relative;
         margin: 0 auto;
+        
+    }
+    .ranklist > h1 {
+        width: 1000px;
+        /* display: inline-block; */
+        margin: 0 auto;
         background-color: #FCFDFE;
+        padding: 5px 0 5px 10px;
+        border-bottom: 1px solid #999999;
     }
     .list {
-        width: 100%;
+        width: 1000px;
+        margin: 0 auto;
         position: relative;
+        background-color: #FCFDFE;
     }
     .listItem {
         position: absolute;
@@ -80,6 +90,6 @@ export default {
         transition: all .6s;
     }
     .listItem:hover {
-        background-color: aqua;
+        background-color: rgb(230,247,255);
     }
 </style>

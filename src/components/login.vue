@@ -62,17 +62,17 @@ export default {
             console.log(info);
             that.$axios.post(url,info).then(rep => {
                 console.log(rep);
-                sessionStorage.token = rep.token;
+                sessionStorage.token = rep.data.data.token;
+                sessionStorage.uid = rep.data.data.Uid;
                 that.$message.success('登录成功');
+                this.$emit('close');
+                this.$emit('ok');
             })
         },
         cancel() {
             // this.visible = false;
             this.$emit('close');
         },
-        success() {
-            this.$emit('ok');
-        }
     }
 }
 </script>

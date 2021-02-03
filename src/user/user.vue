@@ -35,7 +35,7 @@
                 <!-- TODO 两个按钮只显示一个，根据登录状态决定 -->
                 <div class="loginzoom">
                     <a-button class="navButton" @click="loginVisible = true">登录</a-button>
-                    <a-button class="navButton">通知</a-button>
+                    <a-button class="navButton" @click="goPerson">个人中心</a-button>
                 </div>
             </a-layout-header>
             <a-layout-content>
@@ -67,7 +67,7 @@
                 </div>
             </a-layout-content>
         </a-layout>
-        <login :visible="loginVisible" @close="loginVisible = false" />
+        <login :visible="loginVisible" @ok="loginVisible = false" @close="loginVisible = false" />
     </div>
 </template>
 
@@ -111,6 +111,9 @@ export default {
             console.log(this.page);
             this.page[0] = 'home';
             this.$forceUpdate();
+        },
+        goPerson() { // 前往个人中心
+            
         }
     }
 }

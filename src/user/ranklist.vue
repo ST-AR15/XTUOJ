@@ -6,7 +6,7 @@
             height: list.length*42 + 'px'
         }">
             <template v-for="(item,i) in list">
-                <div class="listItem" v-bind:key="i" v-bind:style="{
+                <div class="list-item" v-bind:key="i" v-bind:style="{
                     transform: 'translateY(' + (item.rank-1)*42 + 'px)'
                 }">
                     <div class="name" v-text="item.name"></div>
@@ -80,7 +80,7 @@ export default {
         position: relative;
         background-color: #FCFDFE;
     }
-    .listItem {
+    .list-item {
         position: absolute;
         width: 100%;
         height: 42px;
@@ -89,7 +89,7 @@ export default {
         justify-content: space-around;
         transition: all .6s;
     }
-    .listItem:hover {
+    .list-item:hover {
         background-color: rgb(230,247,255);
     }
 </style>

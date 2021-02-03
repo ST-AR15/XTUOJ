@@ -33,7 +33,7 @@
                     </a-menu-item>
                 </a-menu>
                 <!-- TODO 两个按钮只显示一个，根据登录状态决定 -->
-                <div class="loginZoom">
+                <div class="loginzoom">
                     <a-button class="navButton" @click="loginVisible = true">登录</a-button>
                     <a-button class="navButton">通知</a-button>
                 </div>
@@ -156,12 +156,12 @@ export default {
         height: 64px;
         margin: 0 5px;
     }
-    .user .loginZoom {
+    .user .loginzoom {
         position: absolute;
         right: 0;
         margin-right: 60px;
     }
-    .user .loginZoom > button {
+    .user .loginzoom > button {
         color: rgb(81, 141, 225);
         font-weight: 700;
         padding: 0 20px;

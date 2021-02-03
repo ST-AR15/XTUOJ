@@ -53,7 +53,18 @@ export default {
     },
     methods: {
         login() {
-            
+            let that = this;
+            // let url = this.$baseUrl + "/users/login";
+            let info = {
+                StudentID: that.loginForm.account,
+                password: that.loginForm.password,
+            };
+            console.log(info);
+            that.$axios.post("/users/login",info).then(rep => {
+                console.log(rep);
+                sessionStorage.token = rep.token;
+                that.$message.success('登录成功');
+            })
         },
         cancel() {
             // this.visible = false;

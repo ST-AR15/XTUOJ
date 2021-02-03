@@ -54,13 +54,13 @@ export default {
     methods: {
         login() {
             let that = this;
-            // let url = this.$baseUrl + "/users/login";
+            const url = "/api/users/login";
             let info = {
                 StudentID: that.loginForm.account,
                 password: that.loginForm.password,
             };
             console.log(info);
-            that.$axios.post("/users/login",info).then(rep => {
+            that.$axios.post(url,info).then(rep => {
                 console.log(rep);
                 sessionStorage.token = rep.token;
                 that.$message.success('登录成功');

@@ -33,8 +33,8 @@
                     </a-menu-item>
                 </a-menu>
                 <!-- TODO 两个按钮只显示一个，根据登录状态决定 -->
-                <div class="login">
-                    <a-button class="navButton">登录</a-button>
+                <div class="loginZoom">
+                    <a-button class="navButton" @click="loginVisible = true">登录</a-button>
                     <a-button class="navButton">通知</a-button>
                 </div>
             </a-layout-header>
@@ -67,6 +67,7 @@
                 </div>
             </a-layout-content>
         </a-layout>
+        <login :visible="loginVisible" @close="loginVisible = false" />
     </div>
 </template>
 
@@ -77,6 +78,7 @@ import contests from './contests.vue'
 import status from './status.vue'
 import ranklist from './ranklist.vue'
 import question from '@/components/question.vue'
+import login from '@/components/login.vue'
 export default {
     components: {
         home,
@@ -85,12 +87,14 @@ export default {
         status,
         ranklist,
         question,
+        login,
     },
     data() {
         return {
             page: ['home'],       // 当前选择的页面
             isQuestion: false,    // 是否展示问题
             questionID: 1000,     // 需要展示的问题ID
+            loginVisible: false,  // 是否显示login
         }
     },
     methods: {
@@ -152,12 +156,12 @@ export default {
         height: 64px;
         margin: 0 5px;
     }
-    .user .login {
+    .user .loginZoom {
         position: absolute;
         right: 0;
         margin-right: 60px;
     }
-    .user .login > button {
+    .user .loginZoom > button {
         color: rgb(81, 141, 225);
         font-weight: 700;
         padding: 0 20px;

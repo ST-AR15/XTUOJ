@@ -2,6 +2,8 @@ import axios from 'axios'
 import Vue from 'vue'
 import { notification } from 'ant-design-vue'
 axios.defaults.timeout = 10000;
+// TODO 全部采用这种baseURL写法
+axios.defaults.baseURL = "http://47.106.68.121:8887"
 // const baseUrl = "http://172.22.114.116"  // 校园网环境
 const baseUrl = "http://47.106.68.121:8887"          // 公网url
 Vue.prototype.$baseUrl = baseUrl
@@ -27,10 +29,11 @@ axios.interceptors.response.use((res) => {
 },error => {
     notification.open({
         message: error.message,
-        description: '出现网络错误，请检查自己的网络连接或联系管理员。' + 'url: ' + error.config.url,
+        description: '响应错误，请检查自己的网络连接或联系管理员。' + 'url: ' + error.config.url,
         duration: 0,
         icon: '×',
     });
     console.log(error);
+    console.log(Promise.reject(error));
     return Promise.reject(error)
 })

@@ -181,7 +181,7 @@ export default {
         getQuestionDetail(info) {  // 获取题目详情和修改
             let that = this;
             // 使用info.ID来调取题目信息
-            let url = this.$baseUrl + "/api/problem/" + info.ID;
+            let url = "/api/problem/" + info.ID;
             this.$axios.get(url).then(rep => {
                 // 把获取到的信息赋值给questionDetail
                 const data = rep.data.data;
@@ -212,7 +212,7 @@ export default {
             this.questionDataModal.visible = true;
         },
         deleteQuestion(info) { // 删除题目
-            let url = this.$baseUrl + "/api/problem/" + info.ID;
+            let url = "/api/problem/" + info.ID;
             this.$axios.delete(url).then(rep => {
                 if(parseInt(rep.status/100) == 2) { // 返回2开头的成功码
                     // 提示操作结果
@@ -227,7 +227,7 @@ export default {
             console.log('关闭对话框');
         },
         submitChange() { // 提交问题修改
-            const url = this.$baseUrl + '/api/problem/' + this.questionDetailModal.questionDetail.ID;
+            const url = '/api/problem/' + this.questionDetailModal.questionDetail.ID;
             const info = {
                 Tittle: this.questionDetailModal.questionDetail.title,
                 Source: this.questionDetailModal.questionDetail.source,

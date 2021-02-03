@@ -233,7 +233,7 @@ export default {
                         DetailIn: detailIn,
                     };
                     // url
-                    let url = this.$baseUrl + "/api/problem";
+                    let url = "/api/problem";
                     that.$axios.post(url,info).then(rep => {
                         console.log(rep);
                         // 弹出对话框

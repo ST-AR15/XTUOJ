@@ -253,7 +253,7 @@ export default {
         openQuestion() {  // 加载问题
             console.log("打开了题目" + this.ID);
             this.loading = true; // 开始加载题目
-            let url = this.$baseUrl + '/api/problem/' + this.ID;
+            let url = '/api/problem/' + this.ID;
             this.$axios.get(url).then(rep => {
                 const data = rep.data.data;
                 // Pid
@@ -284,7 +284,7 @@ export default {
                 return ;
             }
             let that = this;
-            let url = this.$baseUrl + '/api/reply/' + this.ID;
+            let url = '/api/reply/' + this.ID;
             this.$axios.get(url).then(rep => {
                 const data = rep.data.data;  // 评论的数据
                 for(let i in data) {

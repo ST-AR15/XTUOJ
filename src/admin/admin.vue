@@ -22,6 +22,7 @@
                                 <span>读取题目</span>
                             </a-menu-item>
                         </a-sub-menu>
+                        <!-- 选项二：比赛管理 -->
                         <a-sub-menu>
                             <span slot="title">
                                 <a-icon type="code" theme="twoTone" />
@@ -34,6 +35,11 @@
                                 <span>管理比赛</span>
                             </a-menu-item>
                         </a-sub-menu>
+                        <!-- 选项三：个人中心 -->
+                        <a-menu-item @click="page = 'person'">
+                            <a-icon type="smile" theme="twoTone" />
+                            <span>个人中心</span>
+                        </a-menu-item>
                     </a-menu>
                 </a-layout-sider>
                 <a-layout-content>
@@ -42,6 +48,7 @@
                     <read v-show="page == 'read'"/>
                     <addContest v-show="page == 'addContest'"/>
                     <manageContest v-show="page == 'manageContest'"/>
+                    <person v-show="page == 'person'"/>
                 </a-layout-content>
             </a-layout>
             <a-layout-footer>
@@ -57,6 +64,7 @@ import add from './add.vue'
 import read from './read.vue'
 import addContest from './addContest.vue'
 import manageContest from './manageContest.vue'
+import person from './person.vue'
 export default {
     components: {
         welcome,
@@ -64,6 +72,7 @@ export default {
         read,
         addContest,
         manageContest,
+        person,
     },
     data() {
         return {
@@ -73,6 +82,9 @@ export default {
     },
     methods: {
 
+    },
+    mounted() {
+        // 检测登录状态，没登录就提示登录
     }
 }
 </script>

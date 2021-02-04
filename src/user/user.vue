@@ -34,8 +34,8 @@
                 </a-menu>
                 <!-- TODO 两个按钮只显示一个，根据登录状态决定 -->
                 <div class="loginzoom">
-                    <a-button class="navButton" @click="loginVisible = true">登录</a-button>
-                    <a-button class="navButton" @click="goPerson">个人中心</a-button>
+                    <a-button class="navButton" v-if="!isLogin" @click="loginVisible = true">登录</a-button>
+                    <a-button class="navButton" v-else @click="goPerson">个人中心</a-button>
                 </div>
             </a-layout-header>
             <a-layout-content>
@@ -67,7 +67,7 @@
                 </div>
             </a-layout-content>
         </a-layout>
-        <login :visible="loginVisible" @ok="loginVisible = false" @close="loginVisible = false" />
+        <login :visible="loginVisible" @ok="loginVisible = false;isLogin = true" @close="loginVisible = false" />
     </div>
 </template>
 
@@ -95,6 +95,7 @@ export default {
             isQuestion: false,    // 是否展示问题
             questionID: 1000,     // 需要展示的问题ID
             loginVisible: false,  // 是否显示login
+            isLogin: false,       // 登录状态，登录了就变成true
         }
     },
     methods: {
@@ -113,7 +114,7 @@ export default {
             this.$forceUpdate();
         },
         goPerson() { // 前往个人中心
-            
+            this.$router.replace("/admin");
         }
     }
 }

@@ -116,6 +116,12 @@ export default {
         goPerson() { // 前往个人中心
             this.$router.replace("/admin");
         }
+    },
+    mounted() {
+        if(sessionStorage.token) {
+            // 如果是登录状态
+            this.isLogin = true;
+        }
     }
 }
 </script>

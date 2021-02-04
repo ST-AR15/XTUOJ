@@ -208,7 +208,7 @@ export default {
                     let timeLimit;
                     if(that.form.timeLimit%500 != 0) {  // 修改无效的时限
                         timeLimit = (parseInt(that.form.timeLimit/500)+1)*500;
-                        this.$message.info(`已将时限的${that.form.timeLimit}修改为${timeLimit}`);
+                        this.$message.info(`已将时限的${ that.form.timeLimit }修改为${ timeLimit }`);
                     }
                     // 把DetailOut和DetailIn变成字符串
                     // 声明生成字符串的方法
@@ -234,7 +234,7 @@ export default {
                     };
                     // url
                     let url = "/api/problem";
-                    that.$axios.post(url,info).then(rep => {
+                    that.$axios.post(url, info).then(rep => {
                         console.log(rep);
                         // 弹出对话框
                         that.modal.visible = true;

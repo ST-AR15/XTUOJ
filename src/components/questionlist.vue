@@ -117,7 +117,7 @@
 </template>
 
 <script>
-import { message } from 'ant-design-vue'
+// import { message } from 'ant-design-vue'
 export default {
     props: {
         buttons: Array
@@ -127,7 +127,7 @@ export default {
             searchText: "",
             loading: false,
             pagination: {       // 页面设置
-                pageSize:5,     // 每页题目数量
+                pageSize:0,     // 每页题目数量
                 showQuickJumper: true,  // 快速跳转
                 total: 0,
                 current: 1,
@@ -259,37 +259,12 @@ export default {
             // 修改页码
             this.pagination.current = pagination.current;
             // 变量
-            let page = {
-                page: pagination.current,
-            };
+            // let page = {
+            //     page: pagination.current,
+            // };
             // 只有未加载过的页面才需要加载
             if(this.questions[(pagination.current-1)*this.pagination.pageSize] == undefined) {
-                this.loading = true; // 开始加载
-                // 声明url
-                let url = '/api/problem';
-                // 开始请求。get请求需要把变量写在param里
-                this.$axios.get(url, {
-                    params: page,
-                }).then(rep => {
-                    // 把返回值里的data取出
-                    const data = rep.data.info.data;
-                    // 如果返回值是空的，就提示一下
-                    if(rep.data.info.data.length == 0) {
-                        message.error("打开了不存在的页码！");
-                    } else {
-                        // 循环复制给数组questions
-                        for(let i=(pagination.current-1)*this.pagination.pageSize,j=0;j<data.length;j++,i++) {
-                            this.questions[i] = {};
-                            this.questions[i]["key"] = data[j].Pid;
-                            this.questions[i]["ID"] = data[j].Pid;
-                            this.questions[i]["title"] = data[j].Tittle;
-                        }
-                    }
-                    this.loading = false;
-                }).catch(error => {
-                    console.log(error);
-                    this.loading = false;
-                })
+                this.loadPage(pagination.current)
             }
             
         },
@@ -303,6 +278,11 @@ export default {
             // 初始化结果数组
             this.questions = [];
             // 加载第一页的内容，并确认每一页的内容数量和总页数
+            this.loadPage(1);
+            // console.log(that.pagination.current);
+        },
+        loadPage(page) { // 加载某一页
+            let that = this;
             // 开始加载
             that.loading = true;
             // url
@@ -310,20 +290,20 @@ export default {
             // 开始请求
             this.$axios.get(url, {
                 params: {
-                    page: 1,
+                    page: page,
                 },
             }).then(rep => {
-                console.log(rep);
-                const data = rep.data.data.data;
+                const data = rep.data.data;
                 // 设置页码相关的东西
-                that.pagination.total = rep.data.data.total;
-                that.pagination.pageSize = data.length;
+                that.pagination.pageSize = that.pagination.pageSize == 0? data.data.length:that.pagination.pageSize;
+                that.pagination.total = data.total;
+                // console.log(that.pagination.pageSize);
                 // 循环复制给数组questions
-                for(let i=0;i<that.pagination.pageSize;i++) {
+                for(let i=(that.pagination.current-1)*that.pagination.pageSize,j=0;j<data.data.length;i++,j++) {
                     that.questions[i] = {};
-                    that.questions[i]["key"] = data[i].Pid;
-                    that.questions[i]["ID"] = data[i].Pid;
-                    that.questions[i]["title"] = data[i].Tittle;
+                    that.questions[i]["key"] = data.data[j].Pid;
+                    that.questions[i]["ID"] = data.data[j].Pid;
+                    that.questions[i]["title"] = data.data[j].Tittle;
                 }
                 // 结束加载
                 that.loading = false;
@@ -332,7 +312,6 @@ export default {
                 console.log(error);
                 that.loading = false;
             })
-            console.log(that.pagination.current);
         }
     },
     mounted: function() {

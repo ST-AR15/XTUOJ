@@ -2,7 +2,8 @@
     <div class="admin" id="admin"> 
         <a-layout>
             <a-layout-header>
-                <h1>湘潭大学OJ系统 - 管理员端</h1>
+                <h1>个人中心</h1>
+                <a-button type="primary" style="position: absolute; top:15px; right:40px" @click="back">回到首页</a-button>
             </a-layout-header>
             <a-layout>
                 <a-layout-sider>
@@ -81,7 +82,9 @@ export default {
         }
     },
     methods: {
-
+        back() {
+            this.$router.replace('/#');
+        }
     },
     mounted() {
         // 检测登录状态，没登录就提示登录

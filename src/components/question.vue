@@ -14,29 +14,31 @@
                     </a-menu>
                 </div>
                 <div class="leftContainer">
-                    <section v-show="leftInner[0] == 'question'" class="questionSection">
-                        <!-- 题目ID和title -->
-                        <h1>
-                            ID {{ ID }}:{{ question.title }}
-                        </h1>
-                        <!-- 题目标签 -->
-                        <p>
-                            <a-tag
-                                v-for="tip in question.tips"
-                                :key="tip"
-                                v-bind:id="'tip-' + tip"
-                            >
-                                {{tip}}
-                            </a-tag>
-                        </p>
-                        <p>
-                            时间限制：<span v-text="question.timeLimit"></span>ms
-                            内存限制：<span v-text="question.memoryLimit"></span>MB
-                        </p>
-                        <!-- 题目内容 -->
-                        <!-- <h2>题目详情</h2> -->
-                        <mavon-editor v-model="question.questionDetail" :subfield="false" :toolbarsFlag="false" defaultOpen="preview"></mavon-editor>
-                    </section>
+                    <a-spin :spinning="loading">
+                        <section v-show="leftInner[0] == 'question'" class="questionSection">
+                            <!-- 题目ID和title -->
+                            <h1>
+                                ID {{ ID }}:{{ question.title }}
+                            </h1>
+                            <!-- 题目标签 -->
+                            <p>
+                                <a-tag
+                                    v-for="tip in question.tips"
+                                    :key="tip"
+                                    v-bind:id="'tip-' + tip"
+                                >
+                                    {{tip}}
+                                </a-tag>
+                            </p>
+                            <p>
+                                时间限制：<span v-text="question.timeLimit"></span>ms
+                                内存限制：<span v-text="question.memoryLimit"></span>MB
+                            </p>
+                            <!-- 题目内容 -->
+                            <!-- <h2>题目详情</h2> -->
+                            <mavon-editor v-model="question.questionDetail" :subfield="false" :toolbarsFlag="false" defaultOpen="preview"></mavon-editor>
+                        </section>
+                    </a-spin>
                     <section v-show="leftInner[0] == 'discuss'" class="discussSection">
                         <div class="comment" style="margin-top: 10px">
                             <a-textarea placeholder="想说什么，尽管说吧~" v-model="comment" :rows="4" />
@@ -105,15 +107,15 @@
                 </div>
                 <div class="buttons">
                     <a-space>
-                        <a-input placeholder="请输入题号"></a-input>
-                        <a-button type="primary">跳转</a-button>
+                        <a-input placeholder="请输入题号" v-model="aimID"></a-input>
+                        <a-button type="primary" @click="ID = aimID">跳转</a-button>
                     </a-space>
                 </div>
             </div>
             <div class="bar" draggable="true" @dragend="dragBar">
             </div>
             <div class="right"  v-bind:style="{ width: rightW + 'px' }">
-                <div style="height: 48px">
+                <div style="height: 48px; padding-left: 5px">
                     <p>
                         语言：
                         <a-select v-model="question.language" style="width: 120px" defult-value="c">
@@ -172,6 +174,7 @@ export default {
     },  // 从父组件获得题目ID，然后在接口里获得全部值
     data() {
         return {
+            aimID: 0, // 要跳转的ID
             leftInner: ["question"],  // 左边显示的内容
             comment: "",   // 编辑框内容
             commentReply: "回复",  // 回复框内容
@@ -179,7 +182,7 @@ export default {
             commentPage: 1,  // 整个回复的页码
             leftW: 500,   // 左边宽度
             rightW: 500,   // 右边宽度
-            loading: true, // 加载状态
+            loading: false, // 加载状态
             cmOptions:{
                 value:'',
                 mode:"text/x-csrc",
@@ -333,6 +336,8 @@ export default {
             this.commentContext = [];
             // 页面切换到问题
             this.leftInner = ["question"];
+            // aimID切换
+            this.aimID = this.ID;
             // 打开问题
             this.openQuestion();
 
@@ -375,6 +380,7 @@ export default {
     height: calc(100% - 48px - 64px);
     /* overflow: auto; */
     overflow-y: scroll;
+    padding: 0 10px;
 }
 .question .leftContainer > section {
     overflow: visible;
@@ -462,6 +468,7 @@ export default {
     justify-content: flex-end;
     align-items: center;
     border-top: 1px solid #e8e8e8;
+    padding: 0 5px;
 }
 .question .buttons > input {
     width: 120px;

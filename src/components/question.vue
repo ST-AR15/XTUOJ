@@ -107,7 +107,7 @@
                 </div>
                 <div class="buttons">
                     <a-space>
-                        <a-input placeholder="请输入题号" v-model="aimID"></a-input>
+                        <a-input placeholder="请输入题号" v-model="aimID" @pressEnter="ID = aimID"></a-input>
                         <a-button type="primary" @click="ID = aimID">跳转</a-button>
                     </a-space>
                 </div>

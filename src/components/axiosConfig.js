@@ -27,6 +27,7 @@ axios.interceptors.response.use((res) => {
     notification.open({
         message: error.message,
         description: `响应错误，请检查自己的网络连接或联系管理员。url:${ error.config.url }；res:${ error.response.data.data }`,
+        // TODO 这个响应错误 在提交回复的时候还是data.message- -
         duration: 0,
         icon: '×',
     });

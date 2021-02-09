@@ -42,7 +42,7 @@
                     <section v-show="leftInner[0] == 'discuss'" class="discussSection">
                         <div class="comment" style="margin-top: 10px">
                             <a-textarea placeholder="想说什么，尽管说吧~" v-model="comment" :rows="4" />
-                            <a-button style="margin-top: 5px" type="primary">发表</a-button>
+                            <a-button style="margin-top: 5px" type="primary" @click="sendComment(false)">发表</a-button>
                         </div>
                         <div class="context">
                             <div class="contextInner" v-for="data in commentContext" v-bind:key="data.Rid">
@@ -62,15 +62,15 @@
                                                 @click="data.isRecomment = !data.isRecomment">
                                             </span>
                                             <span
-                                                @click="data.isReply = !data.isReply"
+                                                @click="data.isReply = !data.isReply; commentPost = data.Rid"
                                                 v-text="`${ !data.isReply? '回复':'收起回复' }`"
                                             ></span>
                                         </a-space>
                                     </div>
                                 </div>
                                 <div class="contextTextarea" v-show="data.isReply">
-                                    <a-textarea placeholder="想说什么，尽管说吧~" :rows="4" style="resize: none" />
-                                    <a-button style="margin-top: 5px;" type="primary">确定</a-button>
+                                    <a-textarea :placeholder="'回复用户' + data.Uid + '的评论'" v-model="commentReply" :rows="4" style="resize: none" />
+                                    <a-button style="margin-top: 5px;" type="primary" @click="sendComment(true)">回复</a-button>
                                 </div>
                                 <div class="reComment" v-show="data.isRecomment">
                                     <div class="contextInner" v-for="item in data.comment" v-bind:key="item.Rid">
@@ -85,7 +85,7 @@
                                             <div class="contextFooter">
                                                 <a-space>
                                                     <span
-                                                        @click="item.isReply = !item.isReply"
+                                                        @click="item.isReply = !item.isReply; commentPost = item.Rid"
                                                         v-text="`${ !item.isReply? '回复':'收起回复' }`"
                                                     ></span>
                                                 </a-space>
@@ -177,8 +177,8 @@ export default {
             aimID: 0, // 要跳转的ID
             leftInner: ["question"],  // 左边显示的内容
             comment: "",   // 编辑框内容
-            commentReply: "回复",  // 回复框内容
-            commentRip: 0,   // 回复对象的ID
+            commentReply: "",  // 回复框内容
+            commentPost: 0,   // 回复对象的RID
             commentPage: 1,  // 整个回复的页码
             leftW: 500,   // 左边宽度
             rightW: 500,   // 右边宽度
@@ -301,7 +301,7 @@ export default {
                         time: data[i].create_at,
                         ip: data[i].Ip,
                     }
-                    console.log(info);
+                    // console.log(info);
                     if(info.postId == null) {
                         // 如果没有postID，就说明是一级评论，直接push到comment数组里
                         // 先添加部分额外属性
@@ -326,7 +326,33 @@ export default {
                 that.commentContext.reverse();
                 // console.log(that.commentContext);
             })
-        }
+        },
+        sendComment(reply) {  // 提交评论
+            // console.log(reply)
+            let that = this;
+            // console.log(that.commentPost);
+            let info = {
+                Pid: that.ID,
+                Context: reply? that.commentReply: that.comment,
+                PostId: reply? that.commentPost: undefined,
+            };
+            const url = "/api/reply";
+            this.$axios.post(url, info).then(rep => {
+                // console.log(rep);
+                // 如果创建成功，就刷评论列表，然后清空评论栏
+                if(Math.floor(rep.status)) {
+                    that.$message.success('评论成功！');
+                    that.commentContext = [];
+                    that.openComment();
+                    if(reply) {
+                        that.commentReply = "";
+                        that.commentPost = null;
+                    } else {
+                        that.comment = ""
+                    }
+                }                
+            })
+        },
     },
     watch: {
         ID: function(){

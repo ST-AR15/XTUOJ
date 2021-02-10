@@ -81,7 +81,7 @@
                                                     <span v-text="item.time"></span>
                                                 </div>
                                                 <div class="contextMain">
-                                                    <p v-text="item.context"></p>
+                                                    <p v-text="`${ item.postId == data.Rid? '':'回复' + data.comment.find(o => o.Rid == item.postId).Uid + ': ' }${ item.context }`"></p>
                                                 </div>
                                                 <div class="contextFooter">
                                                     <a-space>

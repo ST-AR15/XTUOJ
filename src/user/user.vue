@@ -8,26 +8,26 @@
                 <a-menu
                     class="menu"
                     mode="horizontal"
-                    v-model="page"
                     style="user-select:none"
+                    v-model="page"
                 >
-                    <a-menu-item key="home" @click="page[0] = 'home'">
+                    <a-menu-item key="home" @click="openPage('home')">
                         <a-icon type="home" />
                         首页
                     </a-menu-item>
-                    <a-menu-item key="problems" @click="page[0] = 'problems'">
+                    <a-menu-item key="problems" @click="openPage('problems')">
                         <a-icon type="profile" />
                         问题
                     </a-menu-item>
-                    <a-menu-item key="contests" @click="page[0] = 'contests'">
+                    <a-menu-item key="contests" @click="openPage('contests')">
                         <a-icon type="trophy" />
                         竞赛
                     </a-menu-item>
-                    <a-menu-item key="status" @click="page[0] = 'status'">
+                    <a-menu-item key="status" @click="openPage('status')">
                         <a-icon type="branches" />
                         状态
                     </a-menu-item>
-                    <a-menu-item key="ranklist" @click="page[0] = 'ranklist'">
+                    <a-menu-item key="ranklist" @click="openPage('ranklist')">
                         <a-icon type="bar-chart" />
                         排名
                     </a-menu-item>
@@ -42,7 +42,7 @@
                 <div class="container">
                     <div class="page">
                         <transition name="cross">
-                            <router-view></router-view>
+                            <router-view />
                         </transition>
                     </div>
                     <!-- 当页面需要展示question的时候，footer是不需要展示的，因为整个页面都需要展示题目 -->
@@ -73,7 +73,8 @@ export default {
     },
     methods: {
         openPage(page) {  //打开某页
-            this.page[0] = page;
+            this.$router.push(page); // 页面内容切换
+            this.page[0] = page;  // menu切换
             this.$forceUpdate();
         },
         goQuestion(id) {  // 打开某题
@@ -95,12 +96,14 @@ export default {
             // 如果是登录状态
             this.isLogin = true;
         }
+        // menu切换
+        this.page[0] = this.$route.path.slice(1);
+        this.$forceUpdate();
     },
     watch: {
-        $route(to, from) {
-            console.log("to",to);
-            console.log("from",from);
-            this.openPage(to.params.page);
+        $route(to) {
+            this.page[0] = to.path.slice(1);  // menu切换
+            this.$forceUpdate();
         }
     }
 }

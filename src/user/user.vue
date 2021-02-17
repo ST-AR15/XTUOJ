@@ -42,22 +42,7 @@
                 <div class="container">
                     <div class="page">
                         <transition name="cross">
-                            <home @goQuestion="goQuestion" v-show="page == 'home'"/>
-                        </transition>
-                        <transition name="cross">
-                            <problems v-show="page == 'problems'" />
-                        </transition>
-                        <transition name="cross">
-                            <contests v-show="page == 'contests'"/>
-                        </transition>
-                        <transition name="cross">
-                            <status v-show="page == 'status'"/>
-                        </transition>
-                        <transition name="cross">
-                            <ranklist v-show="page == 'ranklist'"/>
-                        </transition>
-                        <transition name="cross">
-                            <question v-show="page == 'question'" :ID="questionID" @back="back" />
+                            <router-view></router-view>
                         </transition>
                     </div>
                     <!-- 当页面需要展示question的时候，footer是不需要展示的，因为整个页面都需要展示题目 -->
@@ -72,21 +57,9 @@
 </template>
 
 <script>
-import home from './home.vue'
-import problems from './problems.vue'
-import contests from './contests.vue'
-import status from './status.vue'
-import ranklist from './ranklist.vue'
-import question from '@/components/question.vue'
 import login from '@/components/login.vue'
 export default {
-    components: {
-        home,
-        problems,
-        contests,
-        status,
-        ranklist,
-        question,
+    components: {        
         login,
     },
     data() {
@@ -121,6 +94,13 @@ export default {
         if(sessionStorage.token) {
             // 如果是登录状态
             this.isLogin = true;
+        }
+    },
+    watch: {
+        $route(to, from) {
+            console.log("to",to);
+            console.log("from",from);
+            this.openPage(to.params.page);
         }
     }
 }

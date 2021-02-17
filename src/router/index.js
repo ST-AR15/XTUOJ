@@ -9,6 +9,11 @@ import admin from '../admin/admin.vue'
 
 // 用户页面
 import user from '../user/user.vue'
+import home from '../user/home.vue'
+import problems from '../user/problems.vue'
+import contests from '../user/contests.vue'
+import ranklist from '../user/ranklist.vue'
+import status from '../user/status.vue'
 
 
 Vue.use(VueRouter)
@@ -32,7 +37,29 @@ const routes = [
   {
     path: '/',
     name: 'user',
-    component: user
+    component: user,
+    children: [
+      {
+        path: 'home',
+        component: home,
+      },
+      {
+        path: 'problems',
+        component: problems,
+      },
+      {
+        path: 'contests',
+        component: contests,
+      },
+      {
+        path: 'ranklist',
+        component: ranklist,
+      },
+      {
+        path: 'status',
+        component: status,
+      },
+    ]
   },
 ]
 

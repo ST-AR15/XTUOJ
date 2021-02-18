@@ -32,7 +32,6 @@
                         排名
                     </a-menu-item>
                 </a-menu>
-                <!-- TODO 两个按钮只显示一个，根据登录状态决定 -->
                 <div class="loginzoom">
                     <a-button class="navButton" v-if="!isLogin" @click="loginVisible = true">登录</a-button>
                     <a-button class="navButton" v-else @click="goPerson">个人中心</a-button>

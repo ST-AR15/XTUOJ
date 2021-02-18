@@ -14,6 +14,10 @@ import problems from '../user/problems.vue'
 import contests from '../user/contests.vue'
 import ranklist from '../user/ranklist.vue'
 import status from '../user/status.vue'
+import question from '../user/question.vue'
+
+// 通用页面
+
 
 
 Vue.use(VueRouter)
@@ -59,6 +63,10 @@ const routes = [
         path: 'status',
         component: status,
       },
+      {
+        path: 'question/:ID',
+        component: question,
+      }
     ]
   },
 ]

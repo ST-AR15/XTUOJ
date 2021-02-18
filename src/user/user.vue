@@ -64,6 +64,7 @@ export default {
     },
     data() {
         return {
+            from: "",             // 之前的页面
             page: ['home'],       // 当前选择的页面
             isQuestion: false,    // 是否展示问题
             questionID: 1000,     // 需要展示的问题ID
@@ -78,6 +79,7 @@ export default {
             this.$forceUpdate();
         },
         goQuestion(id) {  // 打开某题
+            console.log('cnm');
             this.questionID = id;
             this.page[0] = 'question';
             this.$forceUpdate();
@@ -101,7 +103,8 @@ export default {
         this.$forceUpdate();
     },
     watch: {
-        $route(to) {
+        $route(to, from) {
+            console.log(from)
             this.page[0] = to.path.slice(1);  // menu切换
             this.$forceUpdate();
         }

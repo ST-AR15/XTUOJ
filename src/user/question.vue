@@ -112,8 +112,8 @@
                 </div>
                 <div class="buttons">
                     <a-space>
-                        <a-input placeholder="请输入题号" v-model="aimID" @pressEnter="ID = aimID"></a-input>
-                        <a-button type="primary" @click="ID = aimID">跳转</a-button>
+                        <a-input-number placeholder="请输入题号" v-model="aimID" @pressEnter="routeTo(aimID)"></a-input-number>
+                        <a-button type="primary" @click="routeTo(aimID)">跳转</a-button>
                     </a-space>
                 </div>
             </div>
@@ -174,12 +174,13 @@ export default {
         codemirror
     },
     props: {
-        ID: Number,
         backMethod: String,
     },  // 从父组件获得题目ID，然后在接口里获得全部值
     data() {
         return {
-            aimID: 0, // 要跳转的ID
+            jump: 0,   // 跳转的次数，用于返回
+            aimID: 1000,
+            ID: 1000,  // 题目的ID
             leftInner: ["question"],  // 左边显示的内容
             comment: "",   // 编辑框内容
             commentReply: "",  // 回复框内容
@@ -209,35 +210,13 @@ export default {
                 code: "",  //当前输入的代码
             },
             commentReplyNum: [0,0],  // 当前打开的是哪个输入框，第一个数字代表一级评论，第二个数字代表二级
-            commentContext: [
-                // {
-                //     Rid: 1,            // 回复ID
-                //     Uid: 201705551222,
-                //     Pid: 1006,
-                //     context: "谢谢",
-                //     postId: null,
-                //     time: "2020-12-29 09:04:28",
-                //     ip: null,
-                //     isRecomment: false,
-                //     page: 1,    // 当前回复的翻页
-                //     comment: [  // 它的所有回复
-                //         {
-                //             Rid: 100,
-                //             Uid: 201705551222,
-                //             Pid: 1006,
-                //             context: "谢谢",
-                //             postId: 1,
-                //             time: "2020-12-29 09:04:28",
-                //             ip: null,
-                //         }
-                //     ]
-                // },
-            ],
+            commentContext: [],
         }
     },
     methods: {
         back() {  //返回上一页的方法
-            this.$emit("back");
+            // this.$emit("back");
+            this.$router.go(-1 * (this.jump + 1));
         },
         uploadFile(file) {  // 上传文件
             console.log('cnm');
@@ -375,30 +354,51 @@ export default {
                 this.commentReplyNum = [a,b];
                 this.$forceUpdate();
             }
+        },
+        routeTo(id) { // 修改route
+            if(typeof id !== 'string') {
+                id += "";
+            }
+            console.log(this.$router);
+            console.log(this.$route);
+            if(this.$route.params.ID == id) {
+                this.$message.error(`你已经打开ID${id}了哦`);
+            } else {
+                this.$router.push(id);
+            }
         }
     },
     watch: {
-        ID: function(){
+        $route(to) {
+            // 修改ID
+            this.ID = to.params.ID;
+            // 修改aimID
+            this.aimID = to.params.ID;
             // 重置代码
             this.question.code = "";
             // 重置评论
             this.commentContext = [];
             // 页面切换到问题
             this.leftInner = ["question"];
-            // aimID切换
-            this.aimID = this.ID;
+            // 跳转一次
+            this.jump++;
             // 打开问题
             this.openQuestion();
-
         }
     },
     mounted() {
         let that = this;
+        // 设置宽度
         that.rightW = window.innerWidth - 20 - that.leftW;
         window.onresize = function() {
             that.rightW = window.innerWidth - 20 - that.leftW;
         }
-    }
+        // 获取id
+        that.ID = this.$route.params.ID;
+        that.aimID = this.$route.params.ID;
+        // 刚打开页面时，加载一次问题
+        that.openQuestion();
+    },
     
 }
 </script>

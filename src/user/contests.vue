@@ -6,7 +6,7 @@
                 <a-table
                     :columns="columns"
                     :data-source="contests"
-                    style="width:1000px; background-color:#FCFDFE; margin:0 auto"
+                    style="width:98%; background-color:#FCFDFE; margin:0 auto"
                     :pagination="pagination"
                 >
                     <!-- 搜索 -->

@@ -46,64 +46,66 @@
                                 <a-button style="margin-top: 5px" type="primary" @click="sendComment(false)">发表</a-button>
                             </div>
                             <div class="context">
-                                <div class="contextInner" v-for="(data, i) in commentContext" v-bind:key="data.Rid">
-                                    <div class="contextItem">
-                                        <div class="contextHeader">
-                                            <span v-text="data.Uid"></span>
-                                            <span v-text="data.time"></span>
-                                        </div>
-                                        <div class="contextMain">
-                                            <p v-text="data.context"></p>
-                                        </div>
-                                        <div class="contextFooter">
-                                            <a-space>
-                                                <span 
-                                                    v-if="data.comment.length != 0"
-                                                    v-text="`${ !data.isRecomment? '查看':'收起' }${ data.comment.length }条回复`"
-                                                    @click="data.isRecomment = !data.isRecomment">
-                                                </span>
-                                                <span
-                                                    @click="openTextarea(i + 1, 0, data.Rid)"
-                                                    v-text="`${ !(commentReplyNum[0] == i + 1 && commentReplyNum[1] == 0)? '回复':'收起回复' }`"
-                                                ></span>
-                                            </a-space>
-                                        </div>
-                                    </div>
-                                    <div class="contextTextarea" v-show="commentReplyNum[0] == i + 1 && commentReplyNum[1] == 0">
-                                        <a-textarea :placeholder="'回复用户' + data.Uid + '的评论'" v-model="commentReply" :rows="4" style="resize: none" />
-                                        <a-button style="margin-top: 5px;" type="primary" @click="sendComment(true)">回复</a-button>
-                                    </div>
-                                    <div class="reComment" v-show="data.isRecomment">
-                                        <div class="contextInner" v-for="(item, j) in data.comment" v-bind:key="item.Rid">
-                                            <div class="contextItem">
-                                                <div class="contextHeader">
-                                                    <span v-text="item.Uid"></span>
-                                                    <span v-text="item.time"></span>
-                                                </div>
-                                                <div class="contextMain">
-                                                    <p v-text="`${ item.postId == data.Rid? '':'回复' + data.comment.find(o => o.Rid == item.postId).Uid + ': ' }${ item.context }`"></p>
-                                                </div>
-                                                <div class="contextFooter">
-                                                    <a-space>
-                                                        <span
-                                                            @click="openTextarea(i + 1, j + 1, item.Rid);item.isReply = !item.isReply; commentPost = item.Rid"
-                                                            v-text="`${ !item.isReply? '回复':'收起回复' }`"
-                                                        ></span>
-                                                    </a-space>
-                                                </div>
+                                <template v-for="(data, i) in commentContext">
+                                    <div class="contextInner" v-bind:key="data.Rid" v-if="(i >=  (commentPage-1)*commentSize) && (i < commentPage*commentSize)">
+                                        <div class="contextItem">
+                                            <div class="contextHeader">
+                                                <span v-text="data.Uid"></span>
+                                                <span v-text="data.time"></span>
                                             </div>
-                                            <div class="contextTextarea" v-show="commentReplyNum[0] == i + 1 && commentReplyNum[1] == j + 1">
-                                                <a-textarea :placeholder="'回复用户' + item.Uid + '的评论'" v-model="commentReply" :rows="4" style="resize: none" />
-                                                <a-button style="margin-top: 5px;" type="primary" @click="sendComment(true)">回复</a-button>
+                                            <div class="contextMain">
+                                                <p v-text="data.context"></p>
+                                            </div>
+                                            <div class="contextFooter">
+                                                <a-space>
+                                                    <span 
+                                                        v-if="data.comment.length != 0"
+                                                        v-text="`${ !data.isRecomment? '查看':'收起' }${ data.comment.length }条回复`"
+                                                        @click="data.isRecomment = !data.isRecomment">
+                                                    </span>
+                                                    <span
+                                                        @click="openTextarea(i + 1, 0, data.Rid)"
+                                                        v-text="`${ !(commentReplyNum[0] == i + 1 && commentReplyNum[1] == 0)? '回复':'收起回复' }`"
+                                                    ></span>
+                                                </a-space>
                                             </div>
                                         </div>
-                                        <div class="contextPagination" v-show="data.isRecomment">
-                                            <a-pagination :hideOnSinglePage="true" v-model="data.page" :defaultPageSize="10" :total="data.comment.length" simple />
-                                        </div>  
+                                        <div class="contextTextarea" v-show="commentReplyNum[0] == i + 1 && commentReplyNum[1] == 0">
+                                            <a-textarea :placeholder="'回复用户' + data.Uid + '的评论'" v-model="commentReply" :rows="4" style="resize: none" />
+                                            <a-button style="margin-top: 5px;" type="primary" @click="sendComment(true)">回复</a-button>
+                                        </div>
+                                        <div class="reComment" v-show="data.isRecomment">
+                                            <div class="contextInner" v-for="(item, j) in data.comment" v-bind:key="item.Rid">
+                                                <div class="contextItem">
+                                                    <div class="contextHeader">
+                                                        <span v-text="item.Uid"></span>
+                                                        <span v-text="item.time"></span>
+                                                    </div>
+                                                    <div class="contextMain">
+                                                        <p v-text="`${ item.postId == data.Rid? '':'回复' + data.comment.find(o => o.Rid == item.postId).Uid + ': ' }${ item.context }`"></p>
+                                                    </div>
+                                                    <div class="contextFooter">
+                                                        <a-space>
+                                                            <span
+                                                                @click="openTextarea(i + 1, j + 1, item.Rid);item.isReply = !item.isReply; commentPost = item.Rid"
+                                                                v-text="`${ !item.isReply? '回复':'收起回复' }`"
+                                                            ></span>
+                                                        </a-space>
+                                                    </div>
+                                                </div>
+                                                <div class="contextTextarea" v-show="commentReplyNum[0] == i + 1 && commentReplyNum[1] == j + 1">
+                                                    <a-textarea :placeholder="'回复用户' + item.Uid + '的评论'" v-model="commentReply" :rows="4" style="resize: none" />
+                                                    <a-button style="margin-top: 5px;" type="primary" @click="sendComment(true)">回复</a-button>
+                                                </div>
+                                            </div>
+                                            <div class="contextPagination" v-show="data.isRecomment">
+                                                <a-pagination :hideOnSinglePage="true" v-model="data.page" :defaultPageSize="10" :total="data.comment.length" simple />
+                                            </div>  
+                                        </div>
                                     </div>
-                                </div>
+                                </template>
                                 <div class="contextPagination">
-                                    <a-pagination style="text-align: center" :hideOnSinglePage="true" v-model="commentPage" :defaultPageSize="10" :total="commentContext.length" simple />
+                                    <a-pagination style="text-align: center" :hideOnSinglePage="true" v-model="commentPage" :defaultPageSize="commentSize" :total="commentContext.length" simple />
                                 </div>
                             </div>
                         </section>
@@ -186,6 +188,7 @@ export default {
             commentReply: "",  // 回复框内容
             commentPost: 0,   // 回复对象的RID
             commentPage: 1,  // 整个回复的页码
+            commentSize: 10, // 每一页展示的内容数量
             leftW: 500,   // 左边宽度
             rightW: 500,   // 右边宽度
             loading: false, // 加载状态

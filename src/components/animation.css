@@ -34,3 +34,13 @@
 .opacity-enter, .opacity-leave-to  {
     opacity: 0;
 }
+
+/* cross：高度 */
+.height-enter-active, .height-leave-active {
+    transition: all .6s ease;
+    transform-origin: top;
+}
+.height-enter, .height-leave-to  {
+    opacity: 0;
+    transform: scaleY(0);
+}

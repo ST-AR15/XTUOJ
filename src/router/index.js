@@ -6,6 +6,12 @@ import VueRouter from 'vue-router'
 
 // 管理员页面
 import admin from '../admin/admin.vue'
+import add from '../admin/add.vue'
+import addContest from '../admin/addContest.vue'
+import manageContest from '../admin/manageContest.vue'
+import person from '../admin/person.vue'
+import read from '../admin/read.vue'
+// import welcome from '../admin/welcome.vue'
 
 // 用户页面
 import user from '../user/user.vue'
@@ -23,20 +29,33 @@ import question from '../user/question.vue'
 Vue.use(VueRouter)
 
 const routes = [
-  // {
-  //   path: '/',
-  //   name: 'Home',
-  //   component: Home
-  // },
-  // {
-  //   path: '/',
-  //   name: 'index',
-  //   component: index
-  // },
   {
     path: '/admin',
     name: 'admin',
-    component: admin
+    component: admin,
+    children: [
+      {
+        path: 'add',
+        component: add,
+      },
+      {
+        path: 'addContest',
+        component: addContest,
+      },
+      {
+        path: 'manageContest',
+        component: manageContest,
+      },
+      {
+        path: 'person',
+        component: person,
+      },
+      {
+        path: 'read',
+        component: read,
+      }
+      // TODO 任意匹配的*（用于404）在这里报错？
+    ]
   },
   {
     path: '/',

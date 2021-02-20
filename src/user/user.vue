@@ -89,7 +89,7 @@ export default {
             this.$forceUpdate();
         },
         goPerson() { // 前往个人中心
-            this.$router.replace("/admin");
+            this.$router.replace("/admin/welcome");
         }
     },
     mounted() {

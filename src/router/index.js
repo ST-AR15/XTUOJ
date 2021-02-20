@@ -11,7 +11,7 @@ import addContest from '../admin/addContest.vue'
 import manageContest from '../admin/manageContest.vue'
 import person from '../admin/person.vue'
 import read from '../admin/read.vue'
-// import welcome from '../admin/welcome.vue'
+import welcome from '../admin/welcome.vue'
 
 // 用户页面
 import user from '../user/user.vue'
@@ -53,6 +53,10 @@ const routes = [
       {
         path: 'read',
         component: read,
+      },
+      {
+        path: 'welcome',
+        component: welcome
       }
       // TODO 任意匹配的*（用于404）在这里报错？
     ]

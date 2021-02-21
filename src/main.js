@@ -15,7 +15,7 @@ import 'codemirror/lib/codemirror.css'
 
 
 
-Vue.use(Antd,VueCodeMirror)
+Vue.use(Antd, VueCodeMirror)
 Vue.prototype.$axios = axios
 
 /**

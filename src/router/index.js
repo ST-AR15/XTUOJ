@@ -23,7 +23,7 @@ import status from '../user/status.vue'
 import question from '../user/question.vue'
 
 // 通用页面
-
+import rank from '../rank.vue'
 
 
 Vue.use(VueRouter)
@@ -92,6 +92,11 @@ const routes = [
       }
     ]
   },
+  {
+    path: '/rank',
+    name: 'rank',
+    component: rank,
+  }
 ]
 
 const router = new VueRouter({

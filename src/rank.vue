@@ -25,6 +25,7 @@
                 mode="multiple"
                 placeholder="选择关注队伍"
                 style="width: 400px"
+                v-model="starSchool"
                 @change="handleStar"
             >
                 <a-select-option v-for="data in school" :key="data.id">
@@ -1104,6 +1105,7 @@ export default {
                     name: "湘潭大学兴湘学院",
                 },
             ],
+            starSchool: [],
             query: {
                 organization: [],  // 星标队伍
                 t: "",             // 时间进度
@@ -1131,7 +1133,7 @@ export default {
             for(let i in this.query.organization) {
                 star.push(this.school.find(o => o.name == this.query.organization[i]).id);
             }
-            // TODO select的default
+            this.starSchool = star;
             this.handleStar(star);
         },
         formatter() {

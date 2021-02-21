@@ -1103,10 +1103,37 @@ export default {
                     id: 2,
                     name: "湘潭大学兴湘学院",
                 },
-            ]
+            ],
+            query: {
+                organization: [],  // 星标队伍
+                t: "",             // 时间进度
+            }
         }
     },
     methods: {
+        init() {
+            // 初始化
+            // 获取query
+            let query = this.$route.query;
+            this.query.organization = eval(query.organization) || '';
+            this.query.t = query.t || '';
+            // 把query赋值给里面的信息
+            // TODO 时间
+            // // 确认时间进度
+            // let time = new Date();
+            // if(time.getTime() < this.stamp.end) {  // 如果当前时间比结束时间早，就调整进度条
+            //     this.progress = ((time.getTime() - this.stamp.start) / (this.stamp.end - this.stamp.start)) * 100;
+            // } else {   // 否则直接给100
+            //     this.progress = 100;
+            // }
+            // star
+            let star = [];
+            for(let i in this.query.organization) {
+                star.push(this.school.find(o => o.name == this.query.organization[i]).id);
+            }
+            // TODO select的default
+            this.handleStar(star);
+        },
         formatter() {
             let stamp = ((this.stamp.end - this.stamp.start) * this.progress / 100) + this.stamp.start;  // 时间戳
             let time = new Date();
@@ -1140,17 +1167,19 @@ export default {
                     }
                 }
             }
+            // TODO 把信息push到route里
         }
     },
     mounted() {
-        let time = new Date();
-        if(time.getTime() < this.stamp.end) {  // 如果当前时间比结束时间早，就调整进度条
-            this.progress = ((time.getTime() - this.stamp.start) / (this.stamp.end - this.stamp.start)) * 100;
-            
-        } else {   // 否则直接给100
-            this.progress = 100;
-        }
+        this.init();
     },
+    watch: {
+        $route(newVal, oldVal) {
+            if(newVal !== oldVal) {
+                this.init();
+            }
+        }
+    }
 }
 </script>
 

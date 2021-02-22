@@ -90,6 +90,7 @@
 </template>
 
 <script>
+import { filterEmptyValue } from "@/components/AR15.js";
 export default {
     data() {
         return {
@@ -1131,7 +1132,14 @@ export default {
             // star
             let star = [];
             for(let i in this.query.organization) {
-                star.push(this.school.find(o => o.name == this.query.organization[i]).id);
+                // 判断url里的学校是否存在
+                let school = this.school.find(o => o.name == this.query.organization[i]);
+                if(school) {
+                    star.push(school.id);
+                }
+                // else {
+                //     this.$message.info(`已删除organization中多余的参数${this.query.organization[i]}`);
+                // }
             }
             this.starSchool = star;
             this.handleStar(star);
@@ -1169,7 +1177,30 @@ export default {
                     }
                 }
             }
-            // TODO 把信息push到route里
+            this.handleQuery();
+        },
+        handleQuery() {
+            // push query
+            let query = {};
+            // organization
+            if(this.starSchool) { // 如果有星标学校
+                let organization = [];
+                for(let i in this.starSchool) {
+                    organization.push('"' + this.school.find(o => o.id == this.starSchool[i]).name + '"');
+                    // console.log(i);
+                }
+                // 只有有内容才会被加入字符串
+                if(organization.toString()) {
+                    query["organization"] = '[' + organization.toString() + ']';
+                }
+            }
+            // TODO time
+
+            // 通过筛选推送到query
+            // 避免冗余定向
+            if(JSON.stringify(this.$route.query) !== JSON.stringify(filterEmptyValue(query))) {
+                this.$router.push({ query: filterEmptyValue(query) });
+            }
         }
     },
     mounted() {
@@ -1288,6 +1319,7 @@ export default {
         color: #999999;
     }
     .list-inner:hover .none,.list-inner:hover .first-blood,.list-inner:hover .solved,.list-inner:hover .attempted,.list-inner:hover .pending {
+        transition: all .4s;
         background-color: #e6f7ff;
     }
 </style>

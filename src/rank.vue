@@ -2,7 +2,11 @@
     <div class="rank" id="rank">
         <h1 v-text="title"></h1>
         <div class="time">
-            <a-slider :marks="time" v-model="progress" :step="timeStep" :tip-formatter="formatter"></a-slider>
+            <div class="time-bar">
+                <div class="time-bg"></div>
+                <div class="time-end" v-text="new Date().getTime()<stamp.end? timeFormatter(stamp.end, true): '已结束'"></div>
+                <a-slider @change="handleQuery()" :marks="time" :min="stamp.start" :max="stamp.end" v-model="progress" :step="timeStep" :tip-formatter="formatter"></a-slider>
+            </div>
             <div class="time-detail">
                 <span>总时长：4:00:00</span>
                 <span>剩余时长：4:00:00</span>
@@ -90,28 +94,18 @@
 </template>
 
 <script>
-import { filterEmptyValue } from "@/components/AR15.js";
+import { filterEmptyValue, timeFormatter } from "@/components/AR15.js";
 export default {
     data() {
         return {
             title: "第1届湘潭大学程序设计竞赛正式赛",  // 比赛名字
-            time: {
-                0: {
-                    label: "2021-02-20 20:00:00",
-                },
-                100: {
-                    style: {
-                        whiteSpace: 'nowrap'
-                    },
-                    label: "2021-02-20 24:00:00",
-                },
+            time: {},
+            stamp: {   // 比赛开始和比赛结束的时间
+                start: 1614098910000,
+                end: 1614099700000,
             },
-            stamp: {
-                start: 1613822400000,
-                end: 1613836800000,
-            },
-            timeStep: 0.01, // 进度条的最低刻度
-            progress: 25, // 进度条（百分比）
+            timeStep: 1000, // 进度条的最低刻度,为1秒
+            progress: 1614067200000, // 进度条(当前时间)
             list: {
                 question: 13,   // 题目数量
                 score: [
@@ -1110,7 +1104,9 @@ export default {
             query: {
                 organization: [],  // 星标队伍
                 t: "",             // 时间进度
-            }
+            },
+            timer: "",  // 计时器
+
         }
     },
     methods: {
@@ -1121,14 +1117,60 @@ export default {
             this.query.organization = eval(query.organization) || '';
             this.query.t = query.t || '';
             // 把query赋值给里面的信息
-            // TODO 时间
-            // // 确认时间进度
-            // let time = new Date();
-            // if(time.getTime() < this.stamp.end) {  // 如果当前时间比结束时间早，就调整进度条
-            //     this.progress = ((time.getTime() - this.stamp.start) / (this.stamp.end - this.stamp.start)) * 100;
-            // } else {   // 否则直接给100
-            //     this.progress = 100;
-            // }
+            // time
+            // let date = new Date();
+            if(!query.t) {
+                // 如果没有传入时间，就用现在的时间和结束时间里面小的那个
+                this.progress = this.msFormatter(Math.min(this.stamp.end, new Date().getTime()));
+            } else {
+                // 如果传入了时间，就用它传的时间
+                if(query.t > Math.min(this.stamp.end, new Date().getTime())) {
+                    // 如果传入的时间超过了结束时间或当前时间
+                    this.progress = this.msFormatter(Math.min(this.stamp.end, new Date().getTime()));
+                } else if(query.t < this.stamp.start) {
+                    // 如果传入的时间小于开始时间
+                    this.progress = this.msFormatter(Math.min(this.stamp.end, new Date().getTime()));
+                } else {
+                    this.progress = this.msFormatter(query.t);
+                }
+            }
+            this.time = {
+                [this.stamp.start]: {
+                    label: timeFormatter(this.stamp.start, true),
+                },
+                [Math.min(new Date().getTime(), this.stamp.end)]: {
+                    style: {
+                        whiteSpace: 'nowrap'
+                    },
+                    label: timeFormatter(Math.min(new Date().getTime(), this.stamp.end), true),
+                },
+            }
+            if(!this.timer) {
+                // 开一个计时器，保证时间每秒动一次
+                // 同时移动进度条
+                this.timer = setInterval(() => {
+                    // 时间
+                    this.time = {
+                        [this.stamp.start]: {
+                            label: timeFormatter(this.stamp.start, true),
+                        },
+                        [Math.min(new Date().getTime(), this.stamp.end)]: {
+                            style: {
+                                whiteSpace: 'nowrap'
+                            },
+                            label: timeFormatter(Math.min(new Date().getTime(), this.stamp.end), true),
+                        },
+                    }
+                    // 进度
+                    if((Math.min(this.stamp.end, new Date().getTime()) - this.progress) <= 10000) { // 如果在右边，就一直跟着走,判断方法是小于10秒的差距
+                        this.progress += 1000;
+                    }
+                    // 如果到了时间，移除计时器
+                    if(new Date().getTime() > this.stamp.end) {
+                        clearInterval(this.timer);
+                    }
+                }, 1000);
+            }
             // star
             let star = [];
             for(let i in this.query.organization) {
@@ -1145,10 +1187,14 @@ export default {
             this.handleStar(star);
         },
         formatter() {
-            let stamp = ((this.stamp.end - this.stamp.start) * this.progress / 100) + this.stamp.start;  // 时间戳
-            let time = new Date();
-            time.setTime(stamp);
-            return `${time.getHours()}:${time.getMinutes()<10? '0'+time.getMinutes():time.getMinutes()}:${time.getSeconds()<10? '0'+time.getSeconds():time.getSeconds()}`
+            // let stamp = (((Math.min(new Date().getTime(), this.stamp.end)) - this.stamp.start) * this.progress / 100) + this.stamp.start;  // 时间戳
+            return timeFormatter(this.progress);
+        },
+        timeFormatter(a, b) {
+            return timeFormatter(a, b);
+        },
+        msFormatter(ms) {   // 为了保证progress能成为1000的倍数
+            return Math.floor(ms/1000)*1000;
         },
         test() {
             for(let i in this.list.score) {
@@ -1194,8 +1240,11 @@ export default {
                     query["organization"] = '[' + organization.toString() + ']';
                 }
             }
-            // TODO time
-
+            // time
+            // 如果t是结束的t或者进度的t，就不传
+            if(this.progress != this.msFormatter(Math.min(this.stamp.end, new Date().getTime()))) {
+                query.t = this.progress + "";    
+            }
             // 通过筛选推送到query
             // 避免冗余定向
             if(JSON.stringify(this.$route.query) !== JSON.stringify(filterEmptyValue(query))) {
@@ -1228,12 +1277,28 @@ export default {
     .time {
         width: 800px;
         margin: 0 auto;
+        position: relative;
     }
     .time-detail {
         width: 100%;
         display: flex;
         justify-content: space-between;
         align-items: center;
+    }
+    .time-bg {
+        position: absolute;
+        /* 为了配合滑动条设置的css */
+        width: calc(100% - 8px);
+        height: 4px;
+        background-color: #EEEEEE;
+        margin: 4px 4px;
+        box-sizing: border-box;
+        border-radius: 2px;
+    }
+    .time-end {
+        position: absolute;
+        right: 0;
+        transform: translate(55%, -20px);
     }
     .tip {
         height: 24px;

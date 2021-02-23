@@ -35,3 +35,17 @@ export function filterEmptyValue(obj) {
     }
     return newObj
 }
+
+/**
+ * 把时间戳转换成xx:xx:xx或xxxx-xx-xx xx:xx:xx的格式
+ * @param {number} flag 时间戳
+ * @param {boolean} ifFull 是否同时输出年份
+ */
+export function timeFormatter(flag, isFull = false) {
+    let time = new Date(parseInt(flag));
+    if(isFull) {
+        return `${time.getFullYear()}-${(time.getMonth()+1)<10? '0'+(time.getMonth()+1) : (time.getMonth()+1)}-${time.getDate()} ${time.getHours()}:${time.getMinutes()<10? '0'+time.getMinutes():time.getMinutes()}:${time.getSeconds()<10? '0'+time.getSeconds():time.getSeconds()}`
+    } else {
+        return `${time.getHours()}:${time.getMinutes()<10? '0'+time.getMinutes():time.getMinutes()}:${time.getSeconds()<10? '0'+time.getSeconds():time.getSeconds()}`
+    }
+}

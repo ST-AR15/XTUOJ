@@ -49,3 +49,15 @@ export function timeFormatter(flag, isFull = false) {
         return `${time.getHours()}:${time.getMinutes()<10? '0'+time.getMinutes():time.getMinutes()}:${time.getSeconds()<10? '0'+time.getSeconds():time.getSeconds()}`
     }
 }
+
+/**
+ * 把毫秒数转换成时分秒
+ * @param {number} ms 毫秒数
+ */
+export function msToTime(ms) {
+    let s = parseInt(ms / 1000 % 60);
+    let min = parseInt(ms / 1000 / 60) % 60;
+    let h = (ms - s*1000 - min*60*1000) / 1000 / 60 / 60;
+    return `${h}:${min<10? '0'+min:min}:${s<10? '0'+s:s}`;
+
+}

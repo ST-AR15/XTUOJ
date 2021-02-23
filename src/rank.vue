@@ -8,8 +8,8 @@
                 <a-slider @change="handleQuery()" :marks="time" :min="stamp.start" :max="stamp.end" v-model="progress" :step="timeStep" :tip-formatter="formatter"></a-slider>
             </div>
             <div class="time-detail">
-                <span>总时长：4:00:00</span>
-                <span>剩余时长：4:00:00</span>
+                <span v-text="'总时长：' + msToTime(stamp.end-stamp.start)"></span>
+                <span v-text="'剩余时长：' + msToTime(Math.min((stamp.end-stamp.start),(stamp.end-progress)))"></span>
             </div>
         </div>
         <div class="tip">
@@ -94,14 +94,14 @@
 </template>
 
 <script>
-import { filterEmptyValue, timeFormatter } from "@/components/AR15.js";
+import { filterEmptyValue, timeFormatter, msToTime } from "@/components/AR15.js";
 export default {
     data() {
         return {
             title: "第1届湘潭大学程序设计竞赛正式赛",  // 比赛名字
             time: {},
             stamp: {   // 比赛开始和比赛结束的时间
-                start: 1614103480000,
+                start: 1614110180000,
                 end: 1614113480000,
             },
             timeStep: 1000, // 进度条的最低刻度,为1秒
@@ -1210,6 +1210,9 @@ export default {
         formatter() {
             // let stamp = (((Math.min(new Date().getTime(), this.stamp.end)) - this.stamp.start) * this.progress / 100) + this.stamp.start;  // 时间戳
             return timeFormatter(this.progress);
+        },
+        msToTime(ms) {
+            return msToTime(ms);
         },
         timeFormatter(a, b) {
             return timeFormatter(a, b);

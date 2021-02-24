@@ -9,7 +9,7 @@
             </div>
             <div class="time-detail">
                 <span v-text="'总时长：' + msToTime(stamp.end-stamp.start)"></span>
-                <span v-text="'剩余时长：' + msToTime(Math.min((stamp.end-stamp.start),(stamp.end-progress)))"></span>
+                <span v-text="'剩余时长：' + msToTime(Math.max(0, Math.min((stamp.end-stamp.start),(stamp.end-new Date().getTime()))))"></span>
             </div>
         </div>
         <div class="tip">

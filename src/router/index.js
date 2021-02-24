@@ -67,6 +67,10 @@ const routes = [
     component: user,
     children: [
       {
+        path: '/',
+        component: home,
+      },
+      {
         path: 'home',
         component: home,
       },

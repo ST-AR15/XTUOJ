@@ -57,7 +57,7 @@ export function timeFormatter(flag, isFull = false) {
 export function msToTime(ms) {
     let s = parseInt(ms / 1000 % 60);
     let min = parseInt(ms / 1000 / 60) % 60;
-    let h = (ms - s*1000 - min*60*1000) / 1000 / 60 / 60;
+    let h = parseInt((ms - s*1000 - min*60*1000) / 1000 / 60 / 60);
     return `${h}:${min<10? '0'+min:min}:${s<10? '0'+s:s}`;
 
 }

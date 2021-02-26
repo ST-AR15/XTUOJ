@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import questionlist from '../components/questionlist.vue'
 export default {
     components: {
         questionlist,

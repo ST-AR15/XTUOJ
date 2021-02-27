@@ -67,6 +67,12 @@
                                                         @click="openTextarea(i + 1, 0, data.Rid)"
                                                         v-text="`${ !(commentReplyNum[0] == i + 1 && commentReplyNum[1] == 0)? '回复':'收起回复' }`"
                                                     ></span>
+                                                    <span
+                                                        @click="deleteComment(data.Rid)"
+                                                        
+                                                    >删除评论</span>
+                                                    <!-- TODO 这里一个if判断是否显示删除 -->
+                                                    <!-- v-if="data.Uid == sessionStorage.getItem('uid')" -->
                                                 </a-space>
                                             </div>
                                         </div>
@@ -318,6 +324,20 @@ export default {
             })
             
         },
+        deleteComment(Rid) { // 删除评论
+            let url = '/api/reply';
+            let params = {
+                Rid: Rid,
+            }
+            console.log(params);
+            this.$axios.delete(url, { data: params }).then(rep => {
+                console.log(rep);
+                // 刷新评论
+                this.$message.success("删除成功！");
+                this.commentContext = [];
+                this.openComment();
+            })
+        },
         sendComment(reply) {  // 提交评论
             // console.log(reply)
             let that = this;
@@ -369,7 +389,7 @@ export default {
             } else {
                 this.$router.push(id);
             }
-        }
+        },
     },
     watch: {
         $route(to) {

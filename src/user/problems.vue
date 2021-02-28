@@ -25,7 +25,7 @@ export default {
         goQuestion(param) {
             // 修改路由到question
             console.log(param);
-            this.$router.push('/question/' + param.ID);
+            this.$router.push('/problems/' + param.ID);
         },
     }
 }

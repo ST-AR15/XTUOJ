@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-// 首页
-// import index from '../index.vue'
+// 404
+import NotFound from '@/notfound.vue'
 
 // 管理员页面
 // 主页
@@ -10,7 +10,7 @@ import VueRouter from 'vue-router'
 import admin from '@/admin/admin.vue'
 // question
 import questionAdd from '@/admin/question/add.vue'
-import questionRead from '@/admin/question/read.vue'
+import questionManage from '@/admin/question/manage.vue'
 import questionWelcome from '@/admin/question/welcome.vue'
 // contest
 import contestManage from '@/admin/contest/add.vue'
@@ -37,126 +37,112 @@ import rank from '../rank.vue'
 Vue.use(VueRouter)
 
 const routes = [
-  {
-    path: '/admin',
-    name: 'admin',
-    component: admin,
-    children: [
-      {
-        path: 'question',
-        name: 'question',
-        component: questionWelcome,
-        children: [
-          {
-            path: 'add',
-            name: 'question-add',
-            component: questionAdd,
-          },
-          {
-            path: 'read',
-            name: 'question-read',
-            component: questionRead,
-          },
-          {
-            path: '*',
-            name: 'question-404',
-            component: questionWelcome,
-          }
-        ]
-      },
-      {
-        path: '/contest',
-        name: 'contest',
-        component: contestWelcome,
-        children: [
-          {
-            path: '/add',
-            name: 'contest-add',
-            component: contestAdd,
-          },
-          {
-            path: '/manage',
-            name: 'contest-manage',
-            component: contestManage,
-          },
-          {
-            path: '*',
-            name: 'contest-404',
-            component: contestWelcome,
-          }
-        ]
-      },
-      {
-        path: '/user',
+    // 用户端
+    {
         name: 'user',
-        component: userWelcome,
-        children: [
-          {
-            path: '/me',
-            name: 'user-me',
-            component: userMe,
-          },
-          {
-            path: '/search',
-            name: 'user-search',
-            component: userSearch,
-          },
-          {
-            path: '*',
-            name: 'user-404',
-            component: userWelcome,
-          }
-        ]
-      }
-      
-    ]
-  },
-  {
-    path: '/',
-    name: 'user',
-    component: user,
-    children: [
-      {
         path: '/',
+        component: user,
+    },
+    {
+        name: 'home',
+        path: '/home',
         component: home,
-      },
-      {
-        path: 'home',
-        component: home,
-      },
-      {
-        path: 'problems',
+    },
+    {
+        name: 'problems',
+        path: '/problems',
         component: problems,
-      },
-      {
-        path: 'contests',
-        component: contests,
-      },
-      {
-        path: 'ranklist',
-        component: ranklist,
-      },
-      {
-        path: 'status',
-        component: status,
-      },
-      {
-        path: 'question/:ID',
+    },
+    {
+        name: 'problems-detail',
+        path: '/problems/:ID',
         component: question,
-      }
-    ]
-  },
-  {
-    path: '/rank',
-    name: 'rank',
-    component: rank,
-  }
+    },
+    {
+        name: 'contests',
+        path: '/contests',
+        component: contests,
+    },
+    {
+        name: 'status',
+        path: '/status',
+        component: status,
+    },
+    {
+        name: 'ranklist',
+        path: '/ranklist',
+        component: ranklist,
+    },
+    {
+        name: 'rank',
+        path: 'rank',
+        component: rank
+    },
+    // 管理端
+    {
+        name: 'admin',
+        path: '/admin',
+        component: admin,
+    },
+    // 管理端question
+    {
+        name: 'question-manage',
+        path: '/admin/question/manage',
+        component: questionManage,
+    },
+    {
+        name: 'question-add',
+        path: '/admin/question/add',
+        component: questionAdd,
+    },
+    {
+        name: 'question-welcome',
+        path: '/admin/question',
+        component: questionWelcome,
+    },
+    // 管理端contest
+    {
+        name: 'contest-manage',
+        path: '/admin/contest/manage',
+        component: contestManage,
+    },
+    {
+        name: 'contest-add',
+        path: '/admin/contest/add',
+        component: contestAdd,
+    },
+    {
+        name: 'contest-welcome',
+        path: '/admin/contest',
+        component: contestWelcome,
+    },
+    // 管理端user
+    {
+        name: 'user-me',
+        path: '/admin/user/me',
+        component: userMe,
+    },
+    {
+        name: 'user-search',
+        path: '/admin/user/search',
+        component: userSearch,
+    },
+    {
+        name: 'user-welcome',
+        path: '/admin/user',
+        component: userWelcome,
+    },
+    {
+        name: '404',
+        path: '*',
+        component: NotFound,
+    }
 ]
 
 const router = new VueRouter({
-  // mode: 'history',
-  base: process.env.BASE_URL,
-  routes: routes
+// mode: 'history',
+base: process.env.BASE_URL,
+routes: routes
 })
 
 export default router

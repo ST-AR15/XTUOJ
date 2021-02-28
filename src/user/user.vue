@@ -73,23 +73,25 @@ export default {
     },
     methods: {
         openPage(page) {  //打开某页
-            this.$router.push(page); // 页面内容切换
-            this.page[0] = page;  // menu切换
-            this.$forceUpdate();
+            // 当页面不同时，打开页面
+            if(this.$route.fullPath != '/' + page) {
+                this.$router.push(page); // 页面内容切换
+            }
+            // menu切换在watch中实现
+            // if(page == '/') {
+            //     this.page[0] = "home";
+            // } else {
+            //     this.page[0] = page;
+            // }
+            // this.$forceUpdate();
         },
         goQuestion(id) {  // 打开某题
-            console.log('cnm');
             this.questionID = id;
             this.page[0] = 'question';
             this.$forceUpdate();
         },
-        back() {  // 回到之前的页面
-            console.log(this.page);
-            this.page[0] = 'home';
-            this.$forceUpdate();
-        },
         goPerson() { // 前往个人中心
-            this.$router.replace("/admin/welcome");
+            this.$router.replace("/admin");
         }
     },
     mounted() {
@@ -98,12 +100,22 @@ export default {
             this.isLogin = true;
         }
         // menu切换
-        this.page[0] = this.$route.path.slice(1);
+        console.log(this.$route.path.slice(1));
+        if(this.$route.path.slice(1)) {
+            this.page[0] = this.$route.path.slice(1);
+        } else {
+            this.page[0] = "home";
+        }
         this.$forceUpdate();
     },
     watch: {
         $route(to) {
-            this.page[0] = to.path.slice(1);  // menu切换
+            // menu切换
+            if(to.path.slice(1)) {
+                this.page[0] = to.path.slice(1);
+            } else {
+                this.page[0] = "home";
+            }
             this.$forceUpdate();
         }
     }

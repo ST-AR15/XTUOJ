@@ -13,7 +13,7 @@
                     >
                         <!-- 选项1 ： 题目管理 -->
                         <a-sub-menu>
-                            <span slot="title" @click="openPage('question')">
+                            <span slot="title">
                                 <a-icon type="code" theme="twoTone" />
                                 <span>题目管理</span>
                             </span>
@@ -28,7 +28,7 @@
                         </a-sub-menu>
                         <!-- 选项二：比赛管理 -->
                         <a-sub-menu>
-                            <span slot="title" @click="openPage('contest')">
+                            <span slot="title">
                                 <a-icon type="trophy" theme="twoTone" />
                                 <span>比赛管理</span>
                             </span>
@@ -43,7 +43,7 @@
                         </a-sub-menu>
                         <!-- 选项三：用户管理 -->
                         <a-sub-menu>
-                            <span slot="title" @click="openPage('user')">
+                            <span slot="title">
                                 <a-icon type="smile" theme="twoTone" />
                                 <span>用户管理</span>
                             </span>

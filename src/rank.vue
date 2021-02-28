@@ -174,7 +174,7 @@ export default {
                         dirt: "14%",
                     },
                     {
-                        place: 2,
+                        place: 8,
                         rank: 1,
                         school: "湘潭大学",  // 学校名
                         schoolID: 1,
@@ -366,7 +366,7 @@ export default {
                         dirt: "14%",
                     },
                     {
-                        place: 5,
+                        place: 7,
                         rank: 1,
                         school: "湘潭大学",  // 学校名
                         schoolID: 1,
@@ -494,7 +494,7 @@ export default {
                         dirt: "14%",
                     },
                     {
-                        place: 7,
+                        place: 5,
                         rank: 1,
                         school: "湘潭大学",  // 学校名
                         schoolID: 1,
@@ -558,7 +558,7 @@ export default {
                         dirt: "14%",
                     },
                     {
-                        place: 8,
+                        place: 2,
                         rank: 1,
                         school: "湘潭大学",  // 学校名
                         schoolID: 1,
@@ -750,7 +750,7 @@ export default {
                         dirt: "14%",
                     },
                     {
-                        place: 11,
+                        place: 14,
                         rank: 1,
                         school: "湘潭大学兴湘学院",
                         schoolID: 2,
@@ -942,6 +942,70 @@ export default {
                         dirt: "14%",
                     },
                     {
+                        place: 11,
+                        rank: 2,
+                        school: "湘潭大学兴湘学院",
+                        schoolID: 2,
+                        team: "澪田唯吹",    // 队伍名
+                        solved: 6,          // 解决题目数量
+                        time:500,           // 罚时
+                        level: 'bronze',    // 等级
+                        question: [
+                            {
+                                statu: "none"
+                            },
+                            {
+                                statu: "none"
+                            },
+                            {
+                                statu: "none"
+                            },
+                            {
+                                statu: "none"
+                            },
+                            {
+                                statu: "solved", // 解题状态
+                                times: 1,        // 提交次数
+                                time: 87,        // 解出来的分钟数
+                            },
+                            {
+                                statu: "solved",
+                                times: 1,
+                                time: 62,
+                            },
+                            {
+                                statu: "none"
+                            },
+                            {
+                                statu: "first-blood",
+                                times: 1,
+                                time: 155,
+                            },
+                            {
+                                statu: "none"
+                            },
+                            {
+                                statu: "none"
+                            },
+                            {
+                                statu: "solved",
+                                times: 1,
+                                time: 14,
+                            },
+                            {
+                                statu: "solved",
+                                times: 2,
+                                time: 39,
+                            },
+                            {
+                                statu: "solved",
+                                times: 1,
+                                time: 127,
+                            }
+                        ],
+                        dirt: "14%",
+                    },
+                    {
                         place: 15,
                         rank: 3,
                         school: "湘潭大学兴湘学院",
@@ -1006,11 +1070,11 @@ export default {
                         dirt: "14%",
                     },
                     {
-                        place: 14,
-                        rank: 2,
+                        place: 16,
+                        rank: 3,
                         school: "湘潭大学兴湘学院",
                         schoolID: 2,
-                        team: "澪田唯吹",    // 队伍名
+                        team: "罪木蜜柑",    // 队伍名
                         solved: 6,          // 解决题目数量
                         time:500,           // 罚时
                         level: 'bronze',    // 等级
@@ -1398,6 +1462,7 @@ export default {
         justify-content: space-between;
         cursor: pointer;
         transition: all .4s;
+        overflow: hidden;
     }
     .list-inner > div {
         border: 1px solid #FFFFFF;

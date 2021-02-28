@@ -11,7 +11,7 @@
                     style="user-select:none"
                     v-model="page"
                 >
-                    <a-menu-item key="home" @click="openPage('home')">
+                    <a-menu-item key="home" @click="openPage('/')">
                         <a-icon type="home" />
                         首页
                     </a-menu-item>
@@ -102,8 +102,7 @@ export default {
         this.$forceUpdate();
     },
     watch: {
-        $route(to, from) {
-            console.log(from)
+        $route(to) {
             this.page[0] = to.path.slice(1);  // menu切换
             this.$forceUpdate();
         }

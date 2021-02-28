@@ -7,118 +7,115 @@
         />
         <div class="container">
             <div class="left" v-bind:style="{ width: leftW + 'px' }">
-                <div class="menu">
-                    <a-menu mode="horizontal" v-model="leftInner">
-                        <a-menu-item key="question">问题</a-menu-item>
-                        <a-menu-item @click="openComment" key="discuss">讨论</a-menu-item>
-                        <a-menu-item key="submit">提交情况</a-menu-item>
-                    </a-menu>
-                </div>
-                <div class="leftContainer">
-                    <a-spin :spinning="loading">
-                        <section v-show="leftInner[0] == 'question'" class="questionSection">
-                            <!-- 题目ID和title -->
-                            <h1>
-                                ID {{ ID }}:{{ question.title }}
-                            </h1>
-                            <!-- 题目标签 -->
-                            <p>
-                                <a-tag
-                                    v-for="tip in question.tips"
-                                    :key="tip"
-                                    v-bind:id="'tip-' + tip"
-                                >
-                                    {{tip}}
-                                </a-tag>
-                            </p>
-                            <p>
-                                时间限制：<span v-text="question.timeLimit"></span>ms
-                                内存限制：<span v-text="question.memoryLimit"></span>MB
-                            </p>
-                            <!-- 题目内容 -->
-                            <!-- <h2>题目详情</h2> -->
-                            <mavon-editor v-model="question.questionDetail" :subfield="false" :toolbarsFlag="false" defaultOpen="preview"></mavon-editor>
-                        </section>
-                    </a-spin>
-                    <a-spin :spinning="commentLoading">
-                        <section v-show="leftInner[0] == 'discuss'" class="discussSection">
-                            <div class="comment" style="margin-top: 10px">
-                                <a-textarea placeholder="想说什么，尽管说吧~" v-model="comment" :rows="4" />
-                                <a-button style="margin-top: 5px" type="primary" @click="sendComment(false)">发表</a-button>
-                            </div>
-                            <div class="context">
-                                <template v-for="(data, i) in commentContext">
-                                    <div class="contextInner" v-bind:key="data.Rid" v-if="(i >=  (commentPage-1)*commentSize) && (i < commentPage*commentSize)">
-                                        <div class="contextItem">
-                                            <div class="contextHeader">
-                                                <span v-text="data.Uid"></span>
-                                                <span v-text="data.time"></span>
-                                            </div>
-                                            <div class="contextMain">
-                                                <p v-text="data.context"></p>
-                                            </div>
-                                            <div class="contextFooter">
-                                                <a-space>
-                                                    <span 
-                                                        v-if="data.comment.length != 0"
-                                                        v-text="`${ !data.isRecomment? '查看':'收起' }${ data.comment.length }条回复`"
-                                                        @click="data.isRecomment = !data.isRecomment">
-                                                    </span>
-                                                    <span
-                                                        @click="openTextarea(i + 1, 0, data.Rid)"
-                                                        v-text="`${ !(commentReplyNum[0] == i + 1 && commentReplyNum[1] == 0)? '回复':'收起回复' }`"
-                                                    ></span>
-                                                    <span
-                                                        @click="deleteComment(data.Rid)"
-                                                        
-                                                    >删除评论</span>
-                                                    <!-- TODO 这里一个if判断是否显示删除 -->
-                                                    <!-- v-if="data.Uid == sessionStorage.getItem('uid')" -->
-                                                </a-space>
-                                            </div>
-                                        </div>
-                                        <div class="contextTextarea" v-show="commentReplyNum[0] == i + 1 && commentReplyNum[1] == 0">
-                                            <a-textarea :placeholder="'回复用户' + data.Uid + '的评论'" v-model="commentReply" :rows="4" style="resize: none" />
-                                            <a-button style="margin-top: 5px;" type="primary" @click="sendComment(true)">回复</a-button>
-                                        </div>
-                                        <div class="reComment" v-show="data.isRecomment">
-                                            <div class="contextInner" v-for="(item, j) in data.comment" v-bind:key="item.Rid">
-                                                <div class="contextItem">
-                                                    <div class="contextHeader">
-                                                        <span v-text="item.Uid"></span>
-                                                        <span v-text="item.time"></span>
-                                                    </div>
-                                                    <div class="contextMain">
-                                                        <p v-text="`${ item.postId == data.Rid? '':'回复' + data.comment.find(o => o.Rid == item.postId).Uid + ': ' }${ item.context }`"></p>
-                                                    </div>
-                                                    <div class="contextFooter">
-                                                        <a-space>
-                                                            <span
-                                                                @click="openTextarea(i + 1, j + 1, item.Rid);item.isReply = !item.isReply; commentPost = item.Rid"
-                                                                v-text="`${ !item.isReply? '回复':'收起回复' }`"
-                                                            ></span>
-                                                        </a-space>
-                                                    </div>
-                                                </div>
-                                                <div class="contextTextarea" v-show="commentReplyNum[0] == i + 1 && commentReplyNum[1] == j + 1">
-                                                    <a-textarea :placeholder="'回复用户' + item.Uid + '的评论'" v-model="commentReply" :rows="4" style="resize: none" />
-                                                    <a-button style="margin-top: 5px;" type="primary" @click="sendComment(true)">回复</a-button>
-                                                </div>
-                                            </div>
-                                            <div class="contextPagination" v-show="data.isRecomment">
-                                                <a-pagination :hideOnSinglePage="true" v-model="data.page" :defaultPageSize="10" :total="data.comment.length" simple />
-                                            </div>  
-                                        </div>
-                                    </div>
-                                </template>
-                                <div class="contextPagination">
-                                    <a-pagination style="text-align: center" :hideOnSinglePage="true" v-model="commentPage" :defaultPageSize="commentSize" :total="commentContext.length" simple />
+                <a-tabs @change="tabChange">
+                    <a-tab-pane class="leftContainer" key="question" tab="问题">
+                        <a-spin :spinning="loading">
+                            <section class="questionSection session">
+                                <!-- 题目ID和title -->
+                                <h1>
+                                    ID {{ ID }}:{{ question.title }}
+                                </h1>
+                                <!-- 题目标签 -->
+                                <p>
+                                    <a-tag
+                                        v-for="tip in question.tips"
+                                        :key="tip"
+                                        v-bind:id="'tip-' + tip"
+                                    >
+                                        {{tip}}
+                                    </a-tag>
+                                </p>
+                                <p>
+                                    时间限制：<span v-text="question.timeLimit"></span>ms
+                                    内存限制：<span v-text="question.memoryLimit"></span>MB
+                                </p>
+                                <!-- 题目内容 -->
+                                <!-- <h2>题目详情</h2> -->
+                                <mavon-editor v-model="question.questionDetail" :subfield="false" :toolbarsFlag="false" defaultOpen="preview"></mavon-editor>
+                            </section>
+                        </a-spin>
+                    </a-tab-pane>
+                    <a-tab-pane class="leftContainer" key="discuss" tab="讨论">
+                        <a-spin :spinning="commentLoading">
+                            <section class="discussSection session">
+                                <div class="comment" style="margin-top: 10px">
+                                    <a-textarea placeholder="想说什么，尽管说吧~" v-model="comment" :rows="4" />
+                                    <a-button style="margin-top: 5px" type="primary" @click="sendComment(false)">发表</a-button>
                                 </div>
-                            </div>
-                        </section>
-                    </a-spin>
-                    <section v-show="leftInner[0] == 'submit'" class="submitSection"></section>
-                </div>
+                                <div class="context">
+                                    <template v-for="(data, i) in commentContext">
+                                        <div class="contextInner" v-bind:key="data.Rid" v-if="(i >=  (commentPage-1)*commentSize) && (i < commentPage*commentSize)">
+                                            <div class="contextItem">
+                                                <div class="contextHeader">
+                                                    <span v-text="data.Uid"></span>
+                                                    <span v-text="data.time"></span>
+                                                </div>
+                                                <div class="contextMain">
+                                                    <p v-text="data.context"></p>
+                                                </div>
+                                                <div class="contextFooter">
+                                                    <a-space>
+                                                        <span 
+                                                            v-if="data.comment.length != 0"
+                                                            v-text="`${ !data.isRecomment? '查看':'收起' }${ data.comment.length }条回复`"
+                                                            @click="data.isRecomment = !data.isRecomment">
+                                                        </span>
+                                                        <span
+                                                            @click="openTextarea(i + 1, 0, data.Rid)"
+                                                            v-text="`${ !(commentReplyNum[0] == i + 1 && commentReplyNum[1] == 0)? '回复':'收起回复' }`"
+                                                        ></span>
+                                                        <span
+                                                            @click="deleteComment(data.Rid)"
+                                                            
+                                                        >删除评论</span>
+                                                        <!-- TODO 这里一个if判断是否显示删除 -->
+                                                        <!-- v-if="data.Uid == sessionStorage.getItem('uid')" -->
+                                                    </a-space>
+                                                </div>
+                                            </div>
+                                            <div class="contextTextarea" v-show="commentReplyNum[0] == i + 1 && commentReplyNum[1] == 0">
+                                                <a-textarea :placeholder="'回复用户' + data.Uid + '的评论'" v-model="commentReply" :rows="4" style="resize: none" />
+                                                <a-button style="margin-top: 5px;" type="primary" @click="sendComment(true)">回复</a-button>
+                                            </div>
+                                            <div class="reComment" v-show="data.isRecomment">
+                                                <div class="contextInner" v-for="(item, j) in data.comment" v-bind:key="item.Rid">
+                                                    <div class="contextItem">
+                                                        <div class="contextHeader">
+                                                            <span v-text="item.Uid"></span>
+                                                            <span v-text="item.time"></span>
+                                                        </div>
+                                                        <div class="contextMain">
+                                                            <p v-text="`${ item.postId == data.Rid? '':'回复' + data.comment.find(o => o.Rid == item.postId).Uid + ': ' }${ item.context }`"></p>
+                                                        </div>
+                                                        <div class="contextFooter">
+                                                            <a-space>
+                                                                <span
+                                                                    @click="openTextarea(i + 1, j + 1, item.Rid);item.isReply = !item.isReply; commentPost = item.Rid"
+                                                                    v-text="`${ !item.isReply? '回复':'收起回复' }`"
+                                                                ></span>
+                                                            </a-space>
+                                                        </div>
+                                                    </div>
+                                                    <div class="contextTextarea" v-show="commentReplyNum[0] == i + 1 && commentReplyNum[1] == j + 1">
+                                                        <a-textarea :placeholder="'回复用户' + item.Uid + '的评论'" v-model="commentReply" :rows="4" style="resize: none" />
+                                                        <a-button style="margin-top: 5px;" type="primary" @click="sendComment(true)">回复</a-button>
+                                                    </div>
+                                                </div>
+                                                <div class="contextPagination" v-show="data.isRecomment">
+                                                    <a-pagination :hideOnSinglePage="true" v-model="data.page" :defaultPageSize="10" :total="data.comment.length" simple />
+                                                </div>  
+                                            </div>
+                                        </div>
+                                    </template>
+                                    <div class="contextPagination">
+                                        <a-pagination style="text-align: center" :hideOnSinglePage="true" v-model="commentPage" :defaultPageSize="commentSize" :total="commentContext.length" simple />
+                                    </div>
+                                </div>
+                            </section>
+                        </a-spin>
+                    </a-tab-pane>
+                    <a-tab-pane class="leftContainer" key="submit" tab="提交情况"></a-tab-pane>
+                </a-tabs>
                 <div class="buttons">
                     <a-space>
                         <a-input-number placeholder="请输入题号" v-model="aimID" @pressEnter="routeTo(aimID)"></a-input-number>
@@ -391,6 +388,12 @@ export default {
                 this.$router.push(id);
             }
         },
+        tabChange(aim) {
+            // 切换成讨论
+            if(aim == 'discuss') {
+                this.openComment();
+            }
+        }
     },
     watch: {
         $route(to) {
@@ -449,10 +452,9 @@ export default {
     min-width: 400px;
 }
 .question .leftContainer {
-    /* 48是menu,64是buttons */
-    height: calc(100% - 48px - 64px);
-    /* overflow: auto; */
-    overflow-y: scroll;
+    /* 64是导航栏，64是返回按钮，45是选项,64是buttons */
+    height: calc(100vh - 64px - 64px - 45px - 64px);
+    overflow-y: auto;
     padding: 0 10px;
 }
 .question .leftContainer > section {

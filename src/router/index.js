@@ -5,13 +5,21 @@ import VueRouter from 'vue-router'
 // import index from '../index.vue'
 
 // 管理员页面
-import admin from '../admin/admin.vue'
-import add from '../admin/add.vue'
-import addContest from '../admin/addContest.vue'
-import manageContest from '../admin/manageContest.vue'
-import person from '../admin/person.vue'
-import read from '../admin/read.vue'
-import welcome from '../admin/welcome.vue'
+// 主页
+// import adminWelcome from '@/admin/welcome.vue'
+import admin from '@/admin/admin.vue'
+// question
+import questionAdd from '@/admin/question/add.vue'
+import questionRead from '@/admin/question/read.vue'
+import questionWelcome from '@/admin/question/welcome.vue'
+// contest
+import contestManage from '@/admin/contest/add.vue'
+import contestAdd from '@/admin/contest/manage.vue'
+import contestWelcome from '@/admin/contest/welcome.vue'
+// user
+import userSearch from '@/admin/user/search.vue'
+import userMe from '@/admin/user/me.vue'
+import userWelcome from '@/admin/user/welcome.vue'
 
 // 用户页面
 import user from '../user/user.vue'
@@ -35,30 +43,72 @@ const routes = [
     component: admin,
     children: [
       {
-        path: 'add',
-        component: add,
+        path: 'question',
+        name: 'question',
+        component: questionWelcome,
+        children: [
+          {
+            path: 'add',
+            name: 'question-add',
+            component: questionAdd,
+          },
+          {
+            path: 'read',
+            name: 'question-read',
+            component: questionRead,
+          },
+          {
+            path: '*',
+            name: 'question-404',
+            component: questionWelcome,
+          }
+        ]
       },
       {
-        path: 'addContest',
-        component: addContest,
+        path: '/contest',
+        name: 'contest',
+        component: contestWelcome,
+        children: [
+          {
+            path: '/add',
+            name: 'contest-add',
+            component: contestAdd,
+          },
+          {
+            path: '/manage',
+            name: 'contest-manage',
+            component: contestManage,
+          },
+          {
+            path: '*',
+            name: 'contest-404',
+            component: contestWelcome,
+          }
+        ]
       },
       {
-        path: 'manageContest',
-        component: manageContest,
-      },
-      {
-        path: 'person',
-        component: person,
-      },
-      {
-        path: 'read',
-        component: read,
-      },
-      {
-        path: 'welcome',
-        component: welcome
+        path: '/user',
+        name: 'user',
+        component: userWelcome,
+        children: [
+          {
+            path: '/me',
+            name: 'user-me',
+            component: userMe,
+          },
+          {
+            path: '/search',
+            name: 'user-search',
+            component: userSearch,
+          },
+          {
+            path: '*',
+            name: 'user-404',
+            component: userWelcome,
+          }
+        ]
       }
-      // TODO 任意匹配的*（用于404）在这里报错？
+      
     ]
   },
   {

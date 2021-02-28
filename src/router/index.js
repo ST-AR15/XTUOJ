@@ -6,7 +6,7 @@ import NotFound from '@/notfound.vue'
 
 // 管理员页面
 // 主页
-// import adminWelcome from '@/admin/welcome.vue'
+import adminWelcome from '@/admin/welcome.vue'
 import admin from '@/admin/admin.vue'
 // question
 import questionAdd from '@/admin/question/add.vue'
@@ -86,6 +86,11 @@ const routes = [
         path: '/admin',
         component: admin,
         children: [
+            {
+                name: 'admin-welcome',
+                path: '/admin',
+                component: adminWelcome,
+            },
             // 管理端question
             {
                 name: 'question-manage',

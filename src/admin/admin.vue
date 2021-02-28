@@ -13,45 +13,45 @@
                     >
                         <!-- 选项1 ： 题目管理 -->
                         <a-sub-menu>
-                            <span slot="title">
+                            <span slot="title" @click="openPage('question')">
                                 <a-icon type="code" theme="twoTone" />
                                 <span>题目管理</span>
                             </span>
-                            <a-menu-item key="add" @click="openPage('question, add')">
+                            <a-menu-item key="question-add" @click="openPage('question','add')">
                                 <a-icon type="plus-square" />
                                 <span>新增题目</span>
                             </a-menu-item>
-                            <a-menu-item key="read" @click="openPage('question, read')">
+                            <a-menu-item key="question-manage" @click="openPage('question', 'manage')">
                                 <a-icon type="edit" />
-                                <span>读取题目</span>
+                                <span>管理题目</span>
                             </a-menu-item>
                         </a-sub-menu>
                         <!-- 选项二：比赛管理 -->
                         <a-sub-menu>
-                            <span slot="title">
+                            <span slot="title" @click="openPage('contest')">
                                 <a-icon type="trophy" theme="twoTone" />
                                 <span>比赛管理</span>
                             </span>
-                            <a-menu-item key="addContest" @click="openPage('contest, add')">
+                            <a-menu-item key="contest-add" @click="openPage('contest', 'add')">
                                 <a-icon type="plus-circle" />
                                 <span>新建比赛</span>
                             </a-menu-item>
-                            <a-menu-item key="manageContest" @click="openPage('contest, manage')">
+                            <a-menu-item key="contest-manage" @click="openPage('contest', 'manage')">
                                 <a-icon type="database" />
                                 <span>管理比赛</span>
                             </a-menu-item>
                         </a-sub-menu>
                         <!-- 选项三：用户管理 -->
                         <a-sub-menu>
-                            <span slot="title">
+                            <span slot="title" @click="openPage('user')">
                                 <a-icon type="smile" theme="twoTone" />
                                 <span>用户管理</span>
                             </span>
-                            <a-menu-item key="userSearch" @click="openPage('user, search')">
+                            <a-menu-item key="user-search" @click="openPage('user', 'search')">
                                 <a-icon type="file-search" />
                                 <span>搜索用户</span>
                             </a-menu-item>
-                            <a-menu-item @click="openPage('user, me')">
+                            <a-menu-item key="user-me" @click="openPage('user', 'me')">
                                 <a-icon type="user" />
                                 <span>个人中心</span>
                             </a-menu-item>
@@ -81,9 +81,18 @@ export default {
         back() {
             this.$router.replace('/#');
         },
-        openPage(page) { // 打开某页
-            this.$router.push(page);  // 内容切换
-            this.page[0] = page;   // 菜单切换
+        openPage(type, page) { // 打开某页
+            // this.$router.push(page);  // 内容切换
+            // this.page[0] = page;   // 菜单切换
+            let name = "";
+            if(page) {
+                name = type + '-' + page;
+            } else {
+                name = type + '-welcome';
+            }
+            this.$router.push({ name: name }); // router
+            // this.page[0] = name; // 菜单切换在watch里
+
         }
     },
     mounted() {
@@ -93,13 +102,13 @@ export default {
             this.$message.info('没有登录！即将跳转至首页');
             this.$router.replace("/#");
         }
+        // 菜单
+        this.page[0] = this.$route.name;
+        this.$forceUpdate();
     },
     watch: {
         $route(to) {
-            // TODO 这个看能不能不写死7
-            this.page[0] = to.path.slice(7);  // 菜单切换，删掉前面的/admin
-            console.log(this.page);
-            console.log(to);
+            this.page[0] = to.name;  // 菜单切换
             this.$forceUpdate();
         }
     }

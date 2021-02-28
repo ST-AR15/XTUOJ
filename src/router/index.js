@@ -42,40 +42,42 @@ const routes = [
         name: 'user',
         path: '/',
         component: user,
-    },
-    {
-        name: 'home',
-        path: '/home',
-        component: home,
-    },
-    {
-        name: 'problems',
-        path: '/problems',
-        component: problems,
-    },
-    {
-        name: 'problems-detail',
-        path: '/problems/:ID',
-        component: question,
-    },
-    {
-        name: 'contests',
-        path: '/contests',
-        component: contests,
-    },
-    {
-        name: 'status',
-        path: '/status',
-        component: status,
-    },
-    {
-        name: 'ranklist',
-        path: '/ranklist',
-        component: ranklist,
+        children: [
+            {
+                name: 'home',
+                path: '/home',
+                component: home,
+            },
+            {
+                name: 'problems',
+                path: '/problems',
+                component: problems,
+            },
+            {
+                name: 'problems-detail',
+                path: '/problems/:ID',
+                component: question,
+            },
+            {
+                name: 'contests',
+                path: '/contests',
+                component: contests,
+            },
+            {
+                name: 'status',
+                path: '/status',
+                component: status,
+            },
+            {
+                name: 'ranklist',
+                path: '/ranklist',
+                component: ranklist,
+            },
+        ],
     },
     {
         name: 'rank',
-        path: 'rank',
+        path: '/rank',
         component: rank
     },
     // 管理端
@@ -83,54 +85,56 @@ const routes = [
         name: 'admin',
         path: '/admin',
         component: admin,
-    },
-    // 管理端question
-    {
-        name: 'question-manage',
-        path: '/admin/question/manage',
-        component: questionManage,
-    },
-    {
-        name: 'question-add',
-        path: '/admin/question/add',
-        component: questionAdd,
-    },
-    {
-        name: 'question-welcome',
-        path: '/admin/question',
-        component: questionWelcome,
-    },
-    // 管理端contest
-    {
-        name: 'contest-manage',
-        path: '/admin/contest/manage',
-        component: contestManage,
-    },
-    {
-        name: 'contest-add',
-        path: '/admin/contest/add',
-        component: contestAdd,
-    },
-    {
-        name: 'contest-welcome',
-        path: '/admin/contest',
-        component: contestWelcome,
-    },
-    // 管理端user
-    {
-        name: 'user-me',
-        path: '/admin/user/me',
-        component: userMe,
-    },
-    {
-        name: 'user-search',
-        path: '/admin/user/search',
-        component: userSearch,
-    },
-    {
-        name: 'user-welcome',
-        path: '/admin/user',
-        component: userWelcome,
+        children: [
+            // 管理端question
+            {
+                name: 'question-manage',
+                path: '/admin/question/manage',
+                component: questionManage,
+            },
+            {
+                name: 'question-add',
+                path: '/admin/question/add',
+                component: questionAdd,
+            },
+            {
+                name: 'question-welcome',
+                path: '/admin/question',
+                component: questionWelcome,
+            },
+            // 管理端contest
+            {
+                name: 'contest-manage',
+                path: '/admin/contest/manage',
+                component: contestManage,
+            },
+            {
+                name: 'contest-add',
+                path: '/admin/contest/add',
+                component: contestAdd,
+            },
+            {
+                name: 'contest-welcome',
+                path: '/admin/contest',
+                component: contestWelcome,
+            },
+            // 管理端user
+            {
+                name: 'user-me',
+                path: '/admin/user/me',
+                component: userMe,
+            },
+            {
+                name: 'user-search',
+                path: '/admin/user/search',
+                component: userSearch,
+            },
+            {
+                name: 'user-welcome',
+                path: '/admin/user',
+                component: userWelcome,
+            },
+        ]
     },
     {
         name: '404',

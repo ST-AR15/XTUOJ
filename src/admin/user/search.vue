@@ -44,8 +44,13 @@ export default {
             this.$axios.get(url).then(rep => {
                 let data = rep.data.data;
                 // 赋值
-                [this.name, this.age, this.studentID, this.profession, this.role, this.email, this.createTime, this.updateTime] = 
-                [data.Name, data.Age, data.StudentID, data.Profession, data.Role, data.email, data.created_at, data.updated_at];
+                console.log(rep);
+                try {
+                    [this.name, this.age, this.studentID, this.profession, this.role, this.email, this.createTime, this.updateTime] = 
+                    [data.Name, data.Age, data.StudentID, data.Profession, data.Role, data.email, data.created_at, data.updated_at];
+                }catch {
+                    this.$message.info('查无此人');
+                }
                 this.loading = false;
             })
         }

@@ -1,168 +1,256 @@
 <template>
-    <div class="addContest" id="addcontest">
-        <h2 
-            style="border-left:10px solid #1890FF; padding-left:5px"
+    <div class="manageContest" id="manageContest">
+        <a-table
+            :columns="columns"
+            :data-source="contests"
+            style="width:1000px; background-color:#FCFDFE; margin:20px auto"
+            :pagination="pagination"
         >
-            创建比赛
-        </h2>
-        <a-radio-group style="margin-left:218px;margin-bottom:20px" v-model="creatMode">
-            <a-radio value="new">新建</a-radio>
-            <a-radio value="clone">克隆</a-radio>
-        </a-radio-group>
-        <a-form-model
-            ref="addForm"
-            :model="form"
-            :label-col="labelCol"
-            :wrapper-col="wrapperCol"
-            :rules="rules"
-            v-show="creatMode=='new'"
-        >
-            <a-form-model-item label="比赛名称">
-                <a-input 
-                    v-model="form.name"
-                    class="inline-element"
-                    placeholder="题目名称"
-                ></a-input>
-            </a-form-model-item>
-
-            <a-form-model-item label="判题方式">
-                <a-radio-group
-                    v-model="form.judge"
+            <!-- 搜索 -->
+            <div
+                slot="filterDropdown"
+                slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
+                style="padding: 8px"
                 >
-                    <a-radio value="ICPC">ICPC</a-radio>
-                    <a-radio value="OI">OI</a-radio>
-                    <a-radio value="HOI">半OI</a-radio>
-                    <a-radio value="CF">CF</a-radio>
-                </a-radio-group>
-            </a-form-model-item>
-
-            <a-form-model-item label="允许使用的编译器">
-                <a-checkbox-group v-model="form.compiler" :options="compilerList"></a-checkbox-group>
-            </a-form-model-item>
-
-            <a-form-model-item label="题目">
-                <transition-group name="cross">
-                    <!-- 可以把这个div设置成absolute，然后根据i来设置top属性，这样整个动画就能更加连贯 -->
-                    <!-- 后续需求如果需要就这样改 -->
-                    <div class="contests-question" style="display:flex;align-items:center;margin-top:5px;position:relative" v-for="(data,i) in form.questions" :key="data.T">
+                <a-input
+                    v-ant-ref="c => (searchInput = c)"
+                    :placeholder="`搜索 ${column.title}`"
+                    :value="selectedKeys[0]"
+                    style="width: 188px; margin-bottom: 8px; display: block;"
+                    @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
+                    @pressEnter="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                />
+                <a-button
+                    size="small"
+                    style="width: 90px; margin-right: 8px;"
+                    @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                    type="green"
+                >
+                    搜索
+                    <a-icon type="search" />
+                </a-button>
+                <a-button 
+                    type="primary"
+                    size="small"
+                    style="width: 90px" 
+                    @click="() => handleReset(clearFilters)"
+                >
+                    重置
+                    <a-icon type="sync" />
+                </a-button>
+            </div>
+            <!-- 高亮 -->
+            <template slot="customRender" slot-scope="text, record, index, column">
+                <span v-if="searchText && searchedColumn === column.dataIndex">
+                    <template
+                    v-for="(fragment, i) in text
+                        .toString()
+                        .split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))"
+                    >
+                    <mark
+                        v-if="fragment.toLowerCase() === searchText.toLowerCase()"
+                        :key="i"
+                        class="highlight"
+                        >{{ fragment }}</mark
+                    >
+                    <template v-else>{{ fragment }}</template>
+                    </template>
+                </span>
+                <template v-else>
+                    {{ text }}
+                </template>
+            </template>
+            <!-- ID -->
+            <span slot="ID"></span>
+            <span slot="title"></span>
+            <!-- 表头 -->
+            <template slot="title">
+                <h2 style="font-size: 22px">比赛列表</h2>
+            </template>
+            <!-- 搜索图标 -->
+            <a-icon
+                slot="filterIcon"
+                type="search"
+            />
+            <!-- 操作 -->
+            <span slot="buttons" slot-scope="text, record">
+                <a-space>
+                    <a-button type="primary" @click="namelistManage(record.ID)">名单管理</a-button>
+                    <a-button type="primary" @click="questionsManage(record.ID)">题目管理</a-button>
+                    <a-button type="primary" @click="sendNotice(record.ID)">发送通知</a-button>
+                </a-space>
+            </span>
+        </a-table>
+        <!-- 名单管理modal -->
+        <a-modal
+            :title="modal.ID + '名单管理'"
+            :visible="modal.isVisible"
+            @cancel="modal.isVisible = false"
+        >
+            <transition-group name="cross">
+                <div style="margin-top:5px" v-for="(data,i) in modal.questionList" :key="data.T">
+                    <a-space>
                         <a-icon v-bind:style="{
                             fontSize:'22px',
                             cursor:'pointer',
-                            color:i==form.questions.length-1? 'black':'red',
-                            transform:i==form.questions.length-1?'':'rotate(45deg)',
+                            color:i==modal.questionList.length-1? 'black':'red',
+                            transform:i==modal.questionList.length-1?'':'rotate(45deg)',
                             transition: 'all .6s'
-                        }" @click="chargeQuestion(i)" type="plus-circle" v-bind:title="i==form.questions.length-1?'新增':'删除'" />
-                        <a-input class="inline-element" style="width:100px;margin:0 5px" v-model="data.ID" placeholder="题目ID"></a-input>
-                        <a-input class="inline-element" :value="data.name" placeholder="题目名称" :disabled="true"></a-input>
-                    </div>
-                </transition-group>
-                <p>当前题目数量：<span v-text="form.questions.length-1"></span></p>
-            </a-form-model-item>
-
-            <a-form-model-item label="参加方式">
-                <a-radio-group v-model="form.join">
-                    <a-radio value="public">公开</a-radio>
-                    <a-radio value="private">私有</a-radio>
-                    <a-radio value="group">群组</a-radio>
-                </a-radio-group>
-                <div v-show="form.join == 'private'">
-                    <span>比赛密码:</span>
-                    <a-input v-model="form.password" class="inline-element" style="margin-left:10px" placeholder="私有比赛密码"></a-input>
+                        }" @click="chargeQuestion(i)" type="plus-circle" v-bind:title="i==modal.questionList.length-1?'新增':'删除'" />
+                        <a-input style="width:100px;margin:0 5px" v-model="data.ID" placeholder="题目ID"></a-input>
+                        <a-input :value="data.name" placeholder="题目名称" :disabled="true"></a-input>
+                        <a-button type="danger">重判</a-button>
+                    </a-space>
                 </div>
-            </a-form-model-item>
-
-            <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
-                <a-button @click="submitForm" type="primary">上传</a-button>
-                <a-button @click="resetForm" style="margin-left:10px;">重置</a-button>
-            </a-form-model-item>
-        </a-form-model>
-        <div v-if="creatMode=='clone'">
-            <div class="flex-between" style="white-space:nowrap;margin-left:218px">
-                <span>对象比赛ID</span>
-                <a-input style="margin-left:20px"></a-input>
-            </div>
-            <a-button style="margin-left:218px" type="primary">确认</a-button>
-        </div>
+            </transition-group>
+        </a-modal>
+        <!-- 发送通知modal -->
+        <a-modal
+            title="发送通知"
+            :visible="noticeModal.isVisible"
+            @cancel="noticeModal.isVisible = false"
+        >
+            <mavon-editor :tabSize="3"></mavon-editor>
+        </a-modal>
     </div>
 </template>
 
 <script>
+import {mavonEditor} from 'mavon-editor'
+import 'mavon-editor/dist/css/index.css'
 export default {
+    components: {
+        mavonEditor
+    },
     data() {
         return {
-            creatMode: "new",  // new是新建比赛，clone是克隆比赛
-            compilerList: ["GCC","Java","C++","Python"],  // 可使用的编译器列表
-            isCheckAllCompiler: false, // 目前是否全选编辑器
-            labelCol: { span: 4 },
-            wrapperCol: { span: 14 },
-            form: {
-                name: "",
-                judge: "ICPC",
-                compiler: ["GCC","Java"],
-                questions: [
+            pagination: {       // 页面设置
+                pageSize:10,    // 每页题目数量
+            },
+            searchText: "",
+            contests: [
+                {
+                    key: "1000",
+                    ID: 1000,
+                    title: "A+BA",
+                    source: "昶浩",
+                },
+                {
+                    key: "1001",
+                    ID: 1001,
+                    title: "A+BA",
+                    source: "昶浩",
+                },
+            ],
+            columns: [          // 表格的表头
+                {
+                    title: "ID",
+                    dataIndex: "ID",
+                    // sorter: (a,b) => a.ID - b.ID,
+                    scopedSlots: {
+                        filterDropdown: 'filterDropdown',
+                        filterIcon: 'filterIcon',
+                        customRender: 'customRender',
+                    },
+                    onFilter: (value, record) =>
+                        record.ID
+                        .toString()
+                        .toLowerCase()
+                        .includes(value.toLowerCase()),
+                    onFilterDropdownVisibleChange: visible => {
+                        if (visible) {
+                        setTimeout(() => {
+                            this.searchInput.focus();
+                        });
+                        }
+                    },
+                },
+                {
+                    title: "比赛名称",
+                    dataIndex: "title",
+                    scopedSlots: {
+                        filterDropdown: 'filterDropdown',
+                        filterIcon: 'filterIcon',
+                        customRender: 'customRender',
+                    },
+                    onFilter: (value, record) =>
+                        record.title
+                        .toString()
+                        .toLowerCase()
+                        .includes(value.toLowerCase()),
+                    onFilterDropdownVisibleChange: visible => {
+                        if (visible) {
+                        setTimeout(() => {
+                            this.searchInput.focus();
+                        });
+                        }
+                    },
+                },
+                {
+                    title: "发布人",
+                    dataIndex: "source"
+                },
+                {
+                    title: "比赛开始时间"
+                },
+                {
+                    title: "总时长"
+                },
+                {
+                    title: "操作",
+                    scopedSlots: { customRender: 'buttons' },
+                }
+            ],
+            modal: {  // 对话框的内容
+                isVisible: false,
+                ID: 1000,
+                questionList: [
                     {
-                        T: 1,
+                        T:1,
                         ID: 1000,
-                        name: "cnm",
                     },
                     {
-                        T: 2,
+                        T:2,
                         ID: 1001,
-                        name: "qqq"
-                    },
-                    {
-                        T: 3,
-                        ID: 1002,
-                        name: "qqqww"
-                    },
-                ],
-                join: "public",
-                password: "",
+                    }
+                ]
             },
-            rules: {                     // 表单规则
-                name: [                  // 题目名称规则：比如输入内容，否则提示“请输入题目名称”
-                    { required: true, message: '请输入比赛名称', trigger: 'change' },
-                ],
-            },
+            noticeModal: { // 发送通知对话框
+                isVisible: false,
+            }
         }
-        
     },
     methods: {
-        chargeQuestion(i) {  //删除或者添加某个问题
-            if(i == this.form.questions.length-1) {  //如果是最后的问题，那就是添加
+        namelistManage(contestID) {  // 管理名单
+            console.log(contestID);
+        },
+        questionsManage(contestID) { // 管理题目
+            console.log(contestID);
+            this.modal.isVisible = true;
+        },
+        chargeQuestion(i) { // 修改题目
+            if(i == this.modal.questionList.length-1) {  //如果是最后的问题，那就是添加
                 let timer = new Date();  // 时间，为后面的T做准备
-                this.form.questions.push({
+                this.modal.questionList.push({
                     T: timer.getTime(),
-                    ID: parseInt(this.form.questions[i].ID) + 1,
+                    ID: parseInt(this.modal.questionList[i].ID) + 1,
                     name: ""
                 });
             } else {
-                this.form.questions.splice(i,1);
+                this.modal.questionList.splice(i,1);
             }
         },
-        submitForm() { // 上传表单
-
-        },
-        resetForm() { // 重置表单
-            
+        sendNotice(i) { // 发送通知
+            this.noticeModal.isVisible = true;
+            console.log(i);
         }
     }
 }
 </script>
 
 <style>
-    .addContest ul {
-        list-style: none;
-        font-size: 18px;
-    }
-    .addContest .flex-between {
-        width: 300px;
-        display: flex;
-        justify-content: space-between;
-        margin: 10px;
-    }
-    .addContest .inline-element {
+    /* .manageContest .inline-element {
         width: 200px;
         display: inline-block;
-    }
+    } */
 </style>

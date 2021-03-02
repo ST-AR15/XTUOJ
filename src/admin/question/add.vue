@@ -10,7 +10,7 @@
             :wrapper-col="wrapperCol"
             :rules="rules"
         >
-            <a-form-model-item label="题目名称">
+            <a-form-model-item prop="name" label="题目名称">
                 <a-input 
                     v-model="form.name"
                     class="inline-element"
@@ -18,7 +18,7 @@
                 ></a-input>
             </a-form-model-item>
 
-            <a-form-model-item label="时限">
+            <a-form-model-item prop="timeLimit" label="时限">
                     <a-input
                         placeholder="请输入500的倍数" 
                         class="inline-element"
@@ -28,12 +28,6 @@
                         :step="500"
                         suffix="ms"
                     ></a-input>
-                    <!-- TODO 添加动画 -->
-                    <p v-show="form.timeLimit%500 != 0" style="line-height:12px; height:12px; position:absolute; margin: 0; white-space:nowrap">
-                        <span>
-                            我们会把这个数字取整到{{(parseInt(form.timeLimit/500)+1)*500}}，因为这个数必须是500的倍数
-                        </span>
-                    </p>
             </a-form-model-item>
 
             <a-form-model-item label="存限">
@@ -194,6 +188,10 @@ export default {
                 name: [                  // 题目名称规则：比如输入内容，否则提示“请输入题目名称”
                     { required: true, message: '请输入题目名称', trigger: 'change' },
                 ],
+                timeLimit: [                  // 时限规则：必须是500的倍数，否则向上取整
+                    { pattern: new RegExp(/^[1-9]\d*[05]00$|500/, "g"), message: '请输入500的倍数', trigger: 'change' },
+                    // { type: 'number', message: '时限必须是500的倍数', trigger: 'change' }
+                ]
             },
             modal: {
                 visible: false,

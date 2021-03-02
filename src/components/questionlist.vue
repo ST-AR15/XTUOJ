@@ -9,81 +9,14 @@
             :loading="loading"
             @change="handleTableChange"
         >
-            <!-- 搜索 -->
-            <div
-                slot="filterDropdown"
-                slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
-                style="padding: 8px"
-                >
-                <a-input
-                    v-ant-ref="c => (searchInput = c)"
-                    :placeholder="`搜索 ${column.title}`"
-                    :value="selectedKeys[0]"
-                    style="width: 188px; margin-bottom: 8px; display: block;"
-                    @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
-                    @pressEnter="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
-                />
-                <a-button
-                    size="small"
-                    style="width: 90px; margin-right: 8px;"
-                    @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
-                    type="green"
-                >
-                    搜索
-                    <a-icon type="search" />
-                </a-button>
-                <a-button 
-                    type="primary"
-                    size="small"
-                    style="width: 90px" 
-                    @click="() => handleReset(clearFilters)"
-                >
-                    重置
-                    <a-icon type="sync" />
-                </a-button>
-            </div>
-            <!-- 高亮 -->
-            <template slot="customRender" slot-scope="text, record, index, column">
-                <span v-if="searchText && searchedColumn === column.dataIndex">
-                    <template
-                    v-for="(fragment, i) in text
-                        .toString()
-                        .split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))"
-                    >
-                    <mark
-                        v-if="fragment.toLowerCase() === searchText.toLowerCase()"
-                        :key="i"
-                        class="highlight"
-                        >{{ fragment }}</mark
-                    >
-                    <template v-else>{{ fragment }}</template>
-                    </template>
-                </span>
-                <template v-else>
-                    {{ text }}
-                </template>
-            </template>
             <!-- ID -->
             <span slot="ID"></span>
+            <!-- title -->
             <span slot="title"></span>
             <!-- tips -->
-            <span slot="tips" slot-scope="tips" style="float:right">
-                <a-tag
-                    v-for="tip in tips"
-                    :key="tip"
-                    v-bind:id="'tip-' + tip"
-                >
-                    {{tip}}
-                </a-tag>
-            </span>
+            <span slot="tips"></span>
             <!-- status -->
-            <span slot="status" slot-scope="status">
-                <a-tag
-                    :color="status=='ATTEMPT'? 'orange':status=='ACCEPT'? 'green':'blue'"
-                    style="border-radius: 10px;height:22px; line-height:22px"
-                    v-if="status"
-                >● <span>{{status}}</span></a-tag>
-            </span>
+            <span slot="status"></span>
             <!-- AC/Total -->
             <span slot="AT" slot-scope="text, record">
                 <span v-text="record.accept"></span>
@@ -97,11 +30,6 @@
                     <a-icon class="refreshIcon" type="redo" @click="refresh()" />
                 </h2>
             </template>
-            <!-- 搜索图标 -->
-            <a-icon
-                slot="filterIcon"
-                type="search"
-            />
             <!-- 操作 -->
             <span slot="buttons" slot-scope="text, record">
                 <a-space>
@@ -117,7 +45,6 @@
 </template>
 
 <script>
-// import { message } from 'ant-design-vue'
 export default {
     props: {
         buttons: Array
@@ -136,61 +63,14 @@ export default {
                 {
                     title: "ID",
                     dataIndex: "ID",
-                    // sorter: (a,b) => a.ID - b.ID,
-                    scopedSlots: {
-                        filterDropdown: 'filterDropdown',
-                        filterIcon: 'filterIcon',
-                        customRender: 'customRender',
-                    },
-                    onFilter: (value, record) =>
-                        record.ID
-                        .toString()
-                        .toLowerCase()
-                        .includes(value.toLowerCase()),
-                    onFilterDropdownVisibleChange: visible => {
-                        if (visible) {
-                        setTimeout(() => {
-                            this.searchInput.focus();
-                        });
-                        }
-                    },
                 },
                 {
                     title: "题目名称",
                     dataIndex: "title",
-                    scopedSlots: {
-                        filterDropdown: 'filterDropdown',
-                        filterIcon: 'filterIcon',
-                        customRender: 'customRender',
-                    },
-                    onFilter: (value, record) =>
-                        record.title
-                        .toString()
-                        .toLowerCase()
-                        .includes(value.toLowerCase()),
-                    onFilterDropdownVisibleChange: visible => {
-                        if (visible) {
-                        setTimeout(() => {
-                            this.searchInput.focus();
-                        });
-                        }
-                    },
                 },
                 {
                     title: "标签",
                     dataIndex: "tips",
-                    scopedSlots: { customRender: 'tips' },
-                    filters: [
-                        {
-                            text: 'dp',
-                            value: 'dp'
-                        },
-                        {
-                            text: 'math',
-                            value: 'math'
-                        },
-                    ],
-                    onFilter: (value, record) => record.tips.indexOf(value) >= 0,
                 },
                 {
                     title: "来源",
@@ -199,18 +79,6 @@ export default {
                 {
                     title: "状态",
                     dataIndex: "status",
-                    scopedSlots: { customRender: 'status' },
-                    filters: [
-                        {
-                            text: 'ACCEPT',
-                            value: 'ACCEPT'
-                        },
-                        {
-                            text: 'ATTEMPT',
-                            value: 'ATTEMPT'
-                        },
-                    ],
-                    onFilter: (value, record) => record.status.indexOf(value) === 0,
                 },
                 {
                     title: "AC/Total",
@@ -245,16 +113,6 @@ export default {
         }
     },
     methods: {
-        handleSearch(selectedKeys, confirm, dataIndex) {
-            confirm();
-            this.searchText = selectedKeys[0];
-            this.searchedColumn = dataIndex;
-        },
-
-        handleReset(clearFilters) {
-            clearFilters();
-            this.searchText = '';
-        },
         handleTableChange(pagination) {
             // 修改页码
             this.pagination.current = pagination.current;

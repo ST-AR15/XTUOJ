@@ -34,7 +34,13 @@
                 </a-menu>
                 <div class="loginzoom">
                     <a-button class="navButton" v-if="!isLogin" @click="loginVisible = true">登录</a-button>
-                    <a-button class="navButton" v-else @click="goPerson">个人中心</a-button>
+                    <a-dropdown class="navButton" v-else>
+                        <a-button>欢迎</a-button>
+                        <a-menu slot="overlay">
+                            <a-menu-item @click="goPerson">个人中心</a-menu-item>
+                            <a-menu-item>退出登录</a-menu-item>
+                        </a-menu>
+                    </a-dropdown>
                 </div>
             </a-layout-header>
             <a-layout-content>

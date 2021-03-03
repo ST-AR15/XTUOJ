@@ -81,7 +81,13 @@ export default {
         openPage(page) {  //打开某页
             // 当页面不同时，打开页面
             if(this.$route.fullPath != '/' + page) {
-                this.$router.push(page); // 页面内容切换
+                // this.$router.push(page); // 页面内容切换
+                if(page == '/') {
+                    this.$router.push({ name: "home" });
+                } else {
+                    this.$router.push({ name: page });
+                }
+                
             }
             // menu切换在watch中实现
             // if(page == '/') {

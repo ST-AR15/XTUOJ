@@ -51,7 +51,6 @@ export default {
     },
     data() {
         return {
-            searchText: "",
             loading: false,
             pagination: {       // 页面设置
                 pageSize:0,     // 每页题目数量
@@ -113,34 +112,38 @@ export default {
         }
     },
     methods: {
+        // TODO 如果开始加载的不是第一页，再去加载第一页，就会控制台报错。原因不明。
+        // a-table监测页面切换前调用
+        // 只用用a-table自己的方法切换页面才调用（按下面的数字或者输入跳转）
         handleTableChange(pagination) {
-            // 修改页码
-            this.pagination.current = pagination.current;
-            // 变量
-            // let page = {
-            //     page: pagination.current,
-            // };
-            // 只有未加载过的页面才需要加载
-            if(this.questions[(pagination.current-1)*this.pagination.pageSize] == undefined) {
-                this.loadPage(pagination.current)
-            }
-            
+            // 修改query
+            this.$router.push({ query: {page: pagination.current }})
+            // 修改query后，剩下的都交给query去做
         },
+        // 用于调用父接口
         callbackMethod(fatherMethod,param) {
             this.$emit(fatherMethod, param);
         },
-        refresh() { // 刷新表格
+        // 刷新表格
+        refresh(p = 1) { // 刷新表格
             let that = this;
-            // 变到第一页
-            that.pagination.current = 1;
+            // 变到第一页。如果传了值就加载那一页。
+            that.pagination.current = p;
             // 初始化结果数组
             this.questions = [];
             // 加载第一页的内容，并确认每一页的内容数量和总页数
-            this.loadPage(1);
+            this.loadPage(p);
             // console.log(that.pagination.current);
         },
+        // 加载某一页的内容
+        // 只加载内容，其他的不管！
+        // 也就是说，这个方法只是对question变量的操作
         loadPage(page) { // 加载某一页
             let that = this;
+            // 如果已经加载过了，就不加载
+            if(that.questions[(page-1) * that.pagination.pageSize] ) {
+                return ;
+            }
             // 开始加载
             that.loading = true;
             // url
@@ -153,7 +156,7 @@ export default {
             }).then(rep => {
                 const data = rep.data.data;
                 // 设置页码相关的东西
-                that.pagination.pageSize = that.pagination.pageSize == 0? data.data.length:that.pagination.pageSize;
+                that.pagination.pageSize = data.per_page;
                 that.pagination.total = data.total;
                 // console.log(that.pagination.pageSize);
                 // 循环复制给数组questions
@@ -170,12 +173,21 @@ export default {
                 console.log(error);
                 that.loading = false;
             })
-        }
+        },
     },
     mounted: function() {
         let that = this;
         // 刷新表格
-        that.refresh();
+        that.refresh(Number(this.$route.query.page)? Number(this.$route.query.page): 1);
+    },
+    watch: {
+        // query变化的时候调用，通过query切换表页码，与handleTableChange互补
+        $route(to) {
+            // 页码切换
+            this.pagination.current = Number(to.query.page);
+            // 加载内容
+            this.loadPage(Number(to.query.page));
+        }
     }
 }
 </script>

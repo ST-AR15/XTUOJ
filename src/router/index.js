@@ -94,49 +94,49 @@ const routes = [
             // 管理端question
             {
                 name: 'question-manage',
-                path: '/admin/question/manage',
+                path: '/question-manage',
                 component: questionManage,
             },
             {
                 name: 'question-add',
-                path: '/admin/question/add',
+                path: '/question-add',
                 component: questionAdd,
             },
             {
                 name: 'question-welcome',
-                path: '/admin/question',
+                path: '/question',
                 component: questionWelcome,
             },
             // 管理端contest
             {
                 name: 'contest-manage',
-                path: '/admin/contest/manage',
+                path: '/contest-manage',
                 component: contestManage,
             },
             {
                 name: 'contest-add',
-                path: '/admin/contest/add',
+                path: '/contest-add',
                 component: contestAdd,
             },
             {
                 name: 'contest-welcome',
-                path: '/admin/contest',
+                path: '/contest',
                 component: contestWelcome,
             },
             // 管理端user
             {
                 name: 'user-me',
-                path: '/admin/user/me',
+                path: '/user-me',
                 component: userMe,
             },
             {
                 name: 'user-search',
-                path: '/admin/user/search',
+                path: '/user-search',
                 component: userSearch,
             },
             {
                 name: 'user-welcome',
-                path: '/admin/user',
+                path: '/user',
                 component: userWelcome,
             },
         ]
@@ -149,9 +149,9 @@ const routes = [
 ]
 
 const router = new VueRouter({
-// mode: 'history',
-base: process.env.BASE_URL,
-routes: routes
+    mode: 'history',
+    // base: process.env.BASE_URL,
+    routes: routes
 })
 
 export default router

@@ -142,11 +142,15 @@ export default {
             // 获取题目名字
             // 限定四位数
             if(this.form.questions[i].ID/1000 >= 1 && this.form.questions[i].ID/1000 < 10) {
-                this.form.questions[i].name = "<查询中……>";
+                this.form.questions[i].name = "< 查询中…… >";
                 let url = "/api/problem/" + this.form.questions[i].ID;
                 this.$axios.get(url).then(rep => {
                     this.form.questions[i].name = rep.data.data.Tittle;
                     this.form.questions[i].isValid = true;
+                }).catch(err => {
+                    this.form.questions[i].name = "< 题目无效 >";
+                    this.form.questions[i].isValid = false;
+                    throw err;
                 })
             } else {
                 // 如果不是四位，就清空内容

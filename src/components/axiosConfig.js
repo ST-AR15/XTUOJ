@@ -13,9 +13,8 @@ axios.interceptors.request.use((req) => {
 },error => {
     notification.open({
         message: error.message,
-        description: '出现请求错误，请检查自己的网络连接或联系管理员。' + 'url: ' + error.config.url,
+        description: '出现请求错误，请检查自己的网络连接或联系管理员。\r\n' + 'url: ' + error.config.url,
         duration: 0,
-        icon: '×',
     });
     return Promise.reject(error);
 })
@@ -26,10 +25,8 @@ axios.interceptors.response.use((res) => {
 },error => {
     notification.open({
         message: error.message,
-        description: `响应错误，请检查自己的网络连接或联系管理员。url:${ error.config.url }；res:${ error.response.data.data }`,
-        // TODO 这个响应错误 在提交回复的时候还是data.message- -
+        description: `响应错误，请检查自己的网络连接或联系管理员。url:${ error.config.url }；\r\nres:${ error.response.data.data }`,
         duration: 0,
-        icon: '×',
     });
     // console.log(error);
     console.log(error.response);

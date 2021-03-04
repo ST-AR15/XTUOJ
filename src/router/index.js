@@ -2,33 +2,33 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 // 404
-import NotFound from '@/notfound.vue'
+const NotFound = () => import('@/notfound.vue')
 
 // 管理员页面
 // 主页
-import adminWelcome from '@/admin/welcome.vue'
-import admin from '@/admin/admin.vue'
+const adminWelcome = () => import('@/admin/welcome.vue')
+const admin = () => import('@/admin/admin.vue')
 // question
-import questionAdd from '@/admin/question/add.vue'
-import questionManage from '@/admin/question/manage.vue'
-import questionWelcome from '@/admin/question/welcome.vue'
+const questionAdd = () => import('@/admin/question/add.vue')
+const questionManage = () => import('@/admin/question/manage.vue')
+const questionWelcome = () => import('@/admin/question/welcome.vue')
 // contest
-import contestManage from '@/admin/contest/add.vue'
-import contestAdd from '@/admin/contest/manage.vue'
-import contestWelcome from '@/admin/contest/welcome.vue'
+const contestManage = () => import('@/admin/contest/add.vue')
+const contestAdd = () => import('@/admin/contest/manage.vue')
+const contestWelcome = () => import('@/admin/contest/welcome.vue')
 // user
-import userSearch from '@/admin/user/search.vue'
-import userMe from '@/admin/user/me.vue'
-import userWelcome from '@/admin/user/welcome.vue'
+const userSearch = () => import('@/admin/user/search.vue')
+const userMe = () => import('@/admin/user/me.vue')
+const userWelcome = () => import('@/admin/user/welcome.vue')
 
 // 用户页面
-import user from '../user/user.vue'
-import home from '../user/home.vue'
-import problems from '../user/problems.vue'
-import contests from '../user/contests.vue'
-import ranklist from '../user/ranklist.vue'
-import status from '../user/status.vue'
-import question from '../user/question.vue'
+const user = () => import('../user/user.vue')
+const home = () => import('../user/home.vue')
+const problems = () => import('../user/problems.vue')
+const contests = () => import('../user/contests.vue')
+const ranklist = () => import('../user/ranklist.vue')
+const status = () => import('../user/status.vue')
+const question = () => import('../user/question.vue')
 
 // 通用页面
 import rank from '../rank.vue'

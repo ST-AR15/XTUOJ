@@ -1,5 +1,5 @@
 <template>
-    <div class="home" id="home">
+    <div class="problems" id="problems">
         <questionlist :buttons="buttons" @goQuestion="goQuestion" />
     </div>
 </template>

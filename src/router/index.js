@@ -13,8 +13,8 @@ const questionAdd = () => import('@/admin/question/add.vue')
 const questionManage = () => import('@/admin/question/manage.vue')
 const questionWelcome = () => import('@/admin/question/welcome.vue')
 // contest
-const contestManage = () => import('@/admin/contest/add.vue')
-const contestAdd = () => import('@/admin/contest/manage.vue')
+const contestManage = () => import('@/admin/contest/manage.vue')
+const contestAdd = () => import('@/admin/contest/add.vue')
 const contestWelcome = () => import('@/admin/contest/welcome.vue')
 // user
 const userSearch = () => import('@/admin/user/search.vue')

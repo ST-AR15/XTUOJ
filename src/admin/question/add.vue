@@ -163,7 +163,14 @@ export default {
                 ],
                 timeLimit: [             // 时限规则：必须是500的倍数，否则向上取整
                     { required: true, message: '请输入时限!', trigger: 'change' },
-                    { pattern: new RegExp(/^[1-9]\d*[05]00$|500/, "g"), message: '请输入500的正倍数', trigger: 'change' },
+                    { validator: ((rule, value, callback) => {
+                        if(value % 500 !== 0 || value < 0) {
+                            callback(new Error('请输入500的正整数倍数'))
+                        } else {
+                            callback();
+                        }
+                    }), trigger: 'change' },
+                    // { pattern: new RegExp(/^[1-9]\d*[05]00$|500/, "g"), message: '请输入500的正倍数', trigger: 'change' },
                 ],
                 memoryLimit: [          // 存限规则：必须存在
                     { required: true, message: '请输入存限', trigger: 'change' },

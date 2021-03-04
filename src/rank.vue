@@ -4,12 +4,12 @@
         <div class="time">
             <div class="time-bar">
                 <div class="time-bg"></div>
-                <div class="time-end" v-text="new Date().getTime()<stamp.end? timeFormatter(stamp.end, true): '已结束'"></div>
+                <div class="time-end" v-text="Date.now()<stamp.end? timeFormatter(stamp.end, true): '已结束'"></div>
                 <a-slider @change="handleQuery()" :marks="time" :min="stamp.start" :max="stamp.end" v-model="progress" :step="timeStep" :tip-formatter="formatter"></a-slider>
             </div>
             <div class="time-detail">
                 <span v-text="'总时长：' + msToTime(stamp.end-stamp.start)"></span>
-                <span v-text="'剩余时长：' + msToTime(Math.max(0, Math.min((stamp.end-stamp.start),(stamp.end-new Date().getTime()))))"></span>
+                <span v-text="'剩余时长：' + msToTime(Math.max(0, Math.min((stamp.end-stamp.start),(stamp.end-Date.now()))))"></span>
             </div>
         </div>
         <div class="tip">
@@ -101,8 +101,8 @@ export default {
             title: "第1届湘潭大学程序设计竞赛正式赛",  // 比赛名字
             time: {},
             stamp: {   // 比赛开始和比赛结束的时间
-                start: 1614110180000,
-                end: 1614113480000,
+                start: 1614844800000,
+                end: 1614949200000,
             },
             timeStep: 1000, // 进度条的最低刻度,为1秒
             progress: 1614067200000, // 进度条(当前时间)
@@ -1185,15 +1185,15 @@ export default {
             // let date = new Date();
             if(!query.t) {
                 // 如果没有传入时间，就用现在的时间和结束时间里面小的那个
-                this.progress = this.msFormatter(Math.min(this.stamp.end, new Date().getTime()));
+                this.progress = this.msFormatter(Math.min(this.stamp.end, Date.now()));
             } else {
                 // 如果传入了时间，就用它传的时间
-                if(query.t > Math.min(this.stamp.end, new Date().getTime())) {
+                if(query.t > Math.min(this.stamp.end, Date.now())) {
                     // 如果传入的时间超过了结束时间或当前时间
-                    this.progress = this.msFormatter(Math.min(this.stamp.end, new Date().getTime()));
+                    this.progress = this.msFormatter(Math.min(this.stamp.end, Date.now()));
                 } else if(query.t < this.stamp.start) {
                     // 如果传入的时间小于开始时间
-                    this.progress = this.msFormatter(Math.min(this.stamp.end, new Date().getTime()));
+                    this.progress = this.msFormatter(Math.min(this.stamp.end, Date.now()));
                 } else {
                     this.progress = this.msFormatter(query.t);
                 }
@@ -1203,7 +1203,7 @@ export default {
                 this.progress = this.stamp.start;
             }
             // 进度过了10%就显示右边的
-            if(new Date().getTime() - this.stamp.start < 0 || ((new Date().getTime() - this.stamp.start)/(this.stamp.end - this.stamp.start)) < 0.1 ) {
+            if(Date.now() - this.stamp.start < 0 || ((Date.now() - this.stamp.start)/(this.stamp.end - this.stamp.start)) < 0.1 ) {
                 this.time = {
                     [this.stamp.start]: {
                         label: timeFormatter(this.stamp.start, true),
@@ -1214,11 +1214,11 @@ export default {
                     [this.stamp.start]: {
                         label: timeFormatter(this.stamp.start, true),
                     },
-                    [Math.min(new Date().getTime(), this.stamp.end)]: {
+                    [Math.min(Date.now(), this.stamp.end)]: {
                         style: {
                             whiteSpace: 'nowrap'
                         },
-                        label: timeFormatter(Math.min(new Date().getTime(), this.stamp.end), true),
+                        label: timeFormatter(Math.min(Date.now(), this.stamp.end), true),
                     },
                 }
             }
@@ -1227,7 +1227,7 @@ export default {
                 // 同时移动进度条
                 this.timer = setInterval(() => {
                     // 时间
-                    if(new Date().getTime() - this.stamp.start < 0 || ((new Date().getTime() - this.stamp.start)/(this.stamp.end - this.stamp.start)) < 0.1 ) {
+                    if(Date.now() - this.stamp.start < 0 || ((Date.now() - this.stamp.start)/(this.stamp.end - this.stamp.start)) < 0.1 ) {
                         this.time = {
                             [this.stamp.start]: {
                                 label: timeFormatter(this.stamp.start, true),
@@ -1238,20 +1238,20 @@ export default {
                             [this.stamp.start]: {
                                 label: timeFormatter(this.stamp.start, true),
                             },
-                            [Math.min(new Date().getTime(), this.stamp.end)]: {
+                            [Math.min(Date.now(), this.stamp.end)]: {
                                 style: {
                                     whiteSpace: 'nowrap'
                                 },
-                                label: timeFormatter(Math.min(new Date().getTime(), this.stamp.end), true),
+                                label: timeFormatter(Math.min(Date.now(), this.stamp.end), true),
                             },
                         }
                     }
                     // 进度
-                    if((Math.min(this.stamp.end, new Date().getTime()) - this.progress) <= 10000) { // 如果在右边，就一直跟着走,判断方法是小于10秒的差距
-                        this.progress = this.msFormatter(Math.max(this.stamp.start,(Math.min(this.stamp.end, new Date().getTime()))));
+                    if((Math.min(this.stamp.end, Date.now()) - this.progress) <= 10000) { // 如果在右边，就一直跟着走,判断方法是小于10秒的差距
+                        this.progress = this.msFormatter(Math.max(this.stamp.start,(Math.min(this.stamp.end, Date.now()))));
                     }
                     // 如果到了时间，移除计时器
-                    if(new Date().getTime() > this.stamp.end) {
+                    if(Date.now() > this.stamp.end) {
                         clearInterval(this.timer);
                     }
                 }, 1000);
@@ -1272,7 +1272,6 @@ export default {
             this.handleStar(star);
         },
         formatter() {
-            // let stamp = (((Math.min(new Date().getTime(), this.stamp.end)) - this.stamp.start) * this.progress / 100) + this.stamp.start;  // 时间戳
             return timeFormatter(this.progress);
         },
         msToTime(ms) {
@@ -1330,8 +1329,8 @@ export default {
             }
             // time
             // 如果t是结束的t、进度的t或者还没开始，就不传
-            if(this.progress != this.msFormatter(Math.min(this.stamp.end, new Date().getTime()))) {
-                if(new Date().getTime() >= this.stamp.start) {
+            if(this.progress != this.msFormatter(Math.min(this.stamp.end, Date.now()))) {
+                if(Date.now() >= this.stamp.start) {
                     query.t = this.progress + "";
                 }
             }

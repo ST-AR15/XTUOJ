@@ -237,8 +237,9 @@ export default {
                 IsBan: this.questionDetailModal.questionDetail.IsBan,
             }
             console.log(info);
-            this.$axios.put(url, info).then(rep => {
+            this.$axios.put(url, { params: info }).then(rep => {
                 console.log(rep);
+                this.$message.success("修改成功！");
             })
         },
         questionDataModalCancel() {   // 关闭数据管理

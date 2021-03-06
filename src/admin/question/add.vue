@@ -193,11 +193,13 @@ export default {
                     }
                     let info = {    // 传给后端的info
                         Tittle: that.form.name,
-                        // source
+                        source: that.form.source,
                         Content: that.form.contents,
                         TimeLimit: that.form.timeLimit,
                         MemoryLimit: that.form.memoryLimit,
-                        IsBan: "false", // TODO 现在是写死为false
+                        IsBan: that.form.isBan,
+                        Solved: that.form.isSolved? "yes": "no",
+                        // TODO: 没有判题输入和判题输出
                     };
                     // url
                     let url = "/api/problem";

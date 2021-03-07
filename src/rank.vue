@@ -51,7 +51,7 @@
                 <div style="width: 100%">Dirt</div>
             </div>
             <!-- 关注 -->
-            <div class="list-inner star" v-for="(data, i) in list.star" :key="'star' + i" v-bind:style="{ 'transform': `translateY(${i*38}px)` }">
+            <div class="list-inner star" v-for="(data, i) in list.star" :key="'star' + i" :style="{ 'transform': `translateY(${i*38}px)` }">
                 <div style="width: 100%">*</div>
                 <div style="width: 400%">{{ data.school }}</div>
                 <div style="width: 600%">{{ data.team }}</div>
@@ -70,7 +70,7 @@
                 <div style="width: 100%">{{ data.dirt }}</div>
             </div>
             <!-- 全部 -->
-            <div class="list-inner" v-for="(data, i) in list.score" :key="i" v-bind:class="data.level" v-bind:style="{ 'transform': `translateY(${(data.place-1+list.star.length)*38}px)` }">
+            <div class="list-inner" v-for="(data, i) in list.score" :key="i" v-bind:class="data.level" :style="{ 'transform': `translateY(${(data.place-1+list.star.length)*38}px)` }">
                 <div style="width: 100%">{{ data.rank }}</div>
                 <div style="width: 400%">{{ data.school }}</div>
                 <div style="width: 600%">{{ data.team }}</div>
@@ -87,6 +87,71 @@
                     </div>
                 </div>
                 <div style="width: 100%">{{ data.dirt }}</div>
+            </div>
+            <!-- 统计 -->
+            <!-- 表头 -->
+            <div class="list-footer" :style="{ 'transform':  `translateY(${ (list.star.length + list.score.length) * 38 }px)`}">
+                <div style="width: 100%" class="blank"></div>
+                <div style="width: 400%" class="blank"></div>
+                <div style="width: 600%" class="blank"></div>
+                <div style="width: 100%" class="blank"></div>
+                <div style="width: 200%">Attempted</div>
+                <div style="width: 100%" v-for="i in list.question" :key="(i + 9).toString(36)">
+                    {{ (i + 9).toString(36) }}
+                </div>
+                <div style="width: 100%" class="blank"></div>
+            </div>
+            <!-- accepted -->
+            <div class="list-footer" odd :style="{ 'transform':  `translateY(${ (list.star.length + list.score.length + 1) * 38 }px)`}">
+                <div style="width: 100%" class="blank"></div>
+                <div style="width: 400%" class="blank"></div>
+                <div style="width: 600%" class="blank"></div>
+                <div style="width: 100%" class="blank"></div>
+                <div style="width: 200%">Accepted</div>
+                <div style="width: 100%; line-height: 19px" v-for="i in list.question" :key="(i + 9).toString(36)">
+                    12
+                    <br />
+                    (12%)
+                </div>
+                <div style="width: 100%" class="blank"></div>
+            </div>
+            <!-- dirt -->
+            <div class="list-footer" :style="{ 'transform':  `translateY(${ (list.star.length + list.score.length + 2) * 38 }px)`}">
+                <div style="width: 100%" class="blank"></div>
+                <div style="width: 400%" class="blank"></div>
+                <div style="width: 600%" class="blank"></div>
+                <div style="width: 100%" class="blank"></div>
+                <div style="width: 200%">Dirt</div>
+                <div style="width: 100%; line-height: 19px" v-for="i in list.question" :key="(i + 9).toString(36)">
+                    12
+                    <br />
+                    (12%)
+                </div>
+                <div style="width: 100%" class="blank"></div>
+            </div>
+            <!-- fb -->
+            <div class="list-footer" odd :style="{ 'transform':  `translateY(${ (list.star.length + list.score.length + 3) * 38 }px)`}">
+                <div style="width: 100%" class="blank"></div>
+                <div style="width: 400%" class="blank"></div>
+                <div style="width: 600%" class="blank"></div>
+                <div style="width: 100%" class="blank"></div>
+                <div style="width: 200%">First Solved</div>
+                <div style="width: 100%" v-for="i in list.question" :key="(i + 9).toString(36)">
+                    {{ (i + 9).toString(36) }}
+                </div>
+                <div style="width: 100%" class="blank"></div>
+            </div>
+            <!-- lb -->
+            <div class="list-footer" :style="{ 'transform':  `translateY(${ (list.star.length + list.score.length + 4) * 38 }px)`}">
+                <div style="width: 100%" class="blank"></div>
+                <div style="width: 400%" class="blank"></div>
+                <div style="width: 600%" class="blank"></div>
+                <div style="width: 100%" class="blank"></div>
+                <div style="width: 200%">Last Solved</div>
+                <div style="width: 100%" v-for="i in list.question" :key="(i + 9).toString(36)">
+                    {{ (i + 9).toString(36) }}
+                </div>
+                <div style="width: 100%" class="blank"></div>
             </div>
         </div>
         <a-button type="primary" @click="test">测试</a-button>
@@ -120,7 +185,9 @@ export default {
                         level: 'honorable',    // 等级
                         question: [
                             {
-                                statu: "none"
+                                statu: "first-blood",
+                                times: 1,
+                                time: 17,
                             },
                             {
                                 statu: "none"
@@ -145,7 +212,7 @@ export default {
                                 statu: "none"
                             },
                             {
-                                statu: "first-blood",
+                                statu: "solved",
                                 times: 1,
                                 time: 155,
                             },
@@ -211,7 +278,7 @@ export default {
                             {
                                 statu: "first-blood",
                                 times: 1,
-                                time: 155,
+                                time: 15,
                             },
                             {
                                 statu: "none"
@@ -251,7 +318,9 @@ export default {
                                 statu: "none"
                             },
                             {
-                                statu: "none"
+                                statu: "first-blood", // 解题状态
+                                times: 1,        // 提交次数
+                                time: 87,        // 解出来的分钟数
                             },
                             {
                                 statu: "none"
@@ -273,7 +342,7 @@ export default {
                                 statu: "none"
                             },
                             {
-                                statu: "first-blood",
+                                statu: "solved",
                                 times: 1,
                                 time: 155,
                             },
@@ -318,7 +387,9 @@ export default {
                                 statu: "none"
                             },
                             {
-                                statu: "none"
+                                statu: "first-blood", // 解题状态
+                                times: 1,        // 提交次数
+                                time: 87,        // 解出来的分钟数
                             },
                             {
                                 statu: "none"
@@ -337,7 +408,7 @@ export default {
                                 statu: "none"
                             },
                             {
-                                statu: "first-blood",
+                                statu: "solved",
                                 times: 1,
                                 time: 155,
                             },
@@ -385,7 +456,9 @@ export default {
                                 statu: "none"
                             },
                             {
-                                statu: "none"
+                                statu: "first-blood", // 解题状态
+                                times: 1,        // 提交次数
+                                time: 27,        // 解出来的分钟数
                             },
                             {
                                 statu: "solved", // 解题状态
@@ -401,7 +474,7 @@ export default {
                                 statu: "none"
                             },
                             {
-                                statu: "first-blood",
+                                statu: "solved",
                                 times: 1,
                                 time: 155,
                             },
@@ -452,9 +525,9 @@ export default {
                                 statu: "none"
                             },
                             {
-                                statu: "solved", // 解题状态
+                                statu: "first-blood", // 解题状态
                                 times: 1,        // 提交次数
-                                time: 87,        // 解出来的分钟数
+                                time: 12,        // 解出来的分钟数
                             },
                             {
                                 statu: "solved",
@@ -465,7 +538,7 @@ export default {
                                 statu: "none"
                             },
                             {
-                                statu: "first-blood",
+                                statu: "solved",
                                 times: 1,
                                 time: 155,
                             },
@@ -521,15 +594,15 @@ export default {
                                 time: 87,        // 解出来的分钟数
                             },
                             {
-                                statu: "solved",
+                                statu: "first-blood",
                                 times: 1,
-                                time: 62,
+                                time: 2,
                             },
                             {
                                 statu: "none"
                             },
                             {
-                                statu: "first-blood",
+                                statu: "solved",
                                 times: 1,
                                 time: 155,
                             },
@@ -590,15 +663,19 @@ export default {
                                 time: 62,
                             },
                             {
-                                statu: "none"
+                                statu: "first-blood", // 解题状态
+                                times: 1,        // 提交次数
+                                time: 1,        // 解出来的分钟数
                             },
                             {
-                                statu: "first-blood",
+                                statu: "solved",
                                 times: 1,
                                 time: 155,
                             },
                             {
-                                statu: "none"
+                                statu: "solved",
+                                times: 1,
+                                time: 27,
                             },
                             {
                                 statu: "none"
@@ -657,12 +734,14 @@ export default {
                                 statu: "none"
                             },
                             {
-                                statu: "first-blood",
+                                statu: "solved",
                                 times: 1,
                                 time: 155,
                             },
                             {
-                                statu: "none"
+                                statu: "first-blood", // 解题状态
+                                times: 1,        // 提交次数
+                                time: 12,        // 解出来的分钟数
                             },
                             {
                                 statu: "none"
@@ -721,7 +800,7 @@ export default {
                                 statu: "none"
                             },
                             {
-                                statu: "first-blood",
+                                statu: "solved",
                                 times: 1,
                                 time: 155,
                             },
@@ -732,9 +811,9 @@ export default {
                                 statu: "none"
                             },
                             {
-                                statu: "solved",
+                                statu: "first-blood",
                                 times: 1,
-                                time: 14,
+                                time: 6,
                             },
                             {
                                 statu: "solved",
@@ -785,7 +864,7 @@ export default {
                                 statu: "none"
                             },
                             {
-                                statu: "first-blood",
+                                statu: "solved",
                                 times: 1,
                                 time: 155,
                             },
@@ -801,9 +880,9 @@ export default {
                                 time: 14,
                             },
                             {
-                                statu: "solved",
+                                statu: "first-blood",
                                 times: 2,
-                                time: 39,
+                                time: 11,
                             },
                             {
                                 statu: "solved",
@@ -849,7 +928,7 @@ export default {
                                 statu: "none"
                             },
                             {
-                                statu: "first-blood",
+                                statu: "solved",
                                 times: 1,
                                 time: 155,
                             },
@@ -870,9 +949,9 @@ export default {
                                 time: 39,
                             },
                             {
-                                statu: "solved",
+                                statu: "first-blood",
                                 times: 1,
-                                time: 127,
+                                time: 11,
                             }
                         ],
                         dirt: "14%",
@@ -913,7 +992,7 @@ export default {
                                 statu: "none"
                             },
                             {
-                                statu: "first-blood",
+                                statu: "solved",
                                 times: 1,
                                 time: 155,
                             },
@@ -977,7 +1056,7 @@ export default {
                                 statu: "none"
                             },
                             {
-                                statu: "first-blood",
+                                statu: "solved",
                                 times: 1,
                                 time: 155,
                             },
@@ -1041,7 +1120,7 @@ export default {
                                 statu: "none"
                             },
                             {
-                                statu: "first-blood",
+                                statu: "solved",
                                 times: 1,
                                 time: 155,
                             },
@@ -1105,7 +1184,7 @@ export default {
                                 statu: "none"
                             },
                             {
-                                statu: "first-blood",
+                                statu: "solved",
                                 times: 1,
                                 time: 155,
                             },
@@ -1135,6 +1214,13 @@ export default {
                     },
                 ],
                 star: [],
+                question2: {
+                    attempted: [12,23,34,45,56,12,23,34,45,56,111,222,333],
+                    accepted: [],
+                    dirt: [],
+                    fb: [],
+                    lb: [],
+                },
                 placeChange: [
                     {
                         t: 1613826000000,
@@ -1471,10 +1557,27 @@ export default {
     }
     .list-inner:hover {
         background-color: #e6f7ff;
-        color: #999999;
+        /* color: #999999; */
+        opacity: .4;
     }
-    .list-inner:hover .none,.list-inner:hover .first-blood,.list-inner:hover .solved,.list-inner:hover .attempted,.list-inner:hover .pending {
+    .list-footer {
+        position: absolute;
+        display: flex;
+        justify-content: space-between;
         transition: all .4s;
-        background-color: #e6f7ff;
+        overflow: hidden;
+        text-align: center;
+        text-transform: capitalize;
+        line-height: 38px;
+    }
+    .list-footer > div {
+        border: 1px solid #FFFFFF;
+        background-color: rgb(149,222,100);
+    }
+    .list-footer[odd] > div {
+        background-color: rgb(183,235,143);
+    }
+    .list-footer > .blank {
+        background-color: #FFFFFF !important;
     }
 </style>

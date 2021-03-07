@@ -38,7 +38,7 @@
                         <a-button>欢迎</a-button>
                         <a-menu slot="overlay">
                             <a-menu-item @click="goPerson">个人中心</a-menu-item>
-                            <a-menu-item>退出登录</a-menu-item>
+                            <a-menu-item @click="logout">退出登录</a-menu-item>
                         </a-menu>
                     </a-dropdown>
                 </div>
@@ -108,6 +108,23 @@ export default {
         login() {
             this.loginVisible = false;
             this.isLogin = true;
+            this.$router.go(0);
+        },
+        logout() {
+            let url = "/api/users/logout";
+            this.$axios.get(url).then(rep => {
+                this.$message.success('登出成功!');
+                this.isLogin = false;
+                sessionStorage.removeItem('uid');
+                sessionStorage.removeItem('token');
+                console.log(rep.data.data);
+            }).catch(err => {
+                this.$message.success('登出成功!');
+                this.isLogin = false;
+                sessionStorage.removeItem('uid');
+                sessionStorage.removeItem('token');
+                console.log(err);
+            })
             this.$router.go(0);
         }
     },

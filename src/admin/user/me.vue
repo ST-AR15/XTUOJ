@@ -9,7 +9,6 @@ export default {
             let that = this;
             let url = "/api/users/logout";
             that.$axios.get(url).then(rep => {
-                console.log(rep);
                 console.log(rep.data.data);
                 that.$message.success("登出成功！即将返回首页");
                 // 登出成功，去掉token和uid，然后返回主页面

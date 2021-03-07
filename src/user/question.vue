@@ -39,7 +39,7 @@
                         <a-spin :spinning="commentLoading">
                             <section class="discussSection session">
                                 <div class="comment" style="margin-top: 10px">
-                                    <a-textarea placeholder="想说什么，尽管说吧~" v-model="comment" :rows="4" />
+                                    <a-textarea :disabled="!uid" :placeholder="uid? '想说什么，尽管说吧~': '请先登录~'" v-model="comment" :rows="4" />
                                     <a-button style="margin-top: 5px" type="primary" @click="sendComment(false)">发表</a-button>
                                 </div>
                                 <div class="context">
@@ -66,10 +66,8 @@
                                                         ></span>
                                                         <span
                                                             @click="deleteComment(data.Rid)"
-                                                            
+                                                            v-if="data.Uid == uid"
                                                         >删除评论</span>
-                                                        <!-- TODO 这里一个if判断是否显示删除 -->
-                                                        <!-- v-if="data.Uid == sessionStorage.getItem('uid')" -->
                                                     </a-space>
                                                 </div>
                                             </div>
@@ -184,6 +182,7 @@ export default {
     },  // 从父组件获得题目ID，然后在接口里获得全部值
     data() {
         return {
+            uid: null, // uid，用于判断是否能删除题目
             jump: 0,   // 跳转的次数，用于返回
             aimID: 1000,
             ID: 1000,  // 题目的ID
@@ -411,7 +410,7 @@ export default {
             this.jump++;
             // 打开问题
             this.openQuestion();
-        }
+        },
     },
     mounted() {
         let that = this;
@@ -425,6 +424,8 @@ export default {
         that.aimID = this.$route.params.ID;
         // 刚打开页面时，加载一次问题
         that.openQuestion();
+        // 获取UID
+        that.uid = sessionStorage.uid;
     },
     
 }

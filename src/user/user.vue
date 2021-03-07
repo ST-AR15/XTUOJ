@@ -57,7 +57,7 @@
                 </div>
             </a-layout-content>
         </a-layout>
-        <login :visible="loginVisible" @ok="loginVisible = false;isLogin = true" @close="loginVisible = false" />
+        <login :visible="loginVisible" @ok="login" @close="loginVisible = false" />
     </div>
 </template>
 
@@ -104,6 +104,11 @@ export default {
         },
         goPerson() { // 前往个人中心
             this.$router.replace("/admin");
+        },
+        login() {
+            this.loginVisible = false;
+            this.isLogin = true;
+            this.$router.go(0);
         }
     },
     mounted() {

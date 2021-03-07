@@ -89,15 +89,26 @@
                 <div style="width: 100%">{{ data.dirt }}</div>
             </div>
             <!-- 统计 -->
-            <!-- 表头 -->
+            <!-- <div class="list-footer" v-for="(data, key, i) in list.questionInfo" :key="key" :style="{ 'transform':  `translateY(${ (list.star.length + list.score.length + i) * 38 }px)`}">
+                <div style="width: 100%" class="blank"></div>
+                <div style="width: 400%" class="blank"></div>
+                <div style="width: 600%" class="blank"></div>
+                <div style="width: 100%" class="blank"></div>
+                <div style="width: 200%">{{ key }}</div>
+                <div style="width: 100%" v-for="i in 13" :key="(i + 9).toString(36)">
+                    {{ (i + 9).toString(36) }}
+                </div>
+                <div style="width: 100%" class="blank"></div>
+            </div> -->
+            <!-- attempted -->
             <div class="list-footer" :style="{ 'transform':  `translateY(${ (list.star.length + list.score.length) * 38 }px)`}">
                 <div style="width: 100%" class="blank"></div>
                 <div style="width: 400%" class="blank"></div>
                 <div style="width: 600%" class="blank"></div>
                 <div style="width: 100%" class="blank"></div>
                 <div style="width: 200%">Attempted</div>
-                <div style="width: 100%" v-for="i in list.question" :key="(i + 9).toString(36)">
-                    {{ (i + 9).toString(36) }}
+                <div style="width: 100%" v-for="(data, i) in list.questionInfo.attempted" :key="i">
+                    {{ data }}
                 </div>
                 <div style="width: 100%" class="blank"></div>
             </div>
@@ -108,10 +119,10 @@
                 <div style="width: 600%" class="blank"></div>
                 <div style="width: 100%" class="blank"></div>
                 <div style="width: 200%">Accepted</div>
-                <div style="width: 100%; line-height: 19px" v-for="i in list.question" :key="(i + 9).toString(36)">
-                    12
+                <div style="width: 100%; line-height: 19px" v-for="(data, i) in list.question" :key="i">
+                    {{ data }}
                     <br />
-                    (12%)
+                    {{ `(${((data/list.questionInfo.attempted[i])*100).toFixed(0)}%)` }}
                 </div>
                 <div style="width: 100%" class="blank"></div>
             </div>
@@ -123,9 +134,9 @@
                 <div style="width: 100%" class="blank"></div>
                 <div style="width: 200%">Dirt</div>
                 <div style="width: 100%; line-height: 19px" v-for="i in list.question" :key="(i + 9).toString(36)">
-                    12
+                    ?
                     <br />
-                    (12%)
+                    (?%)
                 </div>
                 <div style="width: 100%" class="blank"></div>
             </div>
@@ -136,8 +147,8 @@
                 <div style="width: 600%" class="blank"></div>
                 <div style="width: 100%" class="blank"></div>
                 <div style="width: 200%">First Solved</div>
-                <div style="width: 100%" v-for="i in list.question" :key="(i + 9).toString(36)">
-                    {{ (i + 9).toString(36) }}
+                <div style="width: 100%" v-for="(data, i) in list.questionInfo.fb" :key="i">
+                    {{ data }}
                 </div>
                 <div style="width: 100%" class="blank"></div>
             </div>
@@ -148,8 +159,8 @@
                 <div style="width: 600%" class="blank"></div>
                 <div style="width: 100%" class="blank"></div>
                 <div style="width: 200%">Last Solved</div>
-                <div style="width: 100%" v-for="i in list.question" :key="(i + 9).toString(36)">
-                    {{ (i + 9).toString(36) }}
+                <div style="width: 100%" v-for="(data, i) in list.questionInfo.lb" :key="i">
+                    {{ data }}
                 </div>
                 <div style="width: 100%" class="blank"></div>
             </div>
@@ -1214,12 +1225,12 @@ export default {
                     },
                 ],
                 star: [],
-                question2: {
+                questionInfo: {
                     attempted: [12,23,34,45,56,12,23,34,45,56,111,222,333],
-                    accepted: [],
+                    accepted: [1,2,3,4,5,6,7,8,9,10,11,12,13],
                     dirt: [],
-                    fb: [],
-                    lb: [],
+                    fb: [12,23,34,45,56,12,23,34,45,56,111,222,333],
+                    lb: [12,23,34,45,526,12,23,34,45,56,111,222,333],
                 },
                 placeChange: [
                     {

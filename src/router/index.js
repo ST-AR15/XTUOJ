@@ -153,5 +153,8 @@ const router = new VueRouter({
     // base: process.env.BASE_URL,
     routes: routes
 })
+router.onError((err) => {
+    alert(err);
+})
 
 export default router

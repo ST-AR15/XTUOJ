@@ -90,8 +90,6 @@ export default {
             } else {
                 name = type + '-welcome';
             }
-            console.log(name);
-            console.log(this.$route);
             this.$router.push({ name: name }); // router
             // this.page[0] = name; // 菜单切换在watch里
 

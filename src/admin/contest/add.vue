@@ -53,7 +53,7 @@
                             transition: 'all .6s'
                         }" @click="chargeQuestion(i)" type="plus-circle" v-bind:title="i==form.questions.length-1?'新增':'删除'" />
                         <a-input class="inline-element" style="width:100px;margin:0 5px" @change="queryTitle(i)" v-model="data.ID" placeholder="题目ID"></a-input>
-                        <a-input class="inline-element" :value="data.name" placeholder="< 题目名称 >" :disabled="true"></a-input>
+                        <a-input class="inline-element" :value="data.name" placeholder="< 题目名称 >" :disabled="true" v-bind:style="{ 'color': data.isValid? '#52c41a':'#FF0000' }"></a-input>
                     </div>
                 </transition-group>
                 <p>当前题目数量：<span v-text="form.questions.length-1"></span></p>

@@ -39,41 +39,39 @@ Vue.use(VueRouter)
 const routes = [
     // 用户端
     {
+        name: 'home',
+        path: '/',
+        component: home,
+    },
+    {
+        name: 'problems',
+        path: '/problems',
+        component: problems,
+    },
+    {
+        name: 'problems-detail',
+        path: '/problems/:ID',
+        component: question,
+    },
+    {
+        name: 'contests',
+        path: '/contests',
+        component: contests,
+    },
+    {
+        name: 'status',
+        path: '/status',
+        component: status,
+    },
+    {
+        name: 'ranklist',
+        path: '/ranklist',
+        component: ranklist,
+    },
+    {
         name: 'user',
         path: '/',
         component: user,
-        children: [
-            {
-                name: 'home',
-                path: '/',
-                component: home,
-            },
-            {
-                name: 'problems',
-                path: '/problems',
-                component: problems,
-            },
-            {
-                name: 'problems-detail',
-                path: '/problems/:ID',
-                component: question,
-            },
-            {
-                name: 'contests',
-                path: '/contests',
-                component: contests,
-            },
-            {
-                name: 'status',
-                path: '/status',
-                component: status,
-            },
-            {
-                name: 'ranklist',
-                path: '/ranklist',
-                component: ranklist,
-            },
-        ],
     },
     {
         name: 'rank',

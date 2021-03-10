@@ -2,7 +2,7 @@
 import Vue from 'vue'
 import Antd from 'ant-design-vue'
 import 'ant-design-vue/dist/antd.css'
-import App from './App.vue'
+import App from './user/user.vue'
 import router from './router'
 import axios from 'axios'
 import VueCodeMirror from 'vue-codemirror'

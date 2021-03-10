@@ -129,6 +129,7 @@ export default {
         }
     },
     mounted() {
+        document.body.removeChild(document.getElementById('app-loader'));
         if(sessionStorage.token) {
             // 如果是登录状态
             this.isLogin = true;

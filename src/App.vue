@@ -1,9 +1,9 @@
 <template>
-  <div class="app" id="app">
-    <a-config-provider :locale="zh_CN">
-      <router-view/>
-    </a-config-provider>
-  </div>
+    <div class="app" id="app">
+        <a-config-provider :locale="zh_CN">
+            <router-view/>
+        </a-config-provider>
+    </div>
 </template>
 
 <script>
@@ -13,11 +13,14 @@ import 'moment/locale/zh-cn';
 
 moment.locale('zh-cn');
 export default {
-  data() {
-    return {
-      zh_CN,
+    data() {
+        return {
+            zh_CN,
+        }
+    },
+    mounted() {
+        document.body.removeChild(document.getElementById('app-loader'));
     }
-  }
 }
 </script>
 

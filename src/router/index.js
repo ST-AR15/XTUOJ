@@ -2,36 +2,36 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 // 404
-const NotFound = () => import('@/notfound.vue')
-
-// 管理员页面
-// 主页
-const adminWelcome = () => import('@/admin/welcome.vue')
-const admin = () => import('@/admin/admin.vue')
-// question
-const questionAdd = () => import('@/admin/question/add.vue')
-const questionManage = () => import('@/admin/question/manage.vue')
-const questionWelcome = () => import('@/admin/question/welcome.vue')
-// contest
-const contestManage = () => import('@/admin/contest/manage.vue')
-const contestAdd = () => import('@/admin/contest/add.vue')
-const contestWelcome = () => import('@/admin/contest/welcome.vue')
-// user
-const userSearch = () => import('@/admin/user/search.vue')
-const userMe = () => import('@/admin/user/me.vue')
-const userWelcome = () => import('@/admin/user/welcome.vue')
+// const NotFound = () => import('@/notfound.vue')
+import NotFound from '@/views/general/404.vue'
 
 // 用户页面
-const user = () => import('../user/user.vue')
-const home = () => import('../user/home.vue')
-const problems = () => import('../user/problems.vue')
-const contests = () => import('../user/contests.vue')
-const ranklist = () => import('../user/ranklist.vue')
-const status = () => import('../user/status.vue')
-const question = () => import('../user/question.vue')
+// const user = () => import('../user/user.vue')
+// const home = () => import('../user/home.vue')
+// const problems = () => import('../user/problems.vue')
+// const contests = () => import('../user/contests.vue')
+// const ranklist = () => import('../user/ranklist.vue')
+// const status = () => import('../user/status.vue')
+// const question = () => import('../user/question.vue')
+import user from '@/views/user/App.vue'
+import home from '@/views/user/Home.vue'
+import problems from '@/views/user/Problems.vue'
+import question from '@/views/user/Question.vue'
+import ranklist from '@/views/user/Ranklist.vue'
+import contests from '@/views/user/Contests.vue'
+import status from '@/views/user/Status.vue'
+
+// 管理端
+import admin from '@/views/admin/App.vue'
+import addContest from '@/views/admin/contest/Add.vue'
+import manageContest from '@/views/admin/contest/Manage.vue'
+import addQuestion from '@/views/admin/question/Add.vue'
+import manageQontest from '@/views/admin/question/Manage.vue'
+import meUser from '@/views/admin/user/Me.vue'
+import searchUser from '@/views/admin/user/Search.vue'
 
 // 通用页面
-import rank from '../rank.vue'
+import rank from '@/views/outer/Rank.vue'
 
 
 Vue.use(VueRouter)
@@ -39,105 +39,83 @@ Vue.use(VueRouter)
 const routes = [
     // 用户端
     {
-        name: 'home',
-        path: '/',
-        component: home,
-    },
-    {
-        name: 'problems',
-        path: '/problems',
-        component: problems,
-    },
-    {
-        name: 'problems-detail',
-        path: '/problems/:ID',
-        component: question,
-    },
-    {
-        name: 'contests',
-        path: '/contests',
-        component: contests,
-    },
-    {
-        name: 'status',
-        path: '/status',
-        component: status,
-    },
-    {
-        name: 'ranklist',
-        path: '/ranklist',
-        component: ranklist,
-    },
-    {
-        name: 'user',
         path: '/',
         component: user,
-    },
-    {
-        name: 'rank',
-        path: '/rank',
-        component: rank
+        children: [
+            {
+                name: 'home',
+                path: '/',
+                component: home,
+            },
+            {
+                name: 'problems',
+                path: '/problems',
+                component: problems,
+            },
+            {
+                name: 'question',
+                path: '/problems/:ID',
+                component: question,
+            },
+            {
+                name: 'ranklist',
+                path: '/ranklist',
+                component: ranklist,
+            },
+            {
+                name: 'contests',
+                path: '/contests',
+                component: contests,
+            },
+            {
+                name: 'status',
+                path: '/status',
+                component: status,
+            },
+        ]
     },
     // 管理端
     {
-        name: 'admin',
         path: '/admin',
         component: admin,
         children: [
             {
-                name: 'admin-welcome',
-                path: '/admin',
-                component: adminWelcome,
+                name: 'contest-add',
+                path: '/admin/contest-add',
+                component: addContest,
             },
-            // 管理端question
             {
-                name: 'question-manage',
-                path: '/question-manage',
-                component: questionManage,
+                name: 'contest-manage',
+                path: '/admin/contest-manage',
+                component: manageContest,
             },
             {
                 name: 'question-add',
-                path: '/question-add',
-                component: questionAdd,
+                path: '/admin/question-add',
+                component: addQuestion,
             },
             {
-                name: 'question-welcome',
-                path: '/question',
-                component: questionWelcome,
+                name: 'question-manage',
+                path: '/admin/question-manage',
+                component: manageQontest,
             },
-            // 管理端contest
-            {
-                name: 'contest-manage',
-                path: '/contest-manage',
-                component: contestManage,
-            },
-            {
-                name: 'contest-add',
-                path: '/contest-add',
-                component: contestAdd,
-            },
-            {
-                name: 'contest-welcome',
-                path: '/contest',
-                component: contestWelcome,
-            },
-            // 管理端user
             {
                 name: 'user-me',
-                path: '/user-me',
-                component: userMe,
+                path: '/admin/user-me',
+                component: meUser,
             },
             {
                 name: 'user-search',
-                path: '/user-search',
-                component: userSearch,
-            },
-            {
-                name: 'user-welcome',
-                path: '/user',
-                component: userWelcome,
+                path: '/admin/user-search',
+                component: searchUser,
             },
         ]
+    },
+    // rank
+    {
+        name: 'rank',
+        path: '/rank',
+        component: rank,
     },
     {
         name: '404',
@@ -147,7 +125,7 @@ const routes = [
 ]
 
 const router = new VueRouter({
-    mode: 'history',
+    // mode: 'history',
     // base: process.env.BASE_URL,
     routes: routes
 })

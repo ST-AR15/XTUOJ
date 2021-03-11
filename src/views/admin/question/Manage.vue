@@ -110,7 +110,7 @@
 </template>
 
 <script>
-import questionlist from '@/components/questionlist.vue'
+import questionlist from '@/views/components/Questionlist.vue'
 import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 import { message } from 'ant-design-vue'

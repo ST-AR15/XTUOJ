@@ -4,7 +4,7 @@ import VueRouter from 'vue-router'
 // 404
 // const NotFound = () => import('@/notfound.vue')
 import NotFound from '@/views/general/404.vue'
- 
+
 // 用户页面
 // const user = () => import('../user/user.vue')
 // const home = () => import('../user/home.vue')

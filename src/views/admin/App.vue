@@ -92,12 +92,11 @@ export default {
             }
             this.$router.push({ name: name }); // router
             // this.page[0] = name; // 菜单切换在watch里
-
         }
     },
     mounted() {
         // 检测登录状态，没登录就提示登录
-        if(!sessionStorage.token) {
+        if(!this.$store.state.token) {
             // 如果没有token值，就跳转
             this.$message.info('没有登录！即将跳转至首页');
             this.$router.replace("/#");

@@ -108,34 +108,33 @@ export default {
         login() {
             this.loginVisible = false;
             this.isLogin = true;
-            this.$router.go(0);
         },
         logout() {
             let url = "/api/users/logout";
             this.$axios.get(url).then(rep => {
                 this.$message.success('登出成功!');
                 this.isLogin = false;
-                sessionStorage.removeItem('uid');
-                sessionStorage.removeItem('token');
+                this.$store.commit('setUid', null);
+                this.$store.commit('setToken', null);
                 console.log(rep.data.data);
             }).catch(err => {
                 this.$message.success('登出成功!');
                 this.isLogin = false;
-                sessionStorage.removeItem('uid');
-                sessionStorage.removeItem('token');
+                this.$store.commit('setUid', null);
+                this.$store.commit('setToken', null);
                 console.log(err);
             })
-            this.$router.go(0);
         }
     },
     mounted() {
-        document.body.removeChild(document.getElementById('app-loader'));
-        if(sessionStorage.token) {
+        try {
+            document.body.removeChild(document.getElementById('app-loader'));
+        } catch(e) { return e }
+        if(this.$store.state.token) {
             // 如果是登录状态
             this.isLogin = true;
         }
         // menu切换
-        console.log(this.$route.path.slice(1));
         if(this.$route.path.slice(1)) {
             this.page[0] = this.$route.path.slice(1);
         } else {

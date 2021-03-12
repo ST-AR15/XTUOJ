@@ -6,6 +6,7 @@ import App from './App.vue'
 import router from '@/router'
 import axios from 'axios'
 import VueCodeMirror from 'vue-codemirror'
+import store from './store'
 import 'codemirror/lib/codemirror.css'
 
 
@@ -27,5 +28,6 @@ Vue.config.productionTip = false
 
 new Vue({
   router,
+  store,
   render: h => h(App)
 }).$mount('#app')

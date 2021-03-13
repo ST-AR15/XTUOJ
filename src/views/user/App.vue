@@ -33,7 +33,7 @@
                     </a-menu-item>
                 </a-menu>
                 <div class="loginzoom">
-                    <a-button class="navButton" v-if="!isLogin" @click="loginVisible = true">登录</a-button>
+                    <a-button class="navButton" v-if="$store.state.token" @click="loginVisible = true">登录</a-button>
                     <a-dropdown class="navButton" v-else>
                         <a-button>欢迎</a-button>
                         <a-menu slot="overlay">
@@ -74,7 +74,6 @@ export default {
             isQuestion: false,    // 是否展示问题
             questionID: 1000,     // 需要展示的问题ID
             loginVisible: false,  // 是否显示login
-            isLogin: false,       // 登录状态，登录了就变成true
         }
     },
     methods: {
@@ -107,19 +106,16 @@ export default {
         },
         login() {
             this.loginVisible = false;
-            this.isLogin = true;
         },
         logout() {
             let url = "/api/users/logout";
             this.$axios.get(url).then(rep => {
                 this.$message.success('登出成功!');
-                this.isLogin = false;
                 this.$store.commit('setUid', null);
                 this.$store.commit('setToken', null);
                 console.log(rep.data.data);
             }).catch(err => {
                 this.$message.success('登出成功!');
-                this.isLogin = false;
                 this.$store.commit('setUid', null);
                 this.$store.commit('setToken', null);
                 console.log(err);
@@ -130,10 +126,7 @@ export default {
         try {
             document.body.removeChild(document.getElementById('app-loader'));
         } catch(e) { return e }
-        if(this.$store.state.token) {
-            // 如果是登录状态
-            this.isLogin = true;
-        }
+        console.log(this.$store.state);
         // menu切换
         if(this.$route.path.slice(1)) {
             this.page[0] = this.$route.path.slice(1);

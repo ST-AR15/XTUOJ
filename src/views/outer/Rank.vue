@@ -170,8 +170,7 @@
 </template>
 
 <script>
-// TODO 这个AR15.JS放到仓库去
-import { filterEmptyValue, timeFormatter, msToTime } from "@/views/components/AR15.js";
+import { filterEmptyValue, timeFormatter, msToTime } from "@/utils/AR15.js";
 export default {
     data() {
         return {

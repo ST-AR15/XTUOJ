@@ -90,9 +90,7 @@ export default {
                     StudentID: that.loginForm.account,
                     password: that.loginForm.password,
                 };
-                console.log(info);
                 that.$axios.post(url,info).then(rep => {
-                    console.log(rep);
                     this.$store.commit('setUid', rep.data.data.Uid);
                     this.$store.commit('setToken', rep.data.data.token);
                     that.$message.success('登录成功');

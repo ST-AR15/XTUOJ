@@ -19,7 +19,12 @@ export default {
         }
     },
     mounted() {
-        document.body.removeChild(document.getElementById('app-loader'));
+        try {
+            document.body.removeChild(document.getElementById('app-loader'));
+        } catch(e) {
+            return e;
+        }
+        
     }
 }
 </script>

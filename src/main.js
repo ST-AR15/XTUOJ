@@ -19,9 +19,8 @@ import '@/styles/antd.css'
 import '@/styles/tips.css'
 import '@/styles/animation.css'
 import '@/styles/mavonEditor.css'
-// js，后续可能用vuex
-// TODO 使用vuex管理
-import '@/views/components/axiosConfig'
+// js
+import '@/utils/axiosConfig'
 
 
 Vue.config.productionTip = false

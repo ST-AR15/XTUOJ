@@ -74,7 +74,7 @@ export default {
     data() {
         return {
             // 当前选择的页面
-            page: ["welcome"],
+            page: ["questio-add"],
         }
     },
     methods: {

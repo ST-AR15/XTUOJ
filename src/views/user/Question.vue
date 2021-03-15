@@ -134,7 +134,7 @@
                                 </a-select-option>
                             </template>
                         </a-select>
-                        <span style="color: #999999; margin-left: 15px;">*可以通过拖拽文件/文本的方式来快速填写代码</span>
+                        <span style="color: #999999; margin-left: 15px;">*可以通过拖拽文件方式来快速填写代码</span>
                     </p>
                     
                 </div>
@@ -269,7 +269,7 @@ export default {
             console.log(e);
             console.log(this.leftW);
             this.leftW = e.clientX;
-            this.rightW = window.innerWidth - 20 - this.leftW;
+            this.rightW = Math.max(window.innerWidth, 1000) - 20 - this.leftW;
             
         },
         openComment() {  // 加载评论
@@ -415,9 +415,9 @@ export default {
     mounted() {
         let that = this;
         // 设置宽度
-        that.rightW = window.innerWidth - 20 - that.leftW;
+        that.rightW = Math.max(window.innerWidth, 1000) - 20 - that.leftW;
         window.onresize = function() {
-            that.rightW = window.innerWidth - 20 - that.leftW;
+            that.rightW = Math.max(window.innerWidth, 1000) - 20 - that.leftW;
         }
         // 获取id
         that.ID = this.$route.params.ID;
@@ -454,7 +454,7 @@ export default {
 }
 .question .leftContainer {
     /* 64是导航栏，64是返回按钮，45是选项,64是buttons */
-    height: calc(100vh - 64px - 64px - 45px - 64px);
+    height: calc(100vh - 64px - 64px - 45px - 64px - 15px);
     overflow-y: auto;
     padding: 0 10px;
 }

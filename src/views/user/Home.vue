@@ -1,6 +1,6 @@
 <template>
     <div class="home" id="home">
-        <a-layout-header style="background-color: #FFFFFF;">
+        <a-layout-header style="background-color: #FFFFFF;margin: 0 10px">
             <h2 style="font-size: 22px">通知</h2>
         </a-layout-header>
         <a-layout>
@@ -57,7 +57,7 @@ export default {
                 {
                     time: "2021-03-14",
                     title: '最新添加题目1007！',
-                    description: "试着做一做<a href='http://172.25.25.215:8080/#/problems/1007'>1007题</a>吧~",
+                    description: "试着做一做<a href='/#/problems/1007'>1007题</a>吧~",
                 },
                 {
                     time: "2021-03-14",
@@ -93,7 +93,7 @@ export default {
 <style>
 .home {
     max-width: 98%;
-    margin: 10px auto;
+    margin: 0 auto;
     position: relative !important;
 }
 </style>

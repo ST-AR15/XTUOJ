@@ -1,7 +1,7 @@
 <template>
     <div class="user" id="user">
         <a-layout>
-            <a-layout-header>
+            <a-layout-header style="position: relative">
                 <div class="logo">
                     <p>XiangTan University</p>
                 </div>
@@ -33,7 +33,7 @@
                     </a-menu-item>
                 </a-menu>
                 <div class="loginzoom">
-                    <a-button class="navButton" v-if="$store.state.token" @click="loginVisible = true">登录</a-button>
+                    <a-button class="navButton" v-if="!$store.state.token" @click="loginVisible = true">登录</a-button>
                     <a-dropdown class="navButton" v-else>
                         <a-button>欢迎</a-button>
                         <a-menu slot="overlay">
@@ -43,7 +43,7 @@
                     </a-dropdown>
                 </div>
             </a-layout-header>
-            <a-layout-content>
+            <a-layout-content style="padding-top: 10px">
                 <div class="container">
                     <div class="page">
                         <transition name="cross">

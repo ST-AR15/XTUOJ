@@ -3,8 +3,8 @@
         <a-layout-header style="background-color: #FFFFFF;margin: 0 10px">
             <h2 style="font-size: 22px">通知</h2>
         </a-layout-header>
-        <a-layout>
-            <a-layout-sider style="padding: 20px;margin: 10px; background-color: #FFFFFF">
+        <a-layout style="height: calc(100vh - 200px)">
+            <a-layout-sider style="padding: 20px;margin: 10px; background-color: #FFFFFF;min-height: calc(100vh - 220px);height: calc(100vh - 220px); overflow-y: scroll">
                 <a-timeline>
                     <a-timeline-item v-for="(item, i) in timer" :key="i" :color="item.color">
                         <p style="margin: 0">{{ item.time }}</p>
@@ -52,6 +52,67 @@ export default {
                     time: "2021-05-25",
                     content: "答辩",
                 },
+                {
+                    color: 'red',
+                    time: "2021-05-25",
+                    content: "答辩",
+                },
+                {
+                    color: 'red',
+                    time: "2021-05-25",
+                    content: "答辩",
+                },
+                {
+                    color: 'red',
+                    time: "2021-05-25",
+                    content: "答辩",
+                },
+                {
+                    color: 'red',
+                    time: "2021-05-25",
+                    content: "答辩",
+                },
+                {
+                    color: 'red',
+                    time: "2021-05-25",
+                    content: "答辩",
+                },
+                {
+                    color: 'red',
+                    time: "2021-05-25",
+                    content: "答辩",
+                },
+                {
+                    color: 'red',
+                    time: "2021-05-25",
+                    content: "答辩",
+                },
+                {
+                    color: 'red',
+                    time: "2021-05-25",
+                    content: "答辩",
+                },
+                {
+                    color: 'red',
+                    time: "2021-05-25",
+                    content: "答辩",
+                },
+                {
+                    color: 'red',
+                    time: "2021-05-25",
+                    content: "答辩",
+                },
+                {
+                    color: 'red',
+                    time: "2021-05-25",
+                    content: "答辩",
+                },
+                {
+                    color: 'red',
+                    time: "2021-05-25",
+                    content: "答辩",
+                },
+                
             ],
             announcements: [
                 {
@@ -78,6 +139,46 @@ export default {
                     time: "2021-03-14",
                     title: "开源",
                     description: "本前端项目开源于<a target='_blank' href='http://www.github.com/ST-AR15/XTUOJ'>github</a>",
+                },
+                {
+                    time: "2021-03-14",
+                    title: "证书",
+                    description: "该项目还没申请证书~",
+                },
+                {
+                    time: "2021-03-14",
+                    title: "证书",
+                    description: "该项目还没申请证书~",
+                },
+                {
+                    time: "2021-03-14",
+                    title: "证书",
+                    description: "该项目还没申请证书~",
+                },
+                {
+                    time: "2021-03-14",
+                    title: "证书",
+                    description: "该项目还没申请证书~",
+                },
+                {
+                    time: "2021-03-14",
+                    title: "证书",
+                    description: "该项目还没申请证书~",
+                },
+                {
+                    time: "2021-03-14",
+                    title: "证书",
+                    description: "该项目还没申请证书~",
+                },
+                {
+                    time: "2021-03-14",
+                    title: "证书",
+                    description: "该项目还没申请证书~",
+                },
+                {
+                    time: "2021-03-14",
+                    title: "证书",
+                    description: "该项目还没申请证书~",
                 },
                 {
                     time: "2021-03-14",

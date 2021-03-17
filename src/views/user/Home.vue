@@ -1,29 +1,31 @@
 <template>
     <div class="home" id="home">
-        <a-layout-header style="background-color: #FFFFFF;margin: 0 10px">
-            <h2 style="font-size: 22px">通知</h2>
-        </a-layout-header>
-        <a-layout style="height: calc(100vh - 200px)">
-            <a-layout-sider style="padding: 20px;margin: 10px; background-color: #FFFFFF;min-height: calc(100vh - 220px);height: calc(100vh - 220px); overflow-y: scroll">
-                <a-timeline>
-                    <a-timeline-item v-for="(item, i) in timer" :key="i" :color="item.color">
-                        <p style="margin: 0">{{ item.time }}</p>
-                        <p style="margin: 0">{{ item.content }}</p>
-                    </a-timeline-item>
-                </a-timeline>
-            </a-layout-sider>
-            <a-layout-content style="padding: 0 20px; background-color: #FFFFFF; margin: 10px">
-                <a-list item-layout="horizontal" :data-source="announcements">
-                    <a-list-item slot="renderItem" slot-scope="item">
-                        <a-list-item-meta>
-                            <span slot="description" v-html="item.description"></span>
-                            <span slot="title">{{ item.title }}</span>
-                        </a-list-item-meta>
-                        <span>{{ item.time }}</span>
-                    </a-list-item>
-                </a-list>
-            </a-layout-content>
-        </a-layout>
+        <div class="container">
+            <a-layout-header style="background-color: #FFFFFF;margin: 0 10px">
+                <h2 style="font-size: 22px">通知</h2>
+            </a-layout-header>
+            <a-layout style="height: calc(100vh - 200px)">
+                <a-layout-sider style="padding: 20px;margin: 10px; background-color: #FFFFFF;min-height: calc(100vh - 220px);height: calc(100vh - 220px); overflow-y: scroll">
+                    <a-timeline>
+                        <a-timeline-item v-for="(item, i) in timer" :key="i" :color="item.color">
+                            <p style="margin: 0">{{ item.time }}</p>
+                            <p style="margin: 0">{{ item.content }}</p>
+                        </a-timeline-item>
+                    </a-timeline>
+                </a-layout-sider>
+                <a-layout-content style="padding: 0 20px; background-color: #FFFFFF; margin: 10px">
+                    <a-list item-layout="horizontal" :data-source="announcements">
+                        <a-list-item slot="renderItem" slot-scope="item">
+                            <a-list-item-meta>
+                                <span slot="description" v-html="item.description"></span>
+                                <span slot="title">{{ item.title }}</span>
+                            </a-list-item-meta>
+                            <span>{{ item.time }}</span>
+                        </a-list-item>
+                    </a-list>
+                </a-layout-content>
+            </a-layout>
+        </div>
     </div>
 </template>
 
@@ -191,10 +193,10 @@ export default {
 }
 </script>
 
-<style>
-.home {
-    max-width: 98%;
+<style scoped>
+.container {
+    position: relative;
+    width: 98%;
     margin: 0 auto;
-    position: relative !important;
 }
 </style>

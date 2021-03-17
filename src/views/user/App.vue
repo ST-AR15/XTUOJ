@@ -11,23 +11,23 @@
                     style="user-select:none"
                     v-model="page"
                 >
-                    <a-menu-item key="home" @click="openPage('/')">
+                    <a-menu-item key="home" @click="queryPage('/')">
                         <a-icon type="home" />
                         首页
                     </a-menu-item>
-                    <a-menu-item key="problems" @click="openPage('problems')">
+                    <a-menu-item key="problems" @click="queryPage('problems')">
                         <a-icon type="profile" />
                         问题
                     </a-menu-item>
-                    <a-menu-item key="contests" @click="openPage('contests')">
+                    <a-menu-item key="contests" @click="queryPage('contests')">
                         <a-icon type="trophy" />
                         竞赛
                     </a-menu-item>
-                    <a-menu-item key="status" @click="openPage('status')">
+                    <a-menu-item key="status" @click="queryPage('status')">
                         <a-icon type="branches" />
                         状态
                     </a-menu-item>
-                    <a-menu-item key="ranklist" @click="openPage('ranklist')">
+                    <a-menu-item key="ranklist" @click="queryPage('ranklist')">
                         <a-icon type="bar-chart" />
                         排名
                     </a-menu-item>
@@ -37,7 +37,7 @@
                     <a-dropdown class="navButton" v-else>
                         <a-button>欢迎</a-button>
                         <a-menu slot="overlay">
-                            <a-menu-item @click="goPerson">个人中心</a-menu-item>
+                            <a-menu-item @click="queryPerson">个人中心</a-menu-item>
                             <a-menu-item @click="logout">退出登录</a-menu-item>
                         </a-menu>
                     </a-dropdown>
@@ -69,15 +69,12 @@ export default {
     },
     data() {
         return {
-            from: "",             // 之前的页面
             page: ['home'],       // 当前选择的页面
-            isQuestion: false,    // 是否展示问题
-            questionID: 1000,     // 需要展示的问题ID
             loginVisible: false,  // 是否显示login
         }
     },
     methods: {
-        openPage(page) {  //打开某页
+        queryPage(page) {  //打开某页
             // 当页面不同时，打开页面
             if(this.$route.fullPath != '/' + page) {
                 // this.$router.push(page); // 页面内容切换
@@ -88,20 +85,8 @@ export default {
                 }
                 
             }
-            // menu切换在watch中实现
-            // if(page == '/') {
-            //     this.page[0] = "home";
-            // } else {
-            //     this.page[0] = page;
-            // }
-            // this.$forceUpdate();
         },
-        goQuestion(id) {  // 打开某题
-            this.questionID = id;
-            this.page[0] = 'question';
-            this.$forceUpdate();
-        },
-        goPerson() { // 前往个人中心
+        queryPerson() { // 前往个人中心
             this.$router.replace("/admin");
         },
         login() {

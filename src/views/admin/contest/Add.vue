@@ -5,7 +5,7 @@
         >
             创建比赛
         </h2>
-        <a-radio-group style="margin-left:218px;margin-bottom:20px" v-model="creatMode">
+        <a-radio-group style="margin-left:218px;margin-bottom:20px" v-model="createMode">
             <a-radio value="new">新建</a-radio>
             <a-radio value="clone">克隆</a-radio>
         </a-radio-group>
@@ -15,7 +15,7 @@
             :label-col="labelCol"
             :wrapper-col="wrapperCol"
             :rules="rules"
-            v-show="creatMode=='new'"
+            v-show="createMode=='new'"
         >
             <a-form-model-item label="比赛名称">
                 <a-input 
@@ -51,7 +51,7 @@
                             color:i==form.questions.length-1? 'black':'red',
                             transform:i==form.questions.length-1?'':'rotate(45deg)',
                             transition: 'all .6s'
-                        }" @click="chargeQuestion(i)" type="plus-circle" v-bind:title="i==form.questions.length-1?'新增':'删除'" />
+                        }" @click="handleQuestion(i)" type="plus-circle" v-bind:title="i==form.questions.length-1?'新增':'删除'" />
                         <a-input class="inline-element" style="width:100px;margin:0 5px" @change="queryTitle(i)" v-model="data.ID" placeholder="题目ID"></a-input>
                         <a-input class="inline-element" :value="data.name" placeholder="< 题目名称 >" :disabled="true" v-bind:style="{ 'color': data.isValid? '#52c41a':'#FF0000' }"></a-input>
                     </div>
@@ -76,7 +76,7 @@
                 <a-button @click="resetForm" style="margin-left:10px;">重置</a-button>
             </a-form-model-item>
         </a-form-model>
-        <div v-if="creatMode=='clone'">
+        <div v-if="createMode=='clone'">
             <div class="flex-between" style="white-space:nowrap;margin-left:218px">
                 <span>对象比赛ID</span>
                 <a-input style="margin-left:20px"></a-input>
@@ -90,9 +90,8 @@
 export default {
     data() {
         return {
-            creatMode: "new",  // new是新建比赛，clone是克隆比赛
+            createMode: "new",  // new是新建比赛，clone是克隆比赛
             compilerList: ["GCC","Java","C++","Python"],  // 可使用的编译器列表
-            isCheckAllCompiler: false, // 目前是否全选编辑器
             labelCol: { span: 4 },
             wrapperCol: { span: 14 },
             form: {
@@ -119,7 +118,7 @@ export default {
         
     },
     methods: {
-        chargeQuestion(i) {  //删除或者添加某个问题
+        handleQuestion(i) {  //删除或者添加某个问题
             if(i == this.form.questions.length-1) {  //如果是最后的问题，那就是添加
                 // 只有isValid为true才允许添加
                 if(this.form.questions[i].isValid) {

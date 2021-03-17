@@ -75,7 +75,7 @@
             <a-divider />
 
             <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
-                <a-button @click="submitForm" type="primary">上传</a-button>
+                <a-button @click="queryForm" type="primary">上传</a-button>
                 <a-button @click="resetForm" style="margin-left:10px;">重置</a-button>
             </a-form-model-item>
         </a-form-model>
@@ -96,7 +96,7 @@
 
 <script>
 // import editor from '@/components/editor.vue'
-import {mavonEditor} from 'mavon-editor'
+import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 export default {
     components: {
@@ -182,7 +182,7 @@ export default {
         }
     },
     methods: {
-        submitForm() {     //提交表单
+        queryForm() {     //提交表单
             let that = this;
             this.$refs.addForm.validate(valid => {
                 if(valid) {
@@ -197,7 +197,7 @@ export default {
                         Content: that.form.contents,
                         TimeLimit: that.form.timeLimit,
                         MemoryLimit: that.form.memoryLimit,
-                        IsBan: that.form.isBan,
+                        IsBan: String(that.form.isBan),
                         Solved: that.form.isSolved? "yes": "no",
                         // TODO: 没有判题输入和判题输出
                     };

@@ -1,3 +1,4 @@
+// TODO 这一页亟需优化
 <template>
     <div class="read" id="read">
         <questionlist ref="questionlist" :buttons="buttons" @getQuestionDetail="getQuestionDetail" @getQuestionData="getQuestionData" @deleteQuestion="deleteQuestion" />
@@ -168,16 +169,6 @@ export default {
         }
     },
     methods: {
-        handleSearch(selectedKeys, confirm, dataIndex) {  // 搜索
-            confirm();
-            this.searchText = selectedKeys[0];
-            this.searchedColumn = dataIndex;
-        },
-
-        handleReset(clearFilters) {   // 重置
-            clearFilters();
-            this.searchText = '';
-        },
         getQuestionDetail(info) {  // 获取题目详情和修改
             let that = this;
             // 使用info.ID来调取题目信息
@@ -247,10 +238,10 @@ export default {
             console.log('关闭对话框');
         },
         deleteTip(i) {  // 删除标签
-            console.log('删除下标为' + i + '的标签' + this.questionDetailModal.tips[i])
-            let tips = this.questionDetailModal.tips;
+            console.log('删除下标为' + i + '的标签' + this.questionDetailModal.questionDetail.tips[i])
+            let tips = this.questionDetailModal.questionDetail.tips;
             tips.splice(i,1);
-            this.questionDetailModal.tips = tips;
+            this.questionDetailModal.questionDetail.tips = tips;
         },
         showInput() { // 添加标签时显示input
             this.tipInputVisible = true;     // 显示input
@@ -264,7 +255,7 @@ export default {
         addTip() { // 添加标签
             this.tipInputVisible = false;     // 去掉input
             if(this.inputValue != "") {       // 空值不要
-                this.questionDetailModal.tips.push(this.inputValue);
+                this.questionDetailModal.questionDetail.tips.push(this.inputValue);
                 this.inputValue = "";
             }
         },

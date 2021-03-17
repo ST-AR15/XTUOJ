@@ -16,226 +16,479 @@
 
    为vue提供路由管理器，它可以实现在导航栏更换router来切换页面。
 
-3. ant-design-vue
+3. vuex
+
+   vue仓库，可以存储vue的状态数据
+
+4. ant-design-vue
 
    一个组件库，可以快捷、高效、实用性强地开发应用
 
-4. mavon-editor
+5. mavon-editor
 
    一个富文本编辑器，可以实现markdown文档输入、html文档输入和mathjax输入
-   
-5. vue-codemirror
+
+6. vue-codemirror
 
    一个代码编辑器，可以实现代码高亮
 
-6. axios
+7. axios
 
    一个用于调用接口API的库，可以用它方便地调用API并获得调用结果。
 
-## 页面设计
+## 文件结构
+
+结合vue项目的基本文件结构以及我们当前项目的实际情况，该项目的文件结构大致如下：
+
+```python
+├── package.json    # 模块描述文件
+├── vue.config.js   # 项目配置
+├── public
+│   ├── lib         # 网页静态资源
+│   │   └── ...     # 字体等静态资源
+│   ├── favicon.ico # 网页图标
+│   └── index.html  # 入口 html 文件
+└── src
+    ├── main.js     # 全局 js 配置
+    ├── App.vue     # 入口vue文件
+    ├── view        # 所有视图（页面）
+    ├── utils       # 脚本文件(js)
+    ├── styles      # 样式文件(css)
+    ├── store       # vuex仓库（状态存储）
+    └── router      # 路由文件（配置路由的js）
+```
+
+## 说明书
 
 ### user
 
-user页面的设计如下：
+#### App.vue
 
-```html
-<div class="user">
-    <a-layout>
-        <a-layout-header>
-            <div class=logo></div>
-            <a-menu></a-menu>
-            <div class="button"></div>
-        </a-layout-header>
-        <a-layout-content>
-            <div class="container">
-                <div class="page"></div>
-                <div class="footer"></div>
-            </div>
-        </a-layout-content>
-    </a-layout>
-</div>
-```
-
-
-
-## 组件设计
-
-### 通用组件（components）
-
-#### questionlist.vue
-
-##### 组件作用
-
-questionlist.vue是一个用于展示题目列表的组件，作用是展示一个题目的列表。它有固定的表头和表格格式，但根据传入值的不同会有不同的交互按钮和题目。
-
-在使用这个组件的时候，要传入一个数组buttons作为表格后面的交互按钮，并注册所有需要用到的方法。
-
-##### 组件布局
-
-页面里只有一个表格。表格使用了antd的组件a-table。绑定的表格属性是`columns`，绑定的数据是`questions`，绑定的分页器属性是`pagination`。
-
-表格的居中是在a-table中设置margin的结果。字体大小、字间距的设置在`questionlist.vue - line293`。标题padding的设置在`questionlist.vue - line297`，标签颜色设置在`components/tips`，其他对表格自定义样式修改的属性在`components/antd.css`。
-
-##### props
+user页面的入口文件，使用了antd的a-layout布局（header和content）所有user页面都是在这个页面里进行切换的。
 
 ```javascript
+// 变量解释
 /**
- * 存储交互方式的数组，数组里每一项都是一个交互（放在表格最后面“操作”一栏里）。text是写在按钮上的内容，method是调用的父函数的方法。正因如此，在使用这个组件的时候要监听这些调用。
- * @property {Array} buttons
+ * 代表页面展示的内容，主要用于配合顶部的菜单，保证不管是 
+ * 切换路由还是点击菜单进行切换都能正确地展示菜单
+ * @property { Array } page
  */
-	buttons: [
-        {
-            text: "",
-            method: ""
-        },
-        ……
-    ]
+		page: ['home'],
+/**
+ * login界面的展示状态
+ * @property { Boolean } loginVisible
+ */
+        loginVisible： false,
+
+// 方法解释
+/**
+ * 组件内（user内）页面切换
+ * @method queryPage
+ * @param { String } page 切换的目的路由
+ */
+	queryPage(page) { …… }
+/**
+ * 前往admin页
+ * @method queryPerson
+ */
+	queryPerson() { …… }
+/**
+ * 登录的回调函数
+ * @method login
+ */
+	login() { …… }
+/**
+ * 登出的回调函数
+ * @method logout
+ */
+	logout() { …… }
 ```
 
-##### data
+#### Home.vue
+
+展示通知的首页，使用了a-layout，有一个header，一个sider和一个content。header是标题，sider是时间进度栏，content是通知内容。
 
 ```javascript
+// 变量解释
 /**
- * 用于配合搜索功能的字符串
- * @property { String } searchText
+ * 左边时间进度栏的内容
+ * @property { Array } timer
  */
-	searchText: "",
+		timer: [……],
 /**
- * 用于实现表格的加载。当这个值为true的时候，表格会进入加载状态。反之退出
- * @property { Boolean } loading
+ * 右边通知内容
+ * @property { Array } announcements
  */
-	loading: false,
+		announcements: [……],
+```
+
+#### Problems.vue
+
+使用了自己写的组件questionlist
+
+```javascript
+// 变量解释
 /**
- * a-table表格分页器的设置。详情可见https://www.antdv.com/components/pagination-cn/
- * @property { object } pagination
+ * 传给questionlist组件的，题目列表后面能使用的方法
+ * @property { Array } buttons
  */
-	pagination: {
-        pageSize: 10,
-        showQuickJump: true,
-        total: 0,
-    },
+		buttons: [……],
+
+// 方法解释
 /**
- * a-table表格的表头设置
+ * 题目切换的回调函数
+ * @method queryQuestion
+ * @param { Object } param questionlist组件传来的题目详情
+ */
+	queryQuestion(param) { …… }
+```
+
+#### Question.vue
+
+展示问题的页面，由一个header和一个container组成，container内又由left、bar和right组成。拖动bar可以调节left和right的宽度。其中left里是题目描述，right里是输入代码的编辑框。
+
+另外，左边的题目展示使用的是mavonEditor渲染markdown格式，右边的编辑器使用的是codemirror。
+
+```javascript
+// 变量解释
+// 由于变量过多，不每个都详解
+jump: 0,                  // 跳转的次数，用于返回
+aimID: 1000,              // 与底部跳转绑定的数值
+ID: 1000,                 // 题目的ID
+leftInner: ["question"],  // 左边显示的内容
+comment: "",              // 编辑框内容
+commentReply: "",         // 回复框内容
+commentPost: 0,           // 回复对象的RID
+commentPage: 1,           // 整个回复的页码
+commentSize: 10,          // 每一页展示的内容数量
+leftW: 500,               // 左边宽度
+rightW: 500,              // 右边宽度
+loading: false,           // 题目加载状态
+commentLoading: false,    // 评论区的加载状态
+commentReplyNum: [0,0],   // 当前打开的是哪个输入框，第一个数字代表一级评论，第二个数字代表二级
+commentContext: [],       // 评论区内容
+cmOptions: {……},          // codemirror设置
+question: {},             // 题目信息
+
+// 方法解释
+// 同上，方法过多，不每个都详解
+back() { …… }              // 点击返回时的回调函数
+handleFile(file) { …… }    // 上传代码文件并誊写到代码框
+querySubmit() { …… }       // 提交代码
+queryQuestion() { …… }     // 加载问题
+dragBar(e) { …… }          // 拖拽中间的bar时的回调
+queryComment() { …… }      // 加载评论
+deleteComment(Rid) { …… }  // 删除评论，Rid是评论的id
+sendComment(reply) { …… }  // 上传评论
+openTextarea(a, b, post){} // 打开评论框，ab是用于判断几级评论下的第几个，post是回复对象的RID
+handleRoute(id) { …… }     // 跳转到目标id的题目
+handleTab(aim) { …… }      // 板块切换时的回调
+```
+
+#### Contest.vue
+
+展示比赛的页面。由比赛列表和题目列表组成。
+
+```javascript
+// 变量解释
+/**
+ * 当前展示的列表，有contests（竞赛列表）和questionlist（题目列表）两种
+ * @property { String } pageNow
+ */
+		pageNow: "contests",
+/**
+ * 列表的表设置
+ * @property { Array } pagination
+ */
+		pagination: [……],
+/**
+ * 列表的表头设置
  * @property { Array } columns
  */
-	columns: [ …… ],
+		columns: [……],
 /**
- * 问题列表。每个问题都是这个数组的一项且都是object。这些object的有效键名分别为ID（题目ID）、title（题目标题）、tips（题目标签，是一个数组）、status（提交状态）、source（题目来源）、accept（通过人数）、total（做题人数）。
- * @property { Array } questions
+ * 竞赛列表内容
+ * @property { Array } contests
  */
-	questions: [ …… ]
+		contests: [……],
+
+// 方法解释
+/**
+ * 查看某比赛信息
+ * @method queryContest 
+ * @param { Number } contestID 目标比赛的ID
+ */
+	queryContest(contestsID) { …… }
+/**
+ * 题目切换的回调函数
+ * @method queryQuestionlist
+ */
+	queryRegister() { …… }
 ```
 
-##### methods
+#### Status.vue
+
+展示提交状态的页面，使用了一个表格。
 
 ```javascript
+// 变量解释
 /**
- * 表格里的搜索功能
- * @method handleSearch
+ * 表格设置
+ * @property { Object } pagination
  */
-	handleSearch(selectedKeys, confirm, dataIndex) { …… }
+		pagination: { …… },
 /**
- * 表格里的清空功能
- * @method handleReset
+ * 表头设置
+ * @property { Array } columns
  */
-	handleReset(clearFilters) { …… }
+		columns: [ …… ],
 /**
- * 表格切换页面的功能，可以在切换页面的时候调用API获取该页的内容
- * @method handleTableChange
- * @param { object } pagination 传入点击切换页面时的相关数据
+ * 内容设置
+ * @property { Array } status
  */
-	handleReset(pagination) { …… }
-/**
- * 调用父函数的功能
- * @method callbackMethod
- * @param { String } fatherMethod 调用的父函数的函数名
- * @param { Number } param 操作按钮对应题目的ID，交由父函数进行处理
- */
-	callbackMethod(fatherMethod,param) {
-    	this.$emit(fatherMethod, param);
-    }
+		status: { …… },
 ```
 
-##### mounted
+### admin
 
-页面加载时，加载第一页的内容并确定总页数。
+#### App.vue
 
-#### question.vue
-
-##### 组件作用
-
-question.vue组件用于展示某一道题目。在question.vue页面中，用户可以查看题目的详情内容或提交代码。另外，这个页面使用了codemirror作为代码编辑器，所以声明了有关它的内容。
-
-在使用这个组件的时候，要传入一个数字ID作为题目的ID，另外，要注册一个back方法供该组件点击返回的时候调用。
-
-##### 组件布局
-
-这个页面使用了antd的a-layout布局。分为上面的header和下面的sider和content（sider在content左边）
-
-上面的header只有一个a-page-header组件，用于返回上一页。
-
-sider是放题目详情的地方。在sider里面，h1是题目的ID和大标题，h2是小标题，p是小标题下的正文。里面还使用了a-tag来显示这个题的标签。a-tag标签颜色的自定义在`components/tips.css`。另外，这里面的部分样式也有自定义的修改，可以在`question.vue - line128`看到。
-
-content是放代码的地方。在content里面有三个部分，第一个部分是上面的div，这个div里放着有关代码编辑器的设置选项。目前只有一个选择语言的a-select。
-
-##### props
-
-``` javascript
-/**
- * 需要展示题目的ID
- * @property { Number } ID
- */
-	ID： Number,
-/**
- * 点击返回按钮时触发的父函数
- * @property { String } backMethod
- */
-	backMethod： String,
-```
-
-##### data
-```javascript
-/**
- * codemirror的配置
- * @property { Object } cmOptions
- */
-	cmOptions: { …… }
-
-/**
- * 有关这个问题的所有内容。具体每一项的作用写在了代码里。
- * @property { Object } question
- */
-	question: {
-        language: String,        // 当前使用的编译器
-        language_allowed: Array, // 允许使用的编译器
-        title: String,           // 题目标题
-        tips: Array,             // 题目标签
-        questionDetail: String,  // 题目内容。用markdown直接展示
-        code: String,            // 用户输入的代码
-        timeLimit: 128,          // 题目的时限
-        memoryLimit: 128,        // 题目的存限
-    }
-```
-
-##### methods
+admin页面的入口文件，使用了antd的a-layout布局（header是标题，sider是菜单，content是内容，footer是底下的内容），所有admin页面都是在这个页面里进行切换的。
 
 ```javascript
+// 变量解释
 /**
- * 点击返回时调用，触发传入的父函数
+ * 代表页面展示的内容，主要用于配合左侧的菜单，保证不管是 
+ * 切换路由还是点击菜单进行切换都能正确地展示菜单
+ * @property { Array } page
+ */
+		page: ['home'],
+// 方法解释
+/**
+ * 回到用户页面
  * @method back
  */
-	back() {
-    	this.$emit("back");
-    }
+	back() { …… }
+/**
+ * 打开某页
+ * @method handlePage
+ * @param { String } type 页面前半段
+ * @param { String } page 页面后半段
+ */
+	handlePage(type, page) { …… }
 ```
 
-##### mounted
+#### question-Add.vue
 
-页面加载时，要根据传入的题目ID调用获取题目的详情。
+添加问题，使用了mavonEditor来编写markdown文档
 
+```javascript
+// 变量解释
+/**
+ * mavonEditor的设置
+ * @property { Object } editorOption
+ */
+		editorOption: { …… },
+/**
+ * 表单的排版设置
+ * @property { Object } labelCol
+ * @property { Object } wrapperCol
+ */
+        labelCol: { …… },
+		wrapperCol: { …… },
+/**
+ * 表单的默认数据
+ * @property { Object } formDefult
+ * 表单数据
+ * @property { Object } form
+ * 表单的填写规则
+ * @property { Object } rules
+ */
+		formDefult: { …… },
+		form: { …… },
+        rules: { …… },
+/**
+ * 弹窗设置
+ * @property { Object } modal
+ */
+		modal: { …… },
 
+// 方法解释
+/**
+ * 提交表单
+ * @method queryForm
+ */
+	queryForm() { …… }       
+/**
+ * 重置表单
+ * @method resetForm
+ */
+	resetForm() { …… }     
+```
 
+#### question-Manage.vue
 
+使用了自己的组件questionlist，另外使用了mavonEditor来实现题目内容的编辑。该页面仅实现了功能，变量设置仍需要优化，因此不进行介绍。
 
+#### contest-Add.vue
 
+创建比赛。有新建和克隆两种方式。
 
+```javascript
+// 变量解释
+/**
+ * 创建比赛的模式，有new（新建比赛）和clone（克隆比赛）两种
+ * @property { String } createMode
+ */
+		createMode: "new",
+/**
+ * 支持的编译器
+ * @property { Array } compilerList
+ */
+		compilerList: [ …… ],
+/**
+ * 表单的排版设置
+ * @property { Object } labelCol
+ * @property { Object } wrapperCol
+ */
+        labelCol: { …… },
+		wrapperCol: { …… },
+/**
+ * 表单数据
+ * @property { Object } form
+ * 表单的填写规则
+ * @property { Object } rules
+ */``
+		form: { …… },
+        rules: { …… },
+
+// 方法解释
+/**
+ * 添加或者删除某个题目
+ * @method handleQuestion
+ * @param { Number } i 题目位于题目列表第几个
+ */
+	handleQuestion(i) { …… }       
+/**
+ * 获取题目标题，在添加题目的时候触发
+ * @method queryTitle
+ * @param { Number } i 题目ID
+ */
+	queryTitle(i) { …… }   
+```
+
+#### contest-Manage.vue
+
+管理比赛，使用了mavonEditor作为富文本编辑框
+
+```javascript
+// 变量解释
+/**
+ * 表格页面设置
+ * @property { Object } pagination
+ * 表格内容
+ * @property { Array } contests
+ * 表格表头
+ * @property { Array } columns
+ */
+		pagination: [ …… ],
+		contests: { …… },
+		columns: { …… },
+/**
+ * 题目管理的对话框设置
+ * @property { Object } questionModal
+ * 发送通知的对话框设置
+ * @property { Object } noticeModal
+ */
+		questionModal: { …… },
+		noticeModal: { …… },
+
+// 方法解释
+/**
+ * 管理比赛名单
+ * @method queryNamelist
+ * @param { Number } contestID 比赛ID
+ */
+	queryNamelist(contestID) { …… }   
+/**
+ * 管理题目
+ * @method queryQuestion
+ * @param { Number } contestID 比赛ID
+ */
+	queryQuestion(contestID) { …… }   
+/**
+ * 发送通知
+ * @method queryNotice
+ * @param { Number } contestID 比赛ID
+ */
+	queryNotice(contestID) { …… }   
+/**
+ * 管理比赛的题目
+ * @method handelQuestion
+ * @param { Number } i 题目位于题目列表第几个
+ */
+	handleQuestion(i) { …… } 
+
+```
+
+#### user-Me.vue
+
+自己数据管理的页面，现在只有一个登出
+
+#### uesr-Search.vue
+
+搜素某用户
+
+### outer
+
+ outer里面的内容预计是不和OJ系统挂钩的，用于公示一类的页面。现在只有一个rank。
+
+#### Rank.vue
+
+页面从上往下分别是：
+
+- h1 标题
+- time 时间轴
+- tip 顶上的颜色提示
+- filter 过滤关注的队伍
+- list 表格内容 分表头、关注栏、总栏和统计栏
+
+```javascript
+// 变量解释
+// 由于不是最终优化结果，所以不每个都详解
+title: "",                   // 比赛名称
+time: {},                    // 时间刻度
+stamp: {                     // 比赛开始和结束的时间戳
+    start: Number,
+    end: Number,
+},
+timeStep: 1000,               // 进度条最低刻度
+progress: Number,             // 进度条当前时间的时间戳
+list：[
+    question: Number,         // 题目数量
+    score: [],                // 排名详情  
+    star: [],                 // 关注的队伍的详情
+    questionInfo: {},         // 底下的统计
+    placeChange: [],          // 变化点
+],
+school: [],                   // 参加比赛的组织集合，用于筛选时选择
+starSchool: [],               // 关注的队伍
+query: {},                    // 网址栏上的query
+timer: "",                    // 计时器，让时间一直动
+    
+// 方法解释
+init() { …… },                // 初始化
+formatter() { …… },           // 格式化时间
+msToTime(ms) { …… },          // 格式化时间
+timeFormatter(a, b) { …… },   // 格式化时间
+handleStar(value) { …… },     // 修改关注队伍时触发
+handleQuery() { …… },         // 把数据放在地址栏的query里
+```
+
+### general
+
+通用页面。目前只有404
+
+#### 404.vue
+
+出现404错误时展示的页面

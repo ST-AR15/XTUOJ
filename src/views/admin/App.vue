@@ -17,11 +17,11 @@
                                 <a-icon type="code" theme="twoTone" />
                                 <span>题目管理</span>
                             </span>
-                            <a-menu-item key="question-add" @click="openPage('question','add')">
+                            <a-menu-item key="question-add" @click="handlePage('question','add')">
                                 <a-icon type="plus-square" />
                                 <span>新增题目</span>
                             </a-menu-item>
-                            <a-menu-item key="question-manage" @click="openPage('question', 'manage')">
+                            <a-menu-item key="question-manage" @click="handlePage('question', 'manage')">
                                 <a-icon type="edit" />
                                 <span>管理题目</span>
                             </a-menu-item>
@@ -32,11 +32,11 @@
                                 <a-icon type="trophy" theme="twoTone" />
                                 <span>比赛管理</span>
                             </span>
-                            <a-menu-item key="contest-add" @click="openPage('contest', 'add')">
+                            <a-menu-item key="contest-add" @click="handlePage('contest', 'add')">
                                 <a-icon type="plus-circle" />
                                 <span>新建比赛</span>
                             </a-menu-item>
-                            <a-menu-item key="contest-manage" @click="openPage('contest', 'manage')">
+                            <a-menu-item key="contest-manage" @click="handlePage('contest', 'manage')">
                                 <a-icon type="database" />
                                 <span>管理比赛</span>
                             </a-menu-item>
@@ -47,11 +47,11 @@
                                 <a-icon type="smile" theme="twoTone" />
                                 <span>用户管理</span>
                             </span>
-                            <a-menu-item key="user-search" @click="openPage('user', 'search')">
+                            <a-menu-item key="user-search" @click="handlePage('user', 'search')">
                                 <a-icon type="file-search" />
                                 <span>搜索用户</span>
                             </a-menu-item>
-                            <a-menu-item key="user-me" @click="openPage('user', 'me')">
+                            <a-menu-item key="user-me" @click="handlePage('user', 'me')">
                                 <a-icon type="user" />
                                 <span>个人中心</span>
                             </a-menu-item>
@@ -74,14 +74,14 @@ export default {
     data() {
         return {
             // 当前选择的页面
-            page: ["questio-add"],
+            page: ["question-add"],
         }
     },
     methods: {
         back() {
             this.$router.replace('/#');
         },
-        openPage(type, page) { // 打开某页
+        handlePage(type, page) { // 打开某页
             // this.$router.push(page);  // 内容切换
             // this.page[0] = page;   // 菜单切换
             let name = "";

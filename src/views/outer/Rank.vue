@@ -175,7 +175,7 @@ export default {
     data() {
         return {
             title: "第1届湘潭大学程序设计竞赛正式赛",  // 比赛名字
-            time: {},
+            time: {},  // 时间刻度
             stamp: {   // 比赛开始和比赛结束的时间
                 start: 1614844800000,
                 end: 1614949200000,
@@ -1224,7 +1224,7 @@ export default {
                         dirt: "14%",
                     },
                 ],
-                star: [],
+                star: [], // 关注的队伍
                 questionInfo: {
                     attempted: [12,23,34,45,56,12,23,34,45,56,111,222,333],
                     accepted: [1,2,3,4,5,6,7,8,9,10,11,12,13],

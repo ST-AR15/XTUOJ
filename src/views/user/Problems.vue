@@ -1,6 +1,6 @@
 <template>
     <div class="problems" id="problems">
-        <questionlist :buttons="buttons" @goQuestion="goQuestion" />
+        <questionlist :buttons="buttons" @queryQuestion="queryQuestion" />
     </div>
 </template>
 
@@ -15,14 +15,14 @@ export default {
             buttons: [
                 {
                     text: "查看",
-                    method: "goQuestion"
+                    method: "queryQuestion"
                 }
             ],
         }
     },
     methods: {
         // 打开题目页面，传入题目ID
-        goQuestion(param) {
+        queryQuestion(param) {
             // 修改路由到question
             console.log(param);
             this.$router.push('/problems/' + param.ID);
@@ -38,9 +38,5 @@ export default {
     }
     .home .ant-table-title {
         padding: 10px 20px;
-    }
-    .highlight {
-        background-color: rgb(255, 192, 105);
-        padding: 0px;
     }
 </style>

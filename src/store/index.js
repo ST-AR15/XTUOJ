@@ -4,7 +4,7 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
     state: {
-        uid: 1,
+        uid: null,
         token: null,
     },
     mutations: {

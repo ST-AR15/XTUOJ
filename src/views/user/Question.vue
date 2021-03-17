@@ -7,7 +7,7 @@
         />
         <div class="container">
             <div class="left" v-bind:style="{ width: leftW + 'px' }">
-                <a-tabs @change="tabChange">
+                <a-tabs @change="handleTab">
                     <a-tab-pane class="leftContainer" key="question" tab="问题">
                         <a-spin :spinning="loading">
                             <section class="questionSection session">
@@ -39,7 +39,7 @@
                         <a-spin :spinning="commentLoading">
                             <section class="discussSection session">
                                 <div class="comment" style="margin-top: 10px">
-                                    <a-textarea :disabled="!uid" :placeholder="uid? '想说什么，尽管说吧~': '请先登录~'" v-model="comment" :rows="4" />
+                                    <a-textarea :disabled="!$store.state.uid" :placeholder="$store.state.uid? '想说什么，尽管说吧~': '请先登录~'" v-model="comment" :rows="4" />
                                     <a-button style="margin-top: 5px" type="primary" @click="sendComment(false)">发表</a-button>
                                 </div>
                                 <div class="context">
@@ -66,7 +66,7 @@
                                                         ></span>
                                                         <span
                                                             @click="deleteComment(data.Rid)"
-                                                            v-if="data.Uid == uid"
+                                                            v-if="data.Uid == $store.state.uid"
                                                         >删除评论</span>
                                                     </a-space>
                                                 </div>
@@ -116,8 +116,8 @@
                 </a-tabs>
                 <div class="buttons">
                     <a-space>
-                        <a-input-number placeholder="请输入题号" v-model="aimID" @pressEnter="routeTo(aimID)"></a-input-number>
-                        <a-button type="primary" @click="routeTo(aimID)">跳转</a-button>
+                        <a-input-number placeholder="请输入题号" v-model="aimID" @pressEnter="handleRoute(aimID)"></a-input-number>
+                        <a-button type="primary" @click="handleRoute(aimID)">跳转</a-button>
                     </a-space>
                 </div>
             </div>
@@ -149,11 +149,11 @@
                 <div class="buttons">
                     <a-space>
                         <a-button type="primary" @click="question.code = ''">重置</a-button>
-                        <a-button type="primary" @click="submit">提交</a-button>
+                        <a-button type="primary" @click="querysubmit">提交</a-button>
                         <!-- TODO 根据文件后缀自动转换语言 -->
                         <a-upload
                             name="codeFile"
-                            :beforeUpload="uploadFile"
+                            :beforeUpload="handleFile"
                             :showUploadList="false"
                         >
                             <a-button type="primary">上传文件</a-button>
@@ -177,25 +177,24 @@ export default {
         mavonEditor,
         codemirror
     },
-    props: {
-        backMethod: String,
-    },  // 从父组件获得题目ID，然后在接口里获得全部值
+    // 从父组件获得题目ID，然后在接口里获得全部值
     data() {
         return {
-            uid: null, // uid，用于判断是否能删除题目
-            jump: 0,   // 跳转的次数，用于返回
-            aimID: 1000,
-            ID: 1000,  // 题目的ID
+            jump: 0,                  // 跳转的次数，用于返回
+            aimID: 1000,              // 与底部跳转绑定的数值
+            ID: 1000,                 // 题目的ID
             leftInner: ["question"],  // 左边显示的内容
-            comment: "",   // 编辑框内容
-            commentReply: "",  // 回复框内容
-            commentPost: 0,   // 回复对象的RID
-            commentPage: 1,  // 整个回复的页码
-            commentSize: 10, // 每一页展示的内容数量
-            leftW: 500,   // 左边宽度
-            rightW: 500,   // 右边宽度
-            loading: false, // 加载状态
-            commentLoading: false, // 评论区的加载状态
+            comment: "",              // 编辑框内容
+            commentReply: "",         // 回复框内容
+            commentPost: 0,           // 回复对象的RID
+            commentPage: 1,           // 整个回复的页码
+            commentSize: 10,          // 每一页展示的内容数量
+            leftW: 500,               // 左边宽度
+            rightW: 500,              // 右边宽度
+            loading: false,           // 题目加载状态
+            commentLoading: false,    // 评论区的加载状态
+            commentReplyNum: [0,0],   // 当前打开的是哪个输入框，第一个数字代表一级评论，第二个数字代表二级
+            commentContext: [],       // 评论区内容
             cmOptions:{
                 value:'',
                 mode:"text/x-csrc",
@@ -215,8 +214,7 @@ export default {
                 questionDetail: "请稍候……",
                 code: "",  //当前输入的代码
             },
-            commentReplyNum: [0,0],  // 当前打开的是哪个输入框，第一个数字代表一级评论，第二个数字代表二级
-            commentContext: [],
+            
         }
     },
     methods: {
@@ -224,8 +222,7 @@ export default {
             // this.$emit("back");
             this.$router.go(-1 * (this.jump + 1));
         },
-        uploadFile(file) {  // 上传文件
-            console.log('cnm');
+        handleFile(file) {  // 上传文件
             // 暂时设定的逻辑是，把文件读取出来，然后誊写到代码框里
             // TODO 理论上这里应该设置一下文件上传后根据文件后缀修改语言（编译器）？或者没必要？
             const reader = new FileReader();
@@ -241,10 +238,10 @@ export default {
             // 返回false表示不调用默认的上传接口
             return false;
         },
-        submit() {  // 提交代码
+        querysubmit() {  // 提交代码
             console.log(this.question.code);
         },
-        openQuestion() {  // 加载问题
+        queryQuestion() {  // 加载问题
             console.log("打开了题目" + this.ID);
             this.loading = true; // 开始加载题目
             let url = '/api/problem/' + this.ID;
@@ -272,7 +269,7 @@ export default {
             this.rightW = Math.max(window.innerWidth, 1000) - 20 - this.leftW;
             
         },
-        openComment() {  // 加载评论
+        queryComment() {  // 加载评论
             // 如果加载过了，就不加载
             if(this.commentContext.length != 0) {
                 return ;
@@ -332,7 +329,7 @@ export default {
                 // 刷新评论
                 this.$message.success("删除成功！");
                 this.commentContext = [];
-                this.openComment();
+                this.queryComment();
             })
         },
         sendComment(reply) {  // 提交评论
@@ -353,7 +350,7 @@ export default {
                     that.commentContext = [];  // 清空评论栏
                     this.commentPost = null;  // 清除post
                     this.commentReplyNum = [0,0]; // 关闭回复的输入框
-                    that.openComment();   // 重新加载评论
+                    that.queryComment();   // 重新加载评论
                     if(reply) {
                         that.commentReply = "";
                         that.commentPost = null;
@@ -375,7 +372,7 @@ export default {
                 this.$forceUpdate();
             }
         },
-        routeTo(id) { // 修改route
+        handleRoute(id) { // 修改route
             if(typeof id !== 'string') {
                 id += "";
             }
@@ -387,10 +384,10 @@ export default {
                 this.$router.push(id);
             }
         },
-        tabChange(aim) {
+        handleTab(aim) {
             // 切换成讨论
             if(aim == 'discuss') {
-                this.openComment();
+                this.queryComment();
             }
         }
     },
@@ -409,7 +406,7 @@ export default {
             // 跳转一次
             this.jump++;
             // 打开问题
-            this.openQuestion();
+            this.queryQuestion();
         },
     },
     mounted() {
@@ -423,9 +420,7 @@ export default {
         that.ID = this.$route.params.ID;
         that.aimID = this.$route.params.ID;
         // 刚打开页面时，加载一次问题
-        that.openQuestion();
-        // 获取UID
-        that.uid = sessionStorage.uid;
+        that.queryQuestion();
     },
     
 }
@@ -454,7 +449,8 @@ export default {
 }
 .question .leftContainer {
     /* 64是导航栏，64是返回按钮，45是选项,64是buttons */
-    height: calc(100vh - 64px - 64px - 45px - 64px - 15px);
+    /* height: calc(100vh - 64px - 64px - 45px - 64px - 15px); */
+    height: calc(100vh - 252px);
     overflow-y: auto;
     padding: 0 10px;
 }

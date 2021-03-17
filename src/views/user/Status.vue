@@ -6,66 +6,12 @@
             style="width:98%; background-color:#FCFDFE; margin:0 auto"
             :pagination="pagination"
         >
-            <!-- 搜索 -->
-            <div
-                slot="filterDropdown"
-                slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
-                style="padding: 8px"
-                >
-                <a-input
-                    v-ant-ref="c => (searchInput = c)"
-                    :placeholder="`搜索 ${column.title}`"
-                    :value="selectedKeys[0]"
-                    style="width: 188px; margin-bottom: 8px; display: block;"
-                    @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
-                    @pressEnter="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
-                />
-                <a-button
-                    size="small"
-                    style="width: 90px; margin-right: 8px;"
-                    @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
-                    type="green"
-                >
-                    搜索
-                    <a-icon type="search" />
-                </a-button>
-                <a-button 
-                    type="primary"
-                    size="small"
-                    style="width: 90px" 
-                    @click="() => handleReset(clearFilters)"
-                >
-                    重置
-                    <a-icon type="sync" />
-                </a-button>
-            </div>
-            <!-- 高亮 -->
-            <template slot="customRender" slot-scope="text, record, index, column">
-                <span v-if="searchText && searchedColumn === column.dataIndex">
-                    <template
-                    v-for="(fragment, i) in text
-                        .toString()
-                        .split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))"
-                    >
-                    <mark
-                        v-if="fragment.toLowerCase() === searchText.toLowerCase()"
-                        :key="i"
-                        class="highlight"
-                        >{{ fragment }}</mark
-                    >
-                    <template v-else>{{ fragment }}</template>
-                    </template>
-                </span>
-                <template v-else>
-                    {{ text }}
-                </template>
-            </template>
             <!-- 运行状态 -->
             <a-popover style="cursor: pointer" slot="status" slot-scope="status" title="编译信息">
                 <template slot="content">
                     <p>编译错误啦哈哈哈</p>
                 </template>
-                <span v-text="status" v-bind:class="status=='Accept'? 'accept':status=='Wrong Answer'? 'wa':'others'"></span>
+                <span v-text="status" :class="status=='Accept'? 'accept':status=='Wrong Answer'? 'wa':'others'"></span>
             </a-popover>
             <!-- Memory -->
             <span slot="memory" slot-scope="memory">
@@ -103,7 +49,6 @@
 export default {
     data() {
         return {
-            searchText: "",
             pagination: {               // 页面设置
                 pageSize: 10,           // 每页展示信息数量
                 showQuickJumper: true,  // 快速跳转
@@ -112,86 +57,19 @@ export default {
                 {
                     title: "SolutionID",
                     dataIndex: "solutionID",
-                    scopedSlots: {
-                        filterDropdown: 'filterDropdown',
-                        filterIcon: 'filterIcon',
-                        customRender: 'customRender',
-                    },
-                    onFilter: (value, record) =>
-                        record.ID
-                        .toString()
-                        .toLowerCase()
-                        .includes(value.toLowerCase()),
-                    onFilterDropdownVisibleChange: visible => {
-                        if (visible) {
-                        setTimeout(() => {
-                            this.searchInput.focus();
-                        });
-                        }
-                    },
                 },
                 {
                     title: "问题ID",
                     dataIndex: "problemID",
-                    scopedSlots: {
-                        filterDropdown: 'filterDropdown',
-                        filterIcon: 'filterIcon',
-                        customRender: 'customRender',
-                    },
-                    onFilter: (value, record) =>
-                        record.ID
-                        .toString()
-                        .toLowerCase()
-                        .includes(value.toLowerCase()),
-                    onFilterDropdownVisibleChange: visible => {
-                        if (visible) {
-                        setTimeout(() => {
-                            this.searchInput.focus();
-                        });
-                        }
-                    },
                 },
                 {
                     title: "用户ID",
                     dataIndex: "userID",
-                    scopedSlots: {
-                        filterDropdown: 'filterDropdown',
-                        filterIcon: 'filterIcon',
-                        customRender: 'customRender',
-                    },
-                    onFilter: (value, record) =>
-                        record.ID
-                        .toString()
-                        .toLowerCase()
-                        .includes(value.toLowerCase()),
-                    onFilterDropdownVisibleChange: visible => {
-                        if (visible) {
-                        setTimeout(() => {
-                            this.searchInput.focus();
-                        });
-                        }
-                    },
                 },
                 {
                     title: "运行状态",
                     dataIndex: "status",
-                    scopedSlots: { 
-                        customRender: 'status',
-                        filterDropdown: 'filterDropdown',
-                        filterIcon: 'filterIcon',
-                    },
-                    onFilter: (value, record) =>
-                        record.ID
-                        .toString()
-                        .toLowerCase()
-                        .includes(value.toLowerCase()),
-                    onFilterDropdownVisibleChange: visible => {
-                        if (visible) {
-                        setTimeout(() => {
-                            this.searchInput.focus();
-                        });
-                        }
-                    },
+                    scopedSlots: { customRender: 'status' },
                 },
                 {
                     title: "Memory",
@@ -206,23 +84,6 @@ export default {
                 {
                     title: "Language",
                     dataIndex: "language",
-                    scopedSlots: {
-                        filterDropdown: 'filterDropdown',
-                        filterIcon: 'filterIcon',
-                        customRender: 'customRender',
-                    },
-                    onFilter: (value, record) =>
-                        record.ID
-                        .toString()
-                        .toLowerCase()
-                        .includes(value.toLowerCase()),
-                    onFilterDropdownVisibleChange: visible => {
-                        if (visible) {
-                        setTimeout(() => {
-                            this.searchInput.focus();
-                        });
-                        }
-                    },
                 },
                 {
                     title: "Code Length",
@@ -276,16 +137,7 @@ export default {
         }
     },
     methods: {
-        handleSearch(selectedKeys, confirm, dataIndex) {
-            confirm();
-            this.searchText = selectedKeys[0];
-            this.searchedColumn = dataIndex;
-        },
 
-        handleReset(clearFilters) {
-            clearFilters();
-            this.searchText = '';
-        },
     }
 }
 </script>

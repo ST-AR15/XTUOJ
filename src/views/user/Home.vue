@@ -130,7 +130,7 @@ export default {
                 {
                     time: "2021-03-14",
                     title: "联系我们",
-                    description: "湘大新OJ前端制作者<a href='tel:13975703258'>电话号码13975703258</a>，<a href='mailto:slighttt@qq.com'>邮箱slighttt@qq.com</a>欢迎联系~",
+                    description: "湘大新OJ前端制作者<a href='tel:13975703258'>电话号码13975703258</a>，<a href='mailto:slighttt@qq.com'>邮箱slighttt@qq.com</a>，欢迎联系~",
                 },
                 {
                     time: "2021-03-14",
@@ -144,8 +144,8 @@ export default {
                 },
                 {
                     time: "2021-03-14",
-                    title: "证书",
-                    description: "该项目还没申请证书~",
+                    title: "很长的文本",
+                    description: "好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊好长啊",
                 },
                 {
                     time: "2021-03-14",

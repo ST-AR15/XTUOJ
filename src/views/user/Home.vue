@@ -57,63 +57,54 @@ export default {
                 {
                     color: 'red',
                     time: "2021-05-25",
-                    content: "答辩",
+                    content: "好长好长好长好长好长好长好长好长好长的文本",
                 },
                 {
                     color: 'red',
                     time: "2021-05-25",
-                    content: "答辩",
+                    content: "更多的文本",
                 },
                 {
                     color: 'red',
                     time: "2021-05-25",
-                    content: "答辩",
+                    content: "更多的文本",
                 },
                 {
                     color: 'red',
                     time: "2021-05-25",
-                    content: "答辩",
+                    content: "更多的文本",
                 },
                 {
                     color: 'red',
                     time: "2021-05-25",
-                    content: "答辩",
+                    content: "更多的文本",
                 },
                 {
                     color: 'red',
                     time: "2021-05-25",
-                    content: "答辩",
+                    content: "更多的文本",
                 },
                 {
                     color: 'red',
                     time: "2021-05-25",
-                    content: "答辩",
+                    content: "更多的文本",
                 },
                 {
                     color: 'red',
                     time: "2021-05-25",
-                    content: "答辩",
+                    content: "更多的文本",
                 },
                 {
                     color: 'red',
                     time: "2021-05-25",
-                    content: "答辩",
+                    content: "更多的文本",
                 },
                 {
                     color: 'red',
                     time: "2021-05-25",
-                    content: "答辩",
+                    content: "更多的文本",
                 },
-                {
-                    color: 'red',
-                    time: "2021-05-25",
-                    content: "答辩",
-                },
-                {
-                    color: 'red',
-                    time: "2021-05-25",
-                    content: "答辩",
-                },
+                
                 
             ],
             announcements: [
@@ -149,44 +140,45 @@ export default {
                 },
                 {
                     time: "2021-03-14",
-                    title: "证书",
-                    description: "该项目还没申请证书~",
+                    title: "很多的文本",
+                    description: "好多啊好多",
                 },
                 {
                     time: "2021-03-14",
-                    title: "证书",
-                    description: "该项目还没申请证书~",
+                    title: "很多的文本",
+                    description: "好多啊好多",
                 },
                 {
                     time: "2021-03-14",
-                    title: "证书",
-                    description: "该项目还没申请证书~",
+                    title: "很多的文本",
+                    description: "好多啊好多",
                 },
                 {
                     time: "2021-03-14",
-                    title: "证书",
-                    description: "该项目还没申请证书~",
+                    title: "很多的文本",
+                    description: "好多啊好多",
                 },
                 {
                     time: "2021-03-14",
-                    title: "证书",
-                    description: "该项目还没申请证书~",
+                    title: "很多的文本",
+                    description: "好多啊好多",
                 },
                 {
                     time: "2021-03-14",
-                    title: "证书",
-                    description: "该项目还没申请证书~",
+                    title: "很多的文本",
+                    description: "好多啊好多",
                 },
                 {
                     time: "2021-03-14",
-                    title: "证书",
-                    description: "该项目还没申请证书~",
+                    title: "很多的文本",
+                    description: "好多啊好多",
                 },
                 {
                     time: "2021-03-14",
-                    title: "证书",
-                    description: "该项目还没申请证书~",
+                    title: "很多的文本",
+                    description: "好多啊好多",
                 },
+                
             ],
         }
     },

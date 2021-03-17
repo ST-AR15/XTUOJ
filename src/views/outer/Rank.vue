@@ -5,7 +5,7 @@
             <div class="time-bar">
                 <div class="time-bg"></div>
                 <div class="time-end" v-text="Date.now()<stamp.end? timeFormatter(stamp.end, true): '已结束'"></div>
-                <a-slider @change="handleQuery()" :marks="time" :min="stamp.start" :max="stamp.end" v-model="progress" :step="timeStep" :tip-formatter="formatter"></a-slider>
+                <a-slider @change="handleTime()" :marks="time" :min="stamp.start" :max="stamp.end" v-model="progress" :step="timeStep" :tip-formatter="formatter"></a-slider>
             </div>
             <div class="time-detail">
                 <span v-text="'总时长：' + msToTime(stamp.end-stamp.start)"></span>
@@ -165,7 +165,6 @@
                 <div style="width: 100%" class="blank"></div>
             </div>
         </div>
-        <a-button type="primary" @click="test">测试</a-button>
     </div>
 </template>
 
@@ -177,8 +176,8 @@ export default {
             title: "第1届湘潭大学程序设计竞赛正式赛",  // 比赛名字
             time: {},  // 时间刻度
             stamp: {   // 比赛开始和比赛结束的时间
-                start: 1614844800000,
-                end: 1614949200000,
+                start: 1615953600000,
+                end: 1615975200000,
             },
             timeStep: 1000, // 进度条的最低刻度,为1秒
             progress: 1614067200000, // 进度条(当前时间)
@@ -1234,20 +1233,24 @@ export default {
                 },
                 placeChange: [
                     {
-                        t: 1613826000000,
-                        change: [3,1,2,4,5,6,7,8,9,10,11,12,13,14,15],
+                        t: 1615953600000,
+                        change: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
                     },
                     {
-                        t: 1613829600000,
-                        change: [3,1,2,5,8,6,7,8,9,10,11,12,13,14,15],
+                        t: 1615962600000,
+                        change: [2,4,6,8,10,12,14,1,3,5,7,9,11,13,15],
                     },
                     {
-                        t: 1613833200000,
-                        change: [3,1,2,5,8,6,7,8,9,10,11,12,13,14,15],
+                        t: 1615964400000,
+                        change: [1,3,5,7,9,11,13,15,2,4,6,8,10,12,14],
                     },
                     {
-                        t: 1613836800000,
-                        change: [3,1,2,4,5,6,7,8,9,10,11,12,13,14,15],
+                        t: 1615968000000,
+                        change: [2,4,6,8,10,12,14,1,3,5,7,9,11,13,15],
+                    },
+                    {
+                        t: 1615969800000,
+                        change: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
                     },
                 ],
             },
@@ -1380,16 +1383,16 @@ export default {
         msFormatter(ms) {   // 为了保证progress能成为1000的倍数
             return Math.floor(ms/1000)*1000;
         },
-        test() {
-            for(let i in this.list.score) {
-                if(this.list.score[i].place == this.list.score.length) {
-                    this.list.score[i].place = 1;
-                } else {
-                    this.list.score[i].place++;
-                }
-            }
-            // 按rank排序
-        },
+        // test() {
+        //     for(let i in this.list.score) {
+        //         if(this.list.score[i].place == this.list.score.length) {
+        //             this.list.score[i].place = 1;
+        //         } else {
+        //             this.list.score[i].place++;
+        //         }
+        //     }
+        //     // 按rank排序
+        // },
         handleStar(value) {
             this.list.star = [];  // 先清空原来的star
             // 获取新的star
@@ -1405,6 +1408,27 @@ export default {
                     if(this.list.star[j].rank > this.list.star[j+1].rank) {
                         [this.list.star[j], this.list.star[j+1]] = [this.list.star[j+1], this.list.star[j]];
                     }
+                }
+            }
+            this.handleQuery();
+        },
+        handleTime() {
+            const change = this.list.placeChange;
+            // 动态修改排名
+            for(let i in change) {
+                if(change[i].t > this.progress) {
+                    // 如果检测到比它大，就用前一个
+                    for(let j in this.list.score) {
+                        this.list.score[j].place = change[i-1].change[j];
+                    }
+                    break ;
+                }
+                if(i == change.length-1) {
+                    // 最后一个
+                    for(let j in this.list.score) {
+                        this.list.score[j].place = change[i].change[j];
+                    }
+                    break ;
                 }
             }
             this.handleQuery();

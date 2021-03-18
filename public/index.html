@@ -21,10 +21,64 @@
         font-family: EN;
       }
     </style>
+    <style>
+        #app-loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200px;
+            height: 200px;
+            margin-left: -100px;
+            margin-top: -100px;
+            
+        }
+        #loader-border {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 6px solid #EEEEEE;
+            box-sizing: border-box;
+            animation-name: loading;
+            animation-duration: .8s;
+            animation-iteration-count: infinite;
+            animation-timing-function: linear;
+        }
+        #loader-text {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            line-height: 200px;
+            user-select: none;
+        }
+        @keyframes loading {
+            0% {
+                transform: rotate(0);
+                border-left-color: rgb(74, 202, 202);
+            }
+            25% {
+                border-left-color: rgb(34, 168, 79);
+            }
+            50% {
+                border-left-color: rgb(40, 17, 146);
+            }
+            75% {
+                border-left-color: rgb(179, 28, 141);
+            }
+            100% {
+                transform: rotate(360deg);
+                border-left-color: rgb(201, 122, 48);
+            }
+        }
+    </style>
   </head>
   <body>
     <div id="app-loader">
-      加载中哦！！！
+        <div id="loader-border"></div>
+        <div id="loader-text">
+            加载中
+        </div>
     </div>
     <div id="app"></div>
     <!-- <script src="lib/jquery/jquery.min.js"></script> -->

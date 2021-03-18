@@ -482,6 +482,7 @@ formatter() { …… },           // 格式化时间
 msToTime(ms) { …… },          // 格式化时间
 timeFormatter(a, b) { …… },   // 格式化时间
 handleStar(value) { …… },     // 修改关注队伍时触发
+handleTime() { …… },         // 拖动时间进度条的时候触发
 handleQuery() { …… },         // 把数据放在地址栏的query里
 ```
 

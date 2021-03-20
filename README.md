@@ -451,11 +451,13 @@ admin页面的入口文件，使用了antd的a-layout布局（header是标题，
 - time 时间轴
 - tip 顶上的颜色提示
 - filter 过滤关注的队伍
-- list 表格内容 分表头、关注栏、总栏和统计栏
+- list 排行表格内容 分表头、关注栏、总栏和统计栏
+- balloon 气球表格内容
 
 ```javascript
 // 变量解释
 // 由于不是最终优化结果，所以不每个都详解
+page: "ranklist",            // 当前页面
 title: "",                   // 比赛名称
 time: {},                    // 时间刻度
 stamp: {                     // 比赛开始和结束的时间戳
@@ -474,6 +476,9 @@ list：[
 school: [],                   // 参加比赛的组织集合，用于筛选时选择
 starSchool: [],               // 关注的队伍
 query: {},                    // 网址栏上的query
+balloon: [],                  // 气球栏内容
+columns: [],                  // 气球栏表格设置
+pagination: {},               // 气球栏表格分页设置
 timer: "",                    // 计时器，让时间一直动
     
 // 方法解释

@@ -491,6 +491,46 @@ handleTime() { …… },         // 拖动时间进度条的时候触发
 handleQuery() { …… },         // 把数据放在地址栏的query里
 ```
 
+#### Ballon.vue
+
+页面只有一个标题和一个表格，表格里是需要发放气球的队伍。发放后，可以点击按钮完成发放。
+
+```javascript
+// 变量解释
+/**
+ * 比赛的名字
+ * @property { String } title
+ */
+		title: "",
+/**
+ * 气球表的有关信息
+ * 气球表内容
+ * @property { Array } ballon
+ * 气球表内容设置
+ * @property { Array } columns
+ * 气球表页面设置
+ * @property { Array } pagination
+ */
+		ballon: [ …… ],
+		columns: [ …… ],
+		pagination: [ …… ],
+/**
+ * 发送气球时展示的提示框设置
+ * @property { Object } modal
+ */
+		modal: { …… },
+            
+// 方法解释
+/**
+ * 发送气球时的提示框
+ * @method handleGrant
+ * @param { Object } info 发送气球的目标信息
+ */
+	handleGrant(info) { …… }    
+```
+
+
+
 ### general
 
 通用页面。目前只有404

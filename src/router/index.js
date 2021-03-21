@@ -30,8 +30,9 @@ import manageQontest from '@/views/admin/question/Manage.vue'
 import meUser from '@/views/admin/user/Me.vue'
 import searchUser from '@/views/admin/user/Search.vue'
 
-// 通用页面
+// 外部页面
 import rank from '@/views/outer/Rank.vue'
+import balloon from '@/views/outer/Balloon.vue'
 
 
 Vue.use(VueRouter)
@@ -116,6 +117,12 @@ const routes = [
         name: 'rank',
         path: '/rank',
         component: rank,
+    },
+    // balloon
+    {
+        name: 'balloon',
+        path: '/balloon',
+        component: balloon,
     },
     {
         name: '404',

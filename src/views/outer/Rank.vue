@@ -1298,6 +1298,7 @@ export default {
             },
             balloon: [
                 {
+                    status: "未发放",
                     time: "01:44:01",
                     solved: "B",
                     school: "湘潭大学",
@@ -1306,6 +1307,7 @@ export default {
                     awards: "First to solved problem B",
                 },
                 {
+                    status: "未发放",
                     time: "01:39:01",
                     solved: "C",
                     school: "湘潭大学",
@@ -1314,6 +1316,7 @@ export default {
                     awards: "",
                 },
                 {
+                    status: "未发放",
                     time: "01:35:01",
                     solved: "C",
                     school: "湘潭大学",
@@ -1322,6 +1325,7 @@ export default {
                     awards: "First to solved problem D",
                 },
                 {
+                    status: "已发放",
                     time: "01:22:01",
                     solved: "C",
                     school: "湘潭大学",
@@ -1330,6 +1334,7 @@ export default {
                     awards: "First to solved problem A",
                 },
                 {
+                    status: "未发放",
                     time: "01:05:01",
                     solved: "B",
                     school: "湘潭大学",
@@ -1338,6 +1343,7 @@ export default {
                     awards: "First to solved problem B",
                 },
                 {
+                    status: "未发放",
                     time: "01:00:01",
                     solved: "C",
                     school: "湘潭大学",
@@ -1347,6 +1353,10 @@ export default {
                 },
             ],
             columns: [
+                {
+                    title: "status",
+                    dataIndex: "status",
+                },
                 {
                     title: "time",
                     dataIndex: "time"

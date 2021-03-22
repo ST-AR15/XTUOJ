@@ -9,10 +9,10 @@
                 <a-layout-sider>
                     <a-menu
                         mode="inline"
-                        v-model="page"
+                        :selectedKeys="page"
                     >
                         <!-- 选项1 ： 题目管理 -->
-                        <a-sub-menu>
+                        <a-sub-menu key="question">
                             <span slot="title">
                                 <a-icon type="code" theme="twoTone" />
                                 <span>题目管理</span>
@@ -27,7 +27,7 @@
                             </a-menu-item>
                         </a-sub-menu>
                         <!-- 选项二：比赛管理 -->
-                        <a-sub-menu>
+                        <a-sub-menu key="contest">
                             <span slot="title">
                                 <a-icon type="trophy" theme="twoTone" />
                                 <span>比赛管理</span>
@@ -42,7 +42,7 @@
                             </a-menu-item>
                         </a-sub-menu>
                         <!-- 选项三：用户管理 -->
-                        <a-sub-menu>
+                        <a-sub-menu key="user">
                             <span slot="title">
                                 <a-icon type="smile" theme="twoTone" />
                                 <span>用户管理</span>
@@ -74,7 +74,7 @@ export default {
     data() {
         return {
             // 当前选择的页面
-            page: ["question-add"],
+            page: [''],
         }
     },
     methods: {
@@ -88,7 +88,7 @@ export default {
             if(page) {
                 name = type + '-' + page;
             } else {
-                name = type + '-welcome';
+                name = type;
             }
             this.$router.push({ name: name }); // router
             // this.page[0] = name; // 菜单切换在watch里
@@ -109,6 +109,7 @@ export default {
         $route(to) {
             this.page[0] = to.name;  // 菜单切换
             this.$forceUpdate();
+            console.log(this.page);
         }
     }
 }

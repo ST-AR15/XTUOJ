@@ -186,9 +186,12 @@ export default {
 </script>
 
 <style scoped>
-.container {
-    position: relative;
-    width: 98%;
-    margin: 0 auto;
-}
+    * {
+        font-size: 15px;
+        letter-spacing: 1px;
+    }
+    .ant-table-title {
+        padding: 10px 20px;
+    }
+    
 </style>

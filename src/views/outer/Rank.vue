@@ -1305,6 +1305,7 @@ export default {
                     team: "狛枝凪斗",
                     total: ["C","B"],
                     awards: "First to solved problem B",
+                    key: 6,
                 },
                 {
                     status: "未发放",
@@ -1314,6 +1315,7 @@ export default {
                     team: "狛枝凪斗",
                     total: ["C"],
                     awards: "",
+                    key: 5,
                 },
                 {
                     status: "未发放",
@@ -1323,6 +1325,7 @@ export default {
                     team: "七海千秋",
                     total: ["C","B","A","D"],
                     awards: "First to solved problem D",
+                    key: 4,
                 },
                 {
                     status: "已发放",
@@ -1332,6 +1335,7 @@ export default {
                     team: "七海千秋",
                     total: ["C","B","A"],
                     awards: "First to solved problem A",
+                    key: 3,
                 },
                 {
                     status: "未发放",
@@ -1341,6 +1345,7 @@ export default {
                     team: "七海千秋",
                     total: ["C","B"],
                     awards: "First to solved problem B",
+                    key: 2,
                 },
                 {
                     status: "未发放",
@@ -1350,6 +1355,7 @@ export default {
                     team: "七海千秋",
                     total: ["C"],
                     awards: "First to solved problem C",
+                    key: 1,
                 },
             ],
             columns: [
@@ -1577,7 +1583,7 @@ export default {
             // 通过筛选推送到query
             // 避免冗余定向
             if(JSON.stringify(this.$route.query) !== JSON.stringify(filterEmptyValue(query))) {
-                this.$router.push({ query: filterEmptyValue(query) });
+                this.$router.replace({ query: filterEmptyValue(query) });
             }
         }
     },

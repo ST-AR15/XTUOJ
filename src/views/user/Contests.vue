@@ -124,11 +124,14 @@ export default {
 </script>
 
 <style>
-    .contests * {
+    * {
         font-size: 15px;
         letter-spacing: 1px;
     }
-    .contests .ant-table-title {
+    .contests {
+        margin-top: 10px;
+    }
+    .ant-table-title {
         padding: 10px 20px;
     }
     .contents-item {

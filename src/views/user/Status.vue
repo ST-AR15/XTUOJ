@@ -152,4 +152,7 @@ export default {
 .status .others {
     color: #0000FF;
 }
+.status {
+    margin-top: 10px;
+}
 </style>

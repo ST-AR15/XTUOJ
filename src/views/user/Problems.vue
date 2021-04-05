@@ -1,6 +1,8 @@
 <template>
     <div class="problems" id="problems">
-        <questionlist :buttons="buttons" @queryQuestion="queryQuestion" />
+        <div class="container">
+            <questionlist :buttons="buttons" @queryQuestion="queryQuestion" />
+        </div>
     </div>
 </template>
 
@@ -31,12 +33,8 @@ export default {
 }
 </script>
 
-<style>
-    .home * {
-        font-size: 15px;
-        letter-spacing: 1px;
-    }
-    .home .ant-table-title {
-        padding: 10px 20px;
+<style scoped>
+    .problems {
+        margin-top: 10px;
     }
 </style>

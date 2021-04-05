@@ -43,7 +43,7 @@
                     </a-dropdown>
                 </div>
             </a-layout-header>
-            <a-layout-content style="padding-top: 10px">
+            <a-layout-content>
                 <div class="container">
                     <div class="page">
                         <transition name="cross">

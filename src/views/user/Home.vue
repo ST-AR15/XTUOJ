@@ -190,8 +190,10 @@ export default {
         font-size: 15px;
         letter-spacing: 1px;
     }
+    .home {
+        margin-top: 10px;
+    }
     .ant-table-title {
         padding: 10px 20px;
     }
-    
 </style>

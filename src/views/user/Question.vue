@@ -244,14 +244,17 @@ export default {
                     timeStamp: Date.now(),
                 }
             } else {
-                // 没找到就加一个
-                code.push({
-                    id: this.ID,
-                    code: this.question.code,
-                    timeStamp: Date.now(),
-                })
+                // 没找到就加一个，而且如果是没写代码的话就不加
+                if(this.question.code) {
+                    code.push({
+                        id: this.ID,
+                        code: this.question.code,
+                        timeStamp: Date.now(),
+                    })
+                }
             }
             localStorage.setItem('code', JSON.stringify(code));
+            
         },
         handleFile(file) {  // 上传文件
             // 暂时设定的逻辑是，把文件读取出来，然后誊写到代码框里
@@ -434,8 +437,12 @@ export default {
             // 重置代码
             if(JSON.parse(localStorage.getItem('code')).find(o => o.id == this.ID)) {
                 // 如果有，就使用上次的代码
-                this.question.code = JSON.parse(localStorage.getItem('code')).find(o => o.id == this.ID).code;
-                this.$message.info('已恢复上次未完成的代码');
+                let code = JSON.parse(localStorage.getItem('code')).find(o => o.id == this.ID).code;
+                if(code) {
+                    // 如果有内容，就弹出提示
+                    this.$message.info('已恢复上次未完成的代码');
+                }
+                this.question.code = code;
             } else {
                 this.question.code = "";
             }

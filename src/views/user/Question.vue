@@ -461,6 +461,10 @@ export default {
         that.aimID = this.$route.params.ID;
         // 刚打开页面时，加载一次问题
         that.queryQuestion();
+        // 检测是否有自动保存用的数组
+        if(!localStorage.getItem('code')) {
+            localStorage.setItem('code', '[]');
+        }
     },
     
 }

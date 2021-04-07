@@ -126,7 +126,7 @@
             <div class="right"  v-bind:style="{ width: rightW + 'px' }">
                 <div style="height: 48px; padding-left: 5px">
                     <p>
-                        语言：
+                        <span>语言：</span>
                         <a-select v-model="question.language" style="width: 120px" defult-value="c">
                             <template v-for="item in question.language_allowed">
                                 <a-select-option :key="item" :value="item">
@@ -134,20 +134,28 @@
                                 </a-select-option>
                             </template>
                         </a-select>
-                        <span style="color: #999999; margin-left: 15px;">*可以通过拖拽文件方式来快速填写代码</span>
+                        <span style="margin-left: 15px">自动保存：</span>
+                        <a-switch checked-children="是" un-checked-children="否" default-checked @change="autoSave = !autoSave" />
+                        <a-tooltip placement="topLeft">
+                            <template slot="title">
+                                <span>开启后，系统会自动保存你未提交的代码，提交后会自动删除</span>
+                            </template>
+                            <a-icon style="margin-left: 5px;cursor: pointer" type="question-circle" />
+                        </a-tooltip>
                     </p>
-                    
                 </div>
                 <!-- <mavon-editor style="height:700px;margin-bottom:20px;z-index:1" :subfield="false" :toolbarsFlag="false" placeholder="Code here……" :tabSize="4" v-model="question.code"></mavon-editor> -->
                 <codemirror
                     ref="mycode"
                     v-model="question.code"
                     :options="cmOptions"
+                    @input="handleCode"
                     style="height: calc(100% - 48px - 64px); position: relative"
                     >
                 </codemirror>
                 <div class="buttons">
                     <a-space>
+                        <span style="color: #999999;">*可以通过拖拽文件方式来快速填写代码</span>
                         <a-button type="primary" @click="question.code = ''">重置</a-button>
                         <a-button type="primary" @click="querysubmit">提交</a-button>
                         <!-- TODO 根据文件后缀自动转换语言 -->
@@ -214,13 +222,18 @@ export default {
                 questionDetail: "请稍候……",
                 code: "",  //当前输入的代码
             },
-            
+            autoSave: true,
         }
     },
     methods: {
         back() {  //返回上一页的方法
             // this.$emit("back");
             this.$router.go(-1 * (this.jump + 1));
+        },
+        handleCode() {
+            // 输入代码时，自动存储代码到localStorage
+            // 为了localStorage不会溢出，提交了就不存了
+            localStorage.setItem(this.ID, this.question.code);
         },
         handleFile(file) {  // 上传文件
             // 暂时设定的逻辑是，把文件读取出来，然后誊写到代码框里
@@ -260,7 +273,7 @@ export default {
                 // created_at
                 // update_at
                 this.loading = false; // 加载题目完成
-            })
+            });
         },
         dragBar(e) {  // 拖拽
             console.log(e);
@@ -398,7 +411,12 @@ export default {
             // 修改aimID
             this.aimID = to.params.ID;
             // 重置代码
-            this.question.code = "";
+            if(localStorage.getItem(this.ID)) {
+                this.question.code = localStorage.getItem(this.ID);
+                this.$message.info('已恢复上次未完成的代码');
+            } else {
+                this.question.code = "";
+            }
             // 重置评论
             this.commentContext = [];
             // 页面切换到问题

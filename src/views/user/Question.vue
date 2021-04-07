@@ -233,7 +233,25 @@ export default {
         handleCode() {
             // 输入代码时，自动存储代码到localStorage
             // 为了localStorage不会溢出，提交了就不存了
-            localStorage.setItem(this.ID, this.question.code);
+            let code = JSON.parse(localStorage.getItem('code'));
+            let num = code.findIndex(o => o.id == this.ID);
+            // console.log(num);
+            if(num >= 0) {
+                // 如果找到了就改原来的
+                code[num] = {
+                    id: this.ID,
+                    code: this.question.code,
+                    timeStamp: Date.now(),
+                }
+            } else {
+                // 没找到就加一个
+                code.push({
+                    id: this.ID,
+                    code: this.question.code,
+                    timeStamp: Date.now(),
+                })
+            }
+            localStorage.setItem('code', JSON.stringify(code));
         },
         handleFile(file) {  // 上传文件
             // 暂时设定的逻辑是，把文件读取出来，然后誊写到代码框里
@@ -275,6 +293,9 @@ export default {
                 this.loading = false; // 加载题目完成
             });
         },
+        // handleStrange(id) {
+
+        // },
         dragBar(e) {  // 拖拽
             console.log(e);
             console.log(this.leftW);
@@ -411,8 +432,9 @@ export default {
             // 修改aimID
             this.aimID = to.params.ID;
             // 重置代码
-            if(localStorage.getItem(this.ID)) {
-                this.question.code = localStorage.getItem(this.ID);
+            if(JSON.parse(localStorage.getItem('code')).find(o => o.id == this.ID)) {
+                // 如果有，就使用上次的代码
+                this.question.code = JSON.parse(localStorage.getItem('code')).find(o => o.id == this.ID).code;
                 this.$message.info('已恢复上次未完成的代码');
             } else {
                 this.question.code = "";

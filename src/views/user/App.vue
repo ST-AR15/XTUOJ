@@ -27,10 +27,10 @@
                         <a-icon type="branches" />
                         状态
                     </a-menu-item>
-                    <a-menu-item key="ranklist" @click="queryPage('ranklist')">
+                    <!-- <a-menu-item key="ranklist" @click="queryPage('ranklist')">
                         <a-icon type="bar-chart" />
                         排名
-                    </a-menu-item>
+                    </a-menu-item> -->
                 </a-menu>
                 <div class="loginzoom">
                     <a-button class="navButton" v-if="!$store.state.token" @click="loginVisible = true">登录</a-button>
@@ -44,17 +44,9 @@
                 </div>
             </a-layout-header>
             <a-layout-content>
-                <div class="container">
-                    <div class="page">
-                        <transition name="cross">
-                            <router-view />
-                        </transition>
-                    </div>
-                    <!-- 当页面需要展示question的时候，footer是不需要展示的，因为整个页面都需要展示题目 -->
-                    <!-- <div class="footer" v-if="page != 'question'">
-                        XTU Online Judge ©2021 Created by Graduates of network engineering in 2017
-                    </div> -->
-                </div>
+                <transition name="cross">
+                    <router-view />
+                </transition>
             </a-layout-content>
         </a-layout>
         <login :visible="loginVisible" @ok="login" @close="loginVisible = false" />
@@ -165,6 +157,7 @@ export default {
 		font-size: 18px;
 		line-height: 66px;
         margin-right: 20px;
+        white-space: nowrap;
     }
     .user .ant-layout-header > .menu {
         height: 64px;
@@ -177,7 +170,8 @@ export default {
     .user .loginzoom {
         position: absolute;
         right: 0;
-        margin-right: 60px;
+        /* margin-right: 60px; */
+        margin-right: 2%;
     }
     .user .loginzoom > button {
         color: rgb(81, 141, 225);
@@ -186,39 +180,16 @@ export default {
     }
     /* content */
     .user .ant-layout-content {
-        position: absolute;
-        top: 64px;  /* 因为设定了header的高度是64px */
-        left: 0;
         overflow: hidden;
         width: 100%;
         height: calc(100vh - 64px);
+        position: relative;
     }
-    .user .container {
+    .user .ant-layout-content > div {
         width: 100%;
         height: 100%;
         overflow-x: hidden;
         position: absolute;
     }
-    .user .page {
-        position: relative;
-        width: 100%;
-        min-height: calc(100vh - 64px - 64px);
-        /* padding: 20px 0; */
-    }
-    .user .page > div {
-        position: absolute;
-        width: 100%;
-    }
-    .user .page > .question {
-        height: calc(100vh - 64px); /* question页面要占据整个展示区域 */
-    }
-    /* footer，为了让滚动逻辑正常，这个footer是写在content里面的 */
-    .user .footer {
-        width: 100%;
-        height: 64px;
-        line-height: 64px;
-        position: relative;
-        text-align: center;
-        padding: 10px 0;
-    }
+    
 </style>

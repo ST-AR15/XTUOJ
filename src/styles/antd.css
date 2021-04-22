@@ -34,3 +34,8 @@
 .ant-table-pagination {
     margin: 16px 20px !important;
 }
+
+/* a-tabs */
+.ant-tabs-nav-scroll {
+    padding: 0 10px;
+}

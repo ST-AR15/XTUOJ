@@ -7,10 +7,10 @@
         />
         <div class="container">
             <div class="left" v-bind:style="{ width: leftW + 'px' }">
-                <a-tabs @change="handleTab">
-                    <a-tab-pane class="leftContainer" key="question" tab="问题">
+                <a-tabs v-model="tabkey" @change="handleTab">
+                    <a-tab-pane class="left-container" key="question" tab="问题">
                         <a-spin :spinning="loading">
-                            <section class="questionSection session">
+                            <section class="question-section">
                                 <!-- 题目ID和title -->
                                 <h1>
                                     ID {{ ID }}:{{ question.title }}
@@ -25,35 +25,30 @@
                                         {{tip}}
                                     </a-tag>
                                 </p>
-                                <p>
-                                    时间限制：<span v-text="question.timeLimit"></span>ms
-                                    内存限制：<span v-text="question.memoryLimit"></span>MB
-                                </p>
-                                <!-- 题目内容 -->
-                                <!-- <h2>题目详情</h2> -->
+                                <p v-text="`时间限制:${ question.timeLimit }ms 内存限制:${ question.memoryLimit }MB`"></p>
                                 <mavon-editor v-model="question.questionDetail" :subfield="false" :toolbarsFlag="false" defaultOpen="preview"></mavon-editor>
                             </section>
                         </a-spin>
                     </a-tab-pane>
-                    <a-tab-pane class="leftContainer" key="discuss" tab="讨论">
+                    <a-tab-pane class="left-container" key="discuss" tab="讨论">
                         <a-spin :spinning="commentLoading">
-                            <section class="discussSection session">
+                            <section class="discuss-section" id="discuss-section">
                                 <div class="comment" style="margin-top: 10px">
                                     <a-textarea :disabled="!$store.state.uid" :placeholder="$store.state.uid? '想说什么，尽管说吧~': '请先登录~'" v-model="comment" :rows="4" />
                                     <a-button style="margin-top: 5px" type="primary" @click="sendComment(false)">发表</a-button>
                                 </div>
                                 <div class="context">
                                     <template v-for="(data, i) in commentContext">
-                                        <div class="contextInner" v-bind:key="data.Rid" v-if="(i >=  (commentPage-1)*commentSize) && (i < commentPage*commentSize)">
-                                            <div class="contextItem">
-                                                <div class="contextHeader">
+                                        <div class="context-inner" v-bind:key="data.Rid">
+                                            <div class="context-item">
+                                                <div class="context-header">
                                                     <span v-text="data.Uid"></span>
                                                     <span v-text="data.time"></span>
                                                 </div>
-                                                <div class="contextMain">
+                                                <div class="context-main">
                                                     <p v-text="data.context"></p>
                                                 </div>
-                                                <div class="contextFooter">
+                                                <div class="context-footer">
                                                     <a-space>
                                                         <span 
                                                             v-if="data.comment.length != 0"
@@ -71,21 +66,21 @@
                                                     </a-space>
                                                 </div>
                                             </div>
-                                            <div class="contextTextarea" v-show="commentReplyNum[0] == i + 1 && commentReplyNum[1] == 0">
-                                                <a-textarea :placeholder="'回复用户' + data.Uid + '的评论'" v-model="commentReply" :rows="4" style="resize: none" />
+                                            <div class="context-textarea" v-show="commentReplyNum[0] == i + 1 && commentReplyNum[1] == 0">
+                                                <a-textarea :disabled="!$store.state.uid" :placeholder="$store.state.uid? '回复用户' + data.Uid + '的评论': '请先登录~'" v-model="commentReply" :rows="4" style="resize: none" />
                                                 <a-button style="margin-top: 5px;" type="primary" @click="sendComment(true)">回复</a-button>
                                             </div>
-                                            <div class="reComment" v-show="data.isRecomment">
-                                                <div class="contextInner" v-for="(item, j) in data.comment" v-bind:key="item.Rid">
-                                                    <div class="contextItem">
-                                                        <div class="contextHeader">
+                                            <div class="context-recomment" v-show="data.isRecomment">
+                                                <div class="context-inner" v-for="(item, j) in data.comment" v-bind:key="item.Rid">
+                                                    <div class="context-item">
+                                                        <div class="context-header">
                                                             <span v-text="item.Uid"></span>
                                                             <span v-text="item.time"></span>
                                                         </div>
-                                                        <div class="contextMain">
+                                                        <div class="context-main">
                                                             <p v-text="`${ item.postId == data.Rid? '':'回复' + data.comment.find(o => o.Rid == item.postId).Uid + ': ' }${ item.context }`"></p>
                                                         </div>
-                                                        <div class="contextFooter">
+                                                        <div class="context-footer">
                                                             <a-space>
                                                                 <span
                                                                     @click="openTextarea(i + 1, j + 1, item.Rid);item.isReply = !item.isReply; commentPost = item.Rid"
@@ -94,25 +89,20 @@
                                                             </a-space>
                                                         </div>
                                                     </div>
-                                                    <div class="contextTextarea" v-show="commentReplyNum[0] == i + 1 && commentReplyNum[1] == j + 1">
+                                                    <div class="context-textarea" v-show="commentReplyNum[0] == i + 1 && commentReplyNum[1] == j + 1">
                                                         <a-textarea :placeholder="'回复用户' + item.Uid + '的评论'" v-model="commentReply" :rows="4" style="resize: none" />
                                                         <a-button style="margin-top: 5px;" type="primary" @click="sendComment(true)">回复</a-button>
                                                     </div>
                                                 </div>
-                                                <div class="contextPagination" v-show="data.isRecomment">
-                                                    <a-pagination :hideOnSinglePage="true" v-model="data.page" :defaultPageSize="10" :total="data.comment.length" simple />
-                                                </div>  
                                             </div>
                                         </div>
                                     </template>
-                                    <div class="contextPagination">
-                                        <a-pagination style="text-align: center" :hideOnSinglePage="true" v-model="commentPage" :defaultPageSize="commentSize" :total="commentContext.length" simple />
-                                    </div>
                                 </div>
+                                <p style="text-align: center; color: #aaa">没有更多了</p>
                             </section>
                         </a-spin>
                     </a-tab-pane>
-                    <a-tab-pane class="leftContainer" key="submit" tab="提交情况"></a-tab-pane>
+                    <a-tab-pane class="left-container" key="submit" tab="提交情况"></a-tab-pane>
                 </a-tabs>
                 <div class="buttons">
                     <a-space>
@@ -124,25 +114,23 @@
             <div class="bar" draggable="true" @dragend="dragBar">
             </div>
             <div class="right"  v-bind:style="{ width: rightW + 'px' }">
-                <div style="height: 48px; padding-left: 5px">
-                    <p>
-                        <span>语言：</span>
-                        <a-select v-model="question.language" style="width: 120px" defult-value="c">
-                            <template v-for="item in question.language_allowed">
-                                <a-select-option :key="item" :value="item">
-                                    {{ item }}
-                                </a-select-option>
-                            </template>
-                        </a-select>
-                        <span style="margin-left: 15px">自动保存：</span>
-                        <a-switch checked-children="是" un-checked-children="否" default-checked @change="autoSave = !autoSave" />
-                        <a-tooltip placement="topLeft">
-                            <template slot="title">
-                                <span>开启后，系统会自动保存你未提交的代码，提交后会自动删除</span>
-                            </template>
-                            <a-icon style="margin-left: 5px;cursor: pointer" type="question-circle" />
-                        </a-tooltip>
-                    </p>
+                <div class="right-header">
+                    <span>语言：</span>
+                    <a-select v-model="question.language" style="width: 120px" defult-value="c">
+                        <template v-for="item in question.language_allowed">
+                            <a-select-option :key="item" :value="item">
+                                {{ item }}
+                            </a-select-option>
+                        </template>
+                    </a-select>
+                    <span style="margin-left: 15px">自动保存：</span>
+                    <a-switch checked-children="是" un-checked-children="否" default-checked @change="autoSave = !autoSave; handleCode()" />
+                    <a-tooltip placement="topLeft">
+                        <template slot="title">
+                            <span>开启后，系统会自动保存你未提交的代码，提交后会自动删除</span>
+                        </template>
+                        <a-icon style="margin-left: 5px;cursor: pointer" type="question-circle" />
+                    </a-tooltip>
                 </div>
                 <!-- <mavon-editor style="height:700px;margin-bottom:20px;z-index:1" :subfield="false" :toolbarsFlag="false" placeholder="Code here……" :tabSize="4" v-model="question.code"></mavon-editor> -->
                 <codemirror
@@ -150,7 +138,7 @@
                     v-model="question.code"
                     :options="cmOptions"
                     @input="handleCode"
-                    style="height: calc(100% - 48px - 64px); position: relative"
+                    style="height: calc(100% - 46px - 64px); position: relative"
                     >
                 </codemirror>
                 <div class="buttons">
@@ -191,12 +179,9 @@ export default {
             jump: 0,                  // 跳转的次数，用于返回
             aimID: 1000,              // 与底部跳转绑定的数值
             ID: 1000,                 // 题目的ID
-            leftInner: ["question"],  // 左边显示的内容
             comment: "",              // 编辑框内容
             commentReply: "",         // 回复框内容
             commentPost: 0,           // 回复对象的RID
-            commentPage: 1,           // 整个回复的页码
-            commentSize: 10,          // 每一页展示的内容数量
             leftW: 500,               // 左边宽度
             rightW: 500,              // 右边宽度
             loading: false,           // 题目加载状态
@@ -222,6 +207,7 @@ export default {
                 questionDetail: "请稍候……",
                 code: "",  //当前输入的代码
             },
+            tabkey: 'question',
             autoSave: true,
         }
     },
@@ -233,28 +219,29 @@ export default {
         handleCode() {
             // 输入代码时，自动存储代码到localStorage
             // 为了localStorage不会溢出，提交了就不存了
-            let code = JSON.parse(localStorage.getItem('code'));
-            let num = code.findIndex(o => o.id == this.ID);
-            // console.log(num);
-            if(num >= 0) {
-                // 如果找到了就改原来的
-                code[num] = {
-                    id: this.ID,
-                    code: this.question.code,
-                    timeStamp: Date.now(),
-                }
-            } else {
-                // 没找到就加一个，而且如果是没写代码的话就不加
-                if(this.question.code) {
-                    code.push({
+            // 只有在开启了自动保存才生效
+            if(this.autoSave) {
+                let code = JSON.parse(localStorage.getItem('code'));
+                let num = code.findIndex(o => o.id == this.ID);
+                if(num >= 0) {
+                    // 如果找到了就改原来的
+                    code[num] = {
                         id: this.ID,
                         code: this.question.code,
                         timeStamp: Date.now(),
-                    })
+                    }
+                } else {
+                    // 没找到就加一个，而且如果是没写代码的话就不加
+                    if(this.question.code) {
+                        code.push({
+                            id: this.ID,
+                            code: this.question.code,
+                            timeStamp: Date.now(),
+                        })
+                    }
                 }
+                localStorage.setItem('code', JSON.stringify(code));
             }
-            localStorage.setItem('code', JSON.stringify(code));
-            
         },
         handleFile(file) {  // 上传文件
             // 暂时设定的逻辑是，把文件读取出来，然后誊写到代码框里
@@ -278,13 +265,15 @@ export default {
         queryQuestion() {  // 加载问题
             console.log("打开了题目" + this.ID);
             this.loading = true; // 开始加载题目
+            this.question.questionDetail = ""; // 暂时删除内容
+            this.tabkey = 'question'; // 切换到问题内容
             let url = '/api/problem/' + this.ID;
             this.$axios.get(url).then(rep => {
                 const data = rep.data.data;
                 // Pid
                 this.question.title = data.Tittle;
                 // source
-                this.question.questionDetail = data.Content;
+                this.question.questionDetail = data.Content;    
                 this.question.timeLimit = data.TimeLimit;
                 this.question.memoryLimit = data.MemoryLimit;
                 // IsBan
@@ -293,15 +282,21 @@ export default {
                 // Solved
                 // created_at
                 // update_at
-                this.loading = false; // 加载题目完成
+                this.loading = false;     // 加载题目完成
+            }).catch(e => {
+                // 如果是直接输入地址过来的，就回到首页，否则回退
+                if(this.jump == 0) {
+                    this.$message.error('加载失败！已回到首页，请检查题号');
+                    this.$router.push({ name: "home" });
+                } else {
+                    this.$message.error('加载失败！已跳转回上一道题，请检查题号');
+                    this.$router.go(-1);
+                    this.jump-= 2; // 过去的一次和go(-1)的一次要被减掉
+                }
+                return e;
             });
         },
-        // handleStrange(id) {
-
-        // },
         dragBar(e) {  // 拖拽
-            console.log(e);
-            console.log(this.leftW);
             this.leftW = e.clientX;
             this.rightW = Math.max(window.innerWidth, 1000) - 20 - this.leftW;
             
@@ -332,7 +327,6 @@ export default {
                         // 如果没有postID，就说明是一级评论，直接push到comment数组里
                         // 先添加部分额外属性
                         info["isRecomment"] = false;  // 未展开评论
-                        info["page"] = 1;             // 评论页码
                         info["isReply"] = false,      // 未展开评论框
                         info["comment"] = [];         // 评论内容
                         that.commentContext.push(info);
@@ -434,6 +428,8 @@ export default {
             this.ID = to.params.ID;
             // 修改aimID
             this.aimID = to.params.ID;
+            // 打开问题
+            this.queryQuestion();
             // 重置代码
             if(JSON.parse(localStorage.getItem('code')).find(o => o.id == this.ID)) {
                 // 如果有，就使用上次的代码
@@ -448,12 +444,8 @@ export default {
             }
             // 重置评论
             this.commentContext = [];
-            // 页面切换到问题
-            this.leftInner = ["question"];
             // 跳转一次
             this.jump++;
-            // 打开问题
-            this.queryQuestion();
         },
     },
     mounted() {
@@ -498,14 +490,18 @@ export default {
 .question .left {
     min-width: 400px;
 }
-.question .leftContainer {
-    /* 64是导航栏，64是返回按钮，45是选项,64是buttons */
-    /* height: calc(100vh - 64px - 64px - 45px - 64px - 15px); */
-    height: calc(100vh - 252px);
-    overflow-y: auto;
-    padding: 0 10px;
+.left .ant-tabs {
+    position: relative;
+    height: calc(100% - 64px);
 }
-.question .leftContainer > section {
+.left .ant-tabs-content {
+    height: calc(100% - 61px);
+}
+.question .left-container {
+    overflow-y: auto;
+    padding: 0 15px;
+}
+.question .left-container > section {
     overflow: visible;
 }
 .question .bar {
@@ -520,34 +516,24 @@ export default {
 .question .right {
     min-width: 400px;
 }
-.question .questionSection > h1 {
+.question .question-section > h1 {
     font-size: 26px;
     border-left: 8px solid #1890FF;
     padding-left: 4px;
 }
-.question .questionSection > h2 {
-    font-size: 26px;
-    margin-top: 45px;
-    border-left: 8px solid #1890FF;
-    padding-left: 4px;
-    user-select: none;
-}
-.question .questionSection > p {
+.question .question-section > p {
     font-size: 20px;
 }
-.question .discussSection {
-    padding: 0 20px;
-}
-.question .discussSection .context {
+.question .discuss-section .context {
     margin-top: 20px;
 }
-.question .discussSection .contextInner {
+.question .discuss-section .context-inner {
     width: 100%;
     min-height: 100px;
     margin: 10px 0;
     border-bottom: 1px solid #666666;
 }
-.question .discussSection .reComment {
+.question .discuss-section .context-recomment {
     display: flex;
     flex-direction: column;
     border: 1px solid #777777;
@@ -556,34 +542,37 @@ export default {
     padding: 0 5%;
     margin: 5px 0;
 }
-.question .discussSection .contextTextarea {
+.question .discuss-section .context-textarea {
     margin-bottom: 5px;
 }
-.question .discussSection .contextItem {
+.question .discuss-section .context-item {
     width: 100%;
     min-height: 100px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
-.question .discussSection .contextHeader {
+.question .discuss-section .context-header {
     height: 30px;
     line-height: 30px;
     display: flex;
     justify-content: space-between;
 }
-.question .discussSection .contextFooter {
+.question .discuss-section .context-footer {
     height: 30px;
     line-height: 30px;
 }
-.question .contextFooter span {
+.question .context-footer span {
     cursor: pointer;
     user-select: none;
 }
-.question .contextFooter span:hover {
+.question .context-footer span:hover {
     color: #1890FF;
 }
-
+.question .right .right-header {
+    height: 46px;
+    padding-left: 5px
+}
 .question .buttons {
     width: 100%;
     height: 64px;

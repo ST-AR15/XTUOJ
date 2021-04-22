@@ -186,10 +186,6 @@ export default {
 </script>
 
 <style scoped>
-    * {
-        font-size: 15px;
-        letter-spacing: 1px;
-    }
     .home {
         margin-top: 10px;
     }

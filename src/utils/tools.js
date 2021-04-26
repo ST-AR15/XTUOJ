@@ -1,5 +1,5 @@
 //@auther ST-AR15 focks on github https://www.github.com/ST-AR15
-
+import { message } from 'ant-design-vue'
 /**
  * 模仿until.filterEmptyValue（大概）
  * 反正它的功能是：传入一个对象，然后删除掉里面空的值（undefined、null和NaN都去掉吧,''，null，undefined，[]，{}）
@@ -60,4 +60,26 @@ export function msToTime(ms) {
     let h = parseInt((ms - s*1000 - min*60*1000) / 1000 / 60 / 60);
     return `${h}:${min<10? '0'+min:min}:${s<10? '0'+s:s}`;
 
+}
+
+/**
+ * 复制内容
+ * @param { String } text 需要复制的内容
+ */
+export function copy(text) {
+    let input = document.createElement('input');
+    input.setAttribute('readonly', 'readonly');
+    input.setAttribute('value', text);
+    document.body.appendChild(input);
+    input.select();
+    input.setSelectionRange(0, 9999);
+    try {
+        document.execCommand('Copy');
+        message.success('复制成功');
+    } catch (e) {
+        message.error('复制失败');
+    } finally {
+        document.body.removeChild(input);
+    }
+    
 }

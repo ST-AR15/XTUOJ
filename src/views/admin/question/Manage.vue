@@ -52,6 +52,17 @@
                         v-model="questionDetailModal.questionDetail.IsBan"
                     ></a-switch>
                 </a-form-model-item>
+                <a-form-model-item label="题目类型">
+                    <a-radio-group 
+                        v-model="questionDetailModal.questionDetail.QType"
+                    >
+                        <a-radio value="normal">普通验证</a-radio>
+                        <a-radio value="special">特别验证</a-radio>
+                    </a-radio-group>
+                    <transition name="cross2">
+                        <a-button type="primary" v-if="questionDetailModal.questionDetail.QType == 'special'">上传特判文件</a-button>
+                    </transition>
+                </a-form-model-item>
                 <a-form-model-item label="tips">
                     <template v-for="(tip, index) in questionDetailModal.questionDetail.tips">
                         <a-tag :key="tip" closable @close="deleteTip(index)">
@@ -84,7 +95,7 @@
             @cancel="questionDataModalCancel"
             width= "900px"
         >
-            <div v-bind:key="i" v-for="(data,i) in questionDataModal.data.input" style="display:flex;width:700px;margin-bottom: 5px">
+            <div :key="i" v-for="(data,i) in questionDataModal.data.input" style="display:flex;width:700px;margin-bottom: 5px">
                 <a-textarea v-model="questionDataModal.data.input[i]"></a-textarea>
                 <div style="white-space: nowrap; margin: 0 20px">
                     输入
@@ -151,6 +162,7 @@ export default {
                     timeLimit: NaN,
                     memoryLimit: NaN,
                     IsBan: false,
+                    QType: "",
                 },
                 labelCol: { span: 4 },
                 wrapperCol: { span: 19 },
@@ -183,6 +195,7 @@ export default {
                 that.questionDetailModal.questionDetail.timeLimit = data.TimeLimit;
                 that.questionDetailModal.questionDetail.memoryLimit = data.MemoryLimit;
                 that.questionDetailModal.questionDetail.IsBan = data.IsBan;
+                that.questionDetailModal.questionDetail.QType = "normal"
             })
             this.questionDetailModal.ID = info.ID;
             this.questionDetailModal.title = info.title;

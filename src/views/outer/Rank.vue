@@ -23,7 +23,7 @@
                 <span class="pending">Pending judgement</span>
             </a-space>
         </div>
-        <div class="filter">
+        <div class="filter" :style="{'width': (list.question + 14) * 55 + 'px'}">
             <a-select
                 mode="multiple"
                 placeholder="选择关注队伍"
@@ -44,28 +44,28 @@
                 </a-radio-button>
             </a-radio-group>
         </div>
-        <table class="list" v-show="page == 'ranklist'" v-bind:style="{ '--i': list.score.length + list.star.length + 1 + 5 }">
+        <table class="list" v-show="page == 'ranklist'" :style="{ 'height': (list.score.length + list.star.length + 1 + 5 + 1) * 38 + 'px' ,'width': (list.question + 14) * 55 + 'px'}">
             <!-- 表头 -->
             <tr class="list-header">
-                <td style="flex: 1">Place</td>
-                <td style="flex: 4">School</td>
-                <td style="flex: 6">Team</td>
-                <td style="flex: 1">Solved</td>
-                <td style="flex: 1">Time</td>
-                <td style="flex: 1" v-for="i in list.question" :key="(i + 9).toString(36)" v-bind:style="{ 'backgroundColor': `rgb(${i*10},${255 - i*10},${i*10})` }">
+                <th>Place</th>
+                <th style="--i: 4">School</th>
+                <th style="--i: 6">Team</th>
+                <th>Solved</th>
+                <th>Time</th>
+                <th v-for="i in list.question" :key="(i + 9).toString(36)" :style="{ 'backgroundColor': `rgb(${i*10},${255 - i*10},${i*10})` }">
                     {{ (i + 9).toString(36) }}
-                </td>
-                <td style="flex: 1">Dirt</td>
+                </th>
+                <th>Dirt</th>
             </tr>
             <!-- 关注 -->
-            <tr class="list-inner star" v-for="(data, i) in list.star" :key="'star' + i" :style="{ 'transform': `translateY(${i*38}px)` }">
-                <td style="flex: 1">{{ data.rank }}</td>
-                <td style="flex: 4">{{ data.school }}</td>
-                <td style="flex: 6">{{ data.team }}</td>
-                <td style="flex: 1">{{ data.solved }}</td>
-                <td style="flex: 1">{{ data.time }}</td>
-                <td style="flex: 1" v-for="(detail, j) in data.question" :key="j">
-                    <div v-bind:class="detail.statu" v-bind:style="{ 'lineHeight': `${detail.statu == 'none'? '38px': '19px'}` }">
+            <tr class="list-inner star" v-for="(data, i) in list.star" :key="'star' + i" :style="{ 'transform': `translateY(${(i+1)*38}px)` }">
+                <td>*</td>
+                <td style="--i: 4">{{ data.school }}</td>
+                <td style="--i: 6">{{ data.team }}</td>
+                <td>{{ data.solved }}</td>
+                <td>{{ data.time }}</td>
+                <td v-for="(detail, j) in data.question" :key="j">
+                    <div :class="detail.statu" :style="{ 'lineHeight': `${detail.statu == 'none'? '38px': '19px'}` }">
                         <span v-if="detail.statu == 'none'">·</span>
                         <span v-else>
                             +
@@ -74,17 +74,17 @@
                         </span>
                     </div>
                 </td>
-                <td style="flex: 1">{{ data.dirt }}</td>
+                <td>{{ data.dirt }}</td>
             </tr>
             <!-- 全部 -->
-            <tr class="list-inner" v-for="(data, i) in list.score" :key="i" v-bind:class="data.level" :style="{ 'transform': `translateY(${(data.place-1+list.star.length)*38}px)` }">
-                <td style="flex: 1">{{ data.rank }}</td>
-                <td style="flex: 4">{{ data.school }}</td>
-                <td style="flex: 6">{{ data.team }}</td>
-                <td style="flex: 1">{{ data.solved }}</td>
-                <td style="flex: 1">{{ data.time }}</td>
-                <td style="flex: 1" v-for="(detail, j) in data.question" :key="j">
-                    <div v-bind:class="detail.statu" v-bind:style="{ 'lineHeight': `${detail.statu == 'none'? '38px': '19px'}` }">
+            <tr class="list-inner" v-for="(data, i) in list.score" :key="i" :class="data.level" :style="{ 'transform': `translateY(${(data.place+list.star.length)*38}px)` }">
+                <td>{{ data.rank }}</td>
+                <td style="--i: 4">{{ data.school }}</td>
+                <td style="--i: 6">{{ data.team }}</td>
+                <td>{{ data.solved }}</td>
+                <td>{{ data.time }}</td>
+                <td v-for="(detail, j) in data.question" :key="j">
+                    <div :class="detail.statu" :style="{ 'lineHeight': `${detail.statu == 'none'? '38px': '19px'}` }">
                         <span v-if="detail.statu == 'none'">·</span>
                         <span v-else>
                             +
@@ -93,59 +93,59 @@
                         </span>
                     </div>
                 </td>
-                <td style="flex: 1">{{ data.dirt }}</td>
+                <td>{{ data.dirt }}</td>
             </tr>
             <!-- attempted -->
-            <tr class="list-footer" :style="{ 'transform':  `translateY(${ (list.star.length + list.score.length) * 38 }px)`}">
-                <td style="flex: 11" class="blank"></td>
-                <td style="flex: 2">Attempted</td>
-                <td style="flex: 1" v-for="(data, i) in list.questionInfo.attempted" :key="i">
+            <tr class="list-footer" :style="{ 'transform':  `translateY(${ (list.star.length + list.score.length + 1) * 38 }px)`}">
+                <td style="--i: 10" class="blank"></td>
+                <td style="--i: 3">Attempted</td>
+                <td v-for="(data, i) in list.questionInfo.attempted" :key="i">
                     {{ data }}
                 </td>
-                <td style="flex: 1" class="blank"></td>
+                <td class="blank"></td>
             </tr>
             <!-- accepted -->
-            <tr class="list-footer" odd :style="{ 'transform':  `translateY(${ (list.star.length + list.score.length + 1) * 38 }px)`}">
-                <td style="flex: 11" class="blank"></td>
-                <td style="flex: 2">Accepted</td>
-                <td style="flex: 1; line-height: 19px" v-for="(data, i) in list.question" :key="i">
+            <tr class="list-footer" odd :style="{ 'transform':  `translateY(${ (list.star.length + list.score.length + 2) * 38 }px)`}">
+                <td style="--i: 10" class="blank"></td>
+                <td style="--i: 3">Accepted</td>
+                <td style="line-height: 19px" v-for="(data, i) in list.question" :key="i">
                     {{ data }}
                     <br />
                     {{ `(${((data/list.questionInfo.attempted[i])*100).toFixed(0)}%)` }}
                 </td>
-                <td style="flex: 1" class="blank"></td>
+                <td class="blank"></td>
             </tr>
             <!-- dirt -->
-            <tr class="list-footer" :style="{ 'transform':  `translateY(${ (list.star.length + list.score.length + 2) * 38 }px)`}">
-                <td style="flex: 11" class="blank"></td>
-                <td style="flex: 2">Dirt</td>
-                <td style="flex: 1; line-height: 19px" v-for="i in list.question" :key="(i + 9).toString(36)">
+            <tr class="list-footer" :style="{ 'transform':  `translateY(${ (list.star.length + list.score.length + 3) * 38 }px)`}">
+                <td style="--i: 10" class="blank"></td>
+                <td style="--i: 3">Dirt</td>
+                <td style="line-height: 19px" v-for="i in list.question" :key="(i + 9).toString(36)">
                     ?
                     <br />
                     (?%)
                 </td>
-                <td style="flex: 1" class="blank"></td>
+                <td class="blank"></td>
             </tr>
             <!-- fb -->
-            <tr class="list-footer" odd :style="{ 'transform':  `translateY(${ (list.star.length + list.score.length + 3) * 38 }px)`}">
-                <td style="flex: 11" class="blank"></td>
-                <td style="flex: 2">First Solved</td>
-                <td style="flex: 1" v-for="(data, i) in list.questionInfo.fb" :key="i">
+            <tr class="list-footer" odd :style="{ 'transform':  `translateY(${ (list.star.length + list.score.length + 4) * 38 }px)`}">
+                <td style="--i: 10" class="blank"></td>
+                <td style="--i: 3">First Solved</td>
+                <td v-for="(data, i) in list.questionInfo.fb" :key="i">
                     {{ data }}
                 </td>
-                <td style="flex: 1" class="blank"></td>
+                <td class="blank"></td>
             </tr>
             <!-- lb -->
-            <tr class="list-footer" :style="{ 'transform':  `translateY(${ (list.star.length + list.score.length + 4) * 38 }px)`}">
-                <td style="flex: 11" class="blank"></td>
-                <td style="flex: 2">Last Solved</td>
-                <td style="flex: 1" v-for="(data, i) in list.questionInfo.lb" :key="i">
+            <tr class="list-footer" :style="{ 'transform':  `translateY(${ (list.star.length + list.score.length + 5) * 38 }px)`}">
+                <td style="--i: 10" class="blank"></td>
+                <td style="--i: 3">Last Solved</td>
+                <td v-for="(data, i) in list.questionInfo.lb" :key="i">
                     {{ data }}
                 </td>
-                <td style="flex: 1" class="blank"></td>
+                <td class="blank"></td>
             </tr>
         </table>
-        <div class="balloon" v-show="page == 'balloon'">
+        <div class="balloon" :style="{ 'width': (list.question + 14) * 55 + 'px' }" v-show="page == 'balloon'">
             <a-table
                 :data-source="balloon"
                 :columns="columns"
@@ -1674,44 +1674,43 @@ export default {
         background-color: #FFFFFF;
     }
     .filter {
-        width: 100%;
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        margin: 8px 0;
+        margin: 12px auto;
     }
     .list {
-        width: 100%;
         position: relative;
-        height: calc(38px * var(--i));
     }
     .list > tr {
-        width: 100%;
         height: 38px;
+        position: absolute;
+        flex-shrink: 0;
+    }
+    .list td,.list th {
+        --i: 1;
+        width: calc(var(--i) * 55px);
+        height: 100%;
+        border: 1px solid #FFFFFF;
+        position: relative;
     }
     .list-header {
-        display: flex;
-        justify-content: space-between;
         text-transform: capitalize;
         line-height: 38px;
         text-align: center;
     }
-    .list-header > td {
+    .list-header > th {
         background-color: #F5F5D5;
-        /* border: 1px solid #FFFFFF; */
         box-sizing: border-box;
         letter-spacing: 0;
     }
     .list-inner {
         position: absolute;
-        display: flex;
-        justify-content: space-between;
         cursor: pointer;
         transition: all .4s;
         overflow: hidden;
     }
     .list-inner > td {
-        /* border: 1px solid #FFFFFF; */
         box-sizing: border-box;
         text-align: center;
         line-height: 38px;
@@ -1723,8 +1722,6 @@ export default {
     }
     .list-footer {
         position: absolute;
-        display: flex;
-        justify-content: space-between;
         transition: all .4s;
         overflow: hidden;
         text-align: center;
@@ -1732,7 +1729,6 @@ export default {
         line-height: 38px;
     }
     .list-footer > td {
-        /* border: 1px solid #FFFFFF; */
         background-color: rgb(149,222,100);
     }
     .list-footer[odd] > td {
@@ -1740,5 +1736,8 @@ export default {
     }
     .list-footer > .blank {
         background-color: #FFFFFF !important;
+    }
+    .balloon {
+        margin: 0 auto;
     }
 </style>

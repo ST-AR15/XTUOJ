@@ -34,7 +34,7 @@
             <span slot="buttons" slot-scope="text, record">
                 <a-space>
                     <template v-for="(item,i) in buttons">
-                        <a-button type="primary" v-bind:key="i" @click="callbackMethod(item.method,record)">
+                        <a-button type="primary" :key="i" @click="callbackMethod(item.method,record)">
                             {{ item.text }}
                         </a-button>
                     </template>

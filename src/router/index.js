@@ -17,7 +17,6 @@ import user from '@/views/user/App.vue'
 import home from '@/views/user/Home.vue'
 import problems from '@/views/user/Problems.vue'
 import question from '@/views/user/Question.vue'
-import ranklist from '@/views/user/Ranklist.vue'
 import contests from '@/views/user/Contests.vue'
 import status from '@/views/user/Status.vue'
 
@@ -57,11 +56,6 @@ const routes = [
                 name: 'question',
                 path: '/problems/:ID',
                 component: question,
-            },
-            {
-                name: 'ranklist',
-                path: '/ranklist',
-                component: ranklist,
             },
             {
                 name: 'contests',

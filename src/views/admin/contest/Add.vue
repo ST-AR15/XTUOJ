@@ -45,7 +45,7 @@
                     <!-- 可以把这个div设置成absolute，然后根据i来设置top属性，这样整个动画就能更加连贯 -->
                     <!-- 后续需求如果需要就这样改 -->
                     <div class="contests-question" style="display:flex;align-items:center;margin-top:5px;position:relative" v-for="(data,i) in form.questions" :key="data.key">
-                        <a-icon v-bind:style="{
+                        <a-icon :style="{
                             fontSize:'22px',
                             cursor:'pointer',
                             color:i==form.questions.length-1? 'black':'red',

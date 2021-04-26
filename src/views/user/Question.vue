@@ -6,7 +6,7 @@
             @back="back"
         />
         <div class="container">
-            <div class="left" v-bind:style="{ width: leftW + 'px' }">
+            <div class="left" :style="{ width: leftW + 'px' }">
                 <a-tabs v-model="tabkey" @change="handleTab">
                     <a-tab-pane class="left-container" key="question" tab="问题">
                         <a-spin :spinning="loading">
@@ -20,7 +20,7 @@
                                     <a-tag
                                         v-for="tip in question.tips"
                                         :key="tip"
-                                        v-bind:id="'tip-' + tip"
+                                        :id="'tip-' + tip"
                                     >
                                         {{tip}}
                                     </a-tag>
@@ -39,7 +39,7 @@
                                 </div>
                                 <div class="context">
                                     <template v-for="(data, i) in commentContext">
-                                        <div class="context-inner" v-bind:key="data.Rid">
+                                        <div class="context-inner" :key="data.Rid">
                                             <div class="context-item">
                                                 <div class="context-header">
                                                     <span v-text="data.Uid"></span>
@@ -71,7 +71,7 @@
                                                 <a-button style="margin-top: 5px;" type="primary" @click="sendComment(true)">回复</a-button>
                                             </div>
                                             <div class="context-recomment" v-show="data.isRecomment">
-                                                <div class="context-inner" v-for="(item, j) in data.comment" v-bind:key="item.Rid">
+                                                <div class="context-inner" v-for="(item, j) in data.comment" :key="item.Rid">
                                                     <div class="context-item">
                                                         <div class="context-header">
                                                             <span v-text="item.Uid"></span>
@@ -113,7 +113,7 @@
             </div>
             <div class="bar" draggable="true" @dragend="dragBar">
             </div>
-            <div class="right"  v-bind:style="{ width: rightW + 'px' }">
+            <div class="right" :style="{ width: rightW + 'px' }">
                 <div class="right-header">
                     <span>语言：</span>
                     <a-select v-model="question.language" style="width: 120px" defult-value="c">

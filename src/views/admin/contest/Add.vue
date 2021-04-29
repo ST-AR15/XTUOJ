@@ -1,26 +1,22 @@
 <template>
-    <div class="addContest" id="addcontest">
-        <h2 
-            style="border-left:10px solid #1890FF; padding-left:5px"
-        >
-            创建比赛
-        </h2>
-        <a-radio-group style="margin-left:218px;margin-bottom:20px" v-model="createMode">
+    <div class="admin-contest-add" id="admin-contest-add">
+        <h2 class="admin-title">创建比赛</h2>
+        <a-radio-group style="margin-left:120px;margin-bottom:20px" v-model="createMode">
             <a-radio value="new">新建</a-radio>
             <a-radio value="clone">克隆</a-radio>
         </a-radio-group>
         <a-form-model
             ref="addForm"
             :model="form"
-            :label-col="labelCol"
-            :wrapper-col="wrapperCol"
+            :label-col="{ span: 3 }"
+            :wrapper-col="{ span: 12 }"
             :rules="rules"
             v-show="createMode=='new'"
         >
             <a-form-model-item label="比赛名称">
                 <a-input 
+                    style="width: 210px"
                     v-model="form.name"
-                    class="inline-element"
                     placeholder="题目名称"
                 ></a-input>
             </a-form-model-item>
@@ -52,8 +48,8 @@
                             transform:i==form.questions.length-1?'':'rotate(45deg)',
                             transition: 'all .6s'
                         }" @click="handleQuestion(i)" type="plus-circle" v-bind:title="i==form.questions.length-1?'新增':'删除'" />
-                        <a-input class="inline-element" style="width:100px;margin:0 5px" @change="queryTitle(i)" v-model="data.ID" placeholder="题目ID"></a-input>
-                        <a-input class="inline-element" :value="data.name" placeholder="< 题目名称 >" :disabled="true" v-bind:style="{ 'color': data.isValid? '#52c41a':'#FF0000' }"></a-input>
+                        <a-input style="width:100px;margin:0 5px" @change="queryTitle(i)" v-model="data.ID" placeholder="题目ID"></a-input>
+                        <a-input style="width: 210px" :value="data.name" placeholder="< 题目名称 >" :disabled="true" v-bind:style="{ 'color': data.isValid? '#52c41a':'#FF0000' }"></a-input>
                     </div>
                 </transition-group>
                 <p>当前题目数量：<span v-text="form.questions.length-1"></span></p>
@@ -65,21 +61,28 @@
                     <a-radio value="private">私有</a-radio>
                     <a-radio value="group">群组</a-radio>
                 </a-radio-group>
-                <div v-show="form.join == 'private'">
-                    <span>比赛密码:</span>
-                    <a-input v-model="form.password" class="inline-element" style="margin-left:10px" placeholder="私有比赛密码"></a-input>
-                </div>
             </a-form-model-item>
 
-            <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
+            <transition name="cross">
+                <a-form-model-item label="比赛密码" v-show="form.join == 'private'">
+                    <a-input v-model="form.password" placeholder="私有比赛密码"></a-input>
+                </a-form-model-item>
+            </transition>
+            
+
+            <a-divider />
+
+            <a-form-model-item :wrapper-col="{ span: 4, offset: 2 }">
                 <a-button @click="submitForm" type="primary">上传</a-button>
                 <a-button @click="resetForm" style="margin-left:10px;">重置</a-button>
             </a-form-model-item>
         </a-form-model>
         <div v-if="createMode=='clone'">
-            <div class="flex-between" style="white-space:nowrap;margin-left:218px">
-                <span>对象比赛ID</span>
-                <a-input style="margin-left:20px"></a-input>
+            <div style="white-space:nowrap;margin-left:218px">
+                <a-space>
+                    <span>对象比赛ID</span>
+                    <a-input></a-input>
+                </a-space>
             </div>
             <a-button style="margin-left:218px" type="primary">确认</a-button>
         </div>
@@ -92,8 +95,6 @@ export default {
         return {
             createMode: "new",  // new是新建比赛，clone是克隆比赛
             compilerList: ["GCC","Java","C++","Python"],  // 可使用的编译器列表
-            labelCol: { span: 4 },
-            wrapperCol: { span: 14 },
             form: {
                 name: "",
                 judge: "ICPC",
@@ -122,7 +123,6 @@ export default {
             if(i == this.form.questions.length-1) {  //如果是最后的问题，那就是添加
                 // 只有isValid为true才允许添加
                 if(this.form.questions[i].isValid) {
-                    // let timer = new Date();  // 时间，为后面的T做准备
                     this.form.questions.push({
                         key: Symbol(i),
                         ID: parseInt(this.form.questions[i].ID) + 1,
@@ -170,18 +170,4 @@ export default {
 </script>
 
 <style>
-    .addContest ul {
-        list-style: none;
-        font-size: 18px;
-    }
-    .addContest .flex-between {
-        width: 300px;
-        display: flex;
-        justify-content: space-between;
-        margin: 10px;
-    }
-    .addContest .inline-element {
-        width: 200px;
-        display: inline-block;
-    }
 </style>

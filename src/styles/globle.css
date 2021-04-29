@@ -1,0 +1,44 @@
+/* 全局的css */
+* {
+    margin: 0;
+    padding: 0;
+    font-size: 15px;
+    letter-spacing: 1px;
+}
+/* 固定标签样式 */
+th,td {
+    text-align: center !important;
+}
+h1 {
+    text-align: center;
+    font-size: 26px;
+}
+/* user通用 */
+.user-container {
+    width: 98%;
+    min-width: 1000px;
+    position: relative;
+    margin: 0 auto;
+    height: 100%;
+    overflow: hidden;
+}
+/* admin通用 */
+.admin-title {
+    border-left:10px solid #1890FF;
+    padding-left:5px;
+    font-size: 1.6rem
+}
+/* 部分颜色 */
+.accept {
+    color: #13C965;
+}
+.wa {
+    color: #FF0000;
+}
+.others {
+    color: #0000FF;
+}
+/* 部分特殊化 */
+.bold {
+    font-weight: bold;
+}

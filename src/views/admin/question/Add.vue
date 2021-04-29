@@ -1,38 +1,35 @@
 <template>
-    <div class="add" id="add">
-        <h2 
-            style="border-left:10px solid #1890FF; padding-left:5px"
-        >新增题目</h2>
+    <div class="admin-question-add" id="admin-question-add">
+        <h2 class="admin-title">新增题目</h2>
         <a-form-model
             ref="addForm"
             :model="form"
-            :label-col="labelCol"
-            :wrapper-col="wrapperCol"
+            :label-col="{ span: 3 }"
+            :wrapper-col="{ span: 14 }"
             :rules="rules"
         >
             <a-form-model-item prop="name" label="题目名称">
-                <a-input 
+                <a-input
+                    style="width: 210px"
                     v-model="form.name"
-                    class="inline-element"
                     placeholder="题目名称"
                 ></a-input>
             </a-form-model-item>
 
             <a-form-model-item label="题目来源">
-                <a-input 
+                <a-input
+                    style="width: 210px"
                     v-model="form.source"
-                    class="inline-element"
                     placeholder="题目来源"
                 ></a-input>
             </a-form-model-item>
 
             <a-form-model-item prop="timeLimit" label="时限">
                     <a-input
+                        style="width: 210px"
                         placeholder="请输入500的倍数" 
-                        class="inline-element"
                         :min="0"
                         v-model="form.timeLimit"
-                        type="number"
                         :step="500"
                         suffix="ms"
                     ></a-input>
@@ -40,10 +37,9 @@
 
             <a-form-model-item prop="memoryLimit" label="存限">
                 <a-input
-                    class="inline-element"
+                    style="width: 210px"
                     :min="0"
                     v-model="form.memoryLimit"
-                    type="number"
                     suffix="MB"
                 ></a-input>
             </a-form-model-item>
@@ -74,9 +70,9 @@
             
             <a-divider />
 
-            <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
+            <a-form-model-item :wrapper-col="{ span: 14, offset: 2 }">
                 <a-button @click="queryForm" type="primary">上传</a-button>
-                <a-button @click="resetForm" style="margin-left:10px;">重置</a-button>
+                <a-button @click="handleReset" style="margin-left:10px;">重置</a-button>
             </a-form-model-item>
         </a-form-model>
         <a-modal
@@ -87,7 +83,7 @@
         >
             <p>请选择操作：</p>
             <a-space>    
-                <a-button @click="resetForm(); modal.visible = false" type="primary">继续添加</a-button>
+                <a-button @click="handleReset(); modal.visible = false" type="primary">继续添加</a-button>
                 <a-button type="primary">跳转到该题目</a-button>
             </a-space>
         </a-modal>
@@ -135,14 +131,12 @@ export default {
                 subfield: true,      // 单双栏模式
                 preview: true,       // 预览
             },
-            labelCol: { span: 4 },
-            wrapperCol: { span: 14 },
             formDefult: {                // 默认的表单数据
                 name: "",                // 题目名称
                 timeLimit: 1000,         // 时限，默认1000ms
                 memoryLimit: 128,        // 存限，默认128MB
                 QType: "normal",         // 题目类型，分普通验证（normal）和特别验证（special），默认普通
-                contents: "测试",        // 题目内容
+                contents: "",            // 题目内容
                 source: "",              // 题目来源
                 isBan: false,            // 禁用
                 isSolved: false,         // 解决
@@ -214,7 +208,7 @@ export default {
                 }
             })
         },
-        resetForm() {  //清空表单
+        handleReset() {  //清空表单
             // this.$refs.addForm.resetFields();
             // this.form = this.formDefult;
             this.form = JSON.parse(JSON.stringify(this.formDefult));
@@ -229,18 +223,4 @@ export default {
 </script>
 
 <style>
-    .add ul {
-        list-style: none;
-        font-size: 18px;
-    }
-    .add .flex-between {
-        width: 300px;
-        display: flex;
-        justify-content: space-between;
-        margin: 10px;
-    }
-    .add .inline-element {
-        width: 200px;
-        display: inline-block;
-    }
 </style>

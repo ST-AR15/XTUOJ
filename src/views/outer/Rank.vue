@@ -1609,15 +1609,11 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
     .rank {
         min-width: 1400px;
         max-width: 95%;
         margin: 0 auto;
-    }
-    h1 {
-        font-size: 32px;
-        text-align: center;
     }
     .time {
         width: 800px;
@@ -1681,6 +1677,7 @@ export default {
     }
     .list {
         position: relative;
+        margin: 0 auto;
     }
     .list > tr {
         height: 38px;

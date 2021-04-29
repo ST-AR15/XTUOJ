@@ -1,5 +1,5 @@
 <template>
-    <div class="status" id="status">
+    <div class="status user-container" id="status">
         <a-table
             :columns="columns"
             :data-source="status"
@@ -196,7 +196,7 @@ export default {
                 problem: "(A) Sum of 2050",
                 result: "Accept",
                 info: "Runtime error on test 1",
-                code: "int main() { return 0 }",
+                code: "int main()\n{\n    int a = 1;\n    return 0;\n}\n",
                 test: [
                     {
                         time: 93,
@@ -242,17 +242,21 @@ export default {
 
 <style>
 .status {
-    margin-top: 10px;
+    padding-top: 10px;
 }
 .status-solution p {
     margin: 0;
 }
-.modal-title {
+.status-solution .modal-title {
     font-size: 14px;
     letter-spacing: 0;
 }
-.modal-title * {
-    font-size: 14px;
-    letter-spacing: 0;
+.status-solution pre {
+    background-color: #EEEEEE;
+    margin: 0;
+    border: 1px solid #AAAAAA;
+    font-size: 0.6rem;
+    padding: 2px;
+    color: #000000;
 }
 </style>

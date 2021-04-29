@@ -1,5 +1,7 @@
 <template>
-    <a-button type="danger" @click="logout">退出登录</a-button>
+    <div class="admin-user-me" id="admin-user-me">
+        <a-button type="danger" @click="logout">退出登录</a-button>
+    </div>
 </template>
 
 <script>
@@ -24,5 +26,4 @@ export default {
 </script>
 
 <style>
-
 </style>

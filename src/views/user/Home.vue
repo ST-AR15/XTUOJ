@@ -1,30 +1,30 @@
 <template>
     <div class="home" id="home">
-        <div class="container">
-            <a-layout-header style="background-color: #FFFFFF;margin: 0 10px">
-                <h2 style="font-size: 22px">通知</h2>
-            </a-layout-header>
-            <a-layout style="height: calc(100vh - 200px)">
-                <a-layout-sider style="padding: 20px;margin: 10px; background-color: #FFFFFF;min-height: calc(100vh - 220px);height: calc(100vh - 220px); overflow-y: scroll">
+        <div class="user-container">
+            <div class="home-header">
+                <h2 style="font-size: 22px">欢迎使用湘潭大学OJ系统！</h2>
+            </div>
+            <div class="home-container">
+                <div class="home-left">
                     <a-timeline>
                         <a-timeline-item v-for="(item, i) in timer" :key="i" :color="item.color">
                             <p style="margin: 0">{{ item.time }}</p>
                             <p style="margin: 0">{{ item.content }}</p>
                         </a-timeline-item>
                     </a-timeline>
-                </a-layout-sider>
-                <a-layout-content style="padding: 0 20px; background-color: #FFFFFF; margin: 10px">
+                </div>
+                <div class="home-right">
                     <a-list item-layout="horizontal" :data-source="announcements">
                         <a-list-item slot="renderItem" slot-scope="item">
                             <a-list-item-meta>
-                                <span slot="description" v-html="item.description"></span>
                                 <span slot="title">{{ item.title }}</span>
+                                <span slot="description" v-html="item.description"></span>
                             </a-list-item-meta>
-                            <span>{{ item.time }}</span>
+                            <span style="margin-left: 30px">{{ item.time }}</span>
                         </a-list-item>
                     </a-list>
-                </a-layout-content>
-            </a-layout>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -185,11 +185,35 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
     .home {
-        margin-top: 10px;
+        padding: 10px 0;
     }
-    .ant-table-title {
-        padding: 10px 20px;
+    .home-header {
+        background-color: #FFFFFF;
+        height: 48px;
+        line-height: 48px;
+        padding-left: 32px;
+    }
+    .home-container {
+        height: calc(100% - 48px);
+        display: flex;
+        position: relative;
+        justify-content: space-between;
+        padding: 10px 0;
+    }
+    .home-left {
+        width: 15%;
+        min-width: 200px;
+        background-color: #FFFFFF;
+        padding: 20px;
+        overflow: auto;
+    }
+    .home-right {
+        width: 84%;
+        
+        background-color: #FFFFFF;
+        padding: 0 20px 20px 20px;
+        overflow: auto;
     }
 </style>

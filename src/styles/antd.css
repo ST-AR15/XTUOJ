@@ -5,7 +5,7 @@
     background: transparent;
 }
 .ant-layout-header {
-    background: transparent;
+    background: #FFFFFF;
 }
 .ant-layout-sider {
     background: transparent;
@@ -16,6 +16,14 @@
     /* width: 100vw;
     position: fixed;
     bottom: 0; */
+}
+.ant-table-title {
+    padding: 15px 0 0 25px;
+}
+.ant-table-wrapper {
+    width: 98%;
+    background-color:#FCFDFE;
+    margin: 0 auto;
 }
 
 /* 自定义的，type为green的a-button */

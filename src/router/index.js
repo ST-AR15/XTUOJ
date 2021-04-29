@@ -22,6 +22,7 @@ import status from '@/views/user/Status.vue'
 
 // 管理端
 import admin from '@/views/admin/App.vue'
+import adminHome from '@/views/admin/Home.vue'
 import addContest from '@/views/admin/contest/Add.vue'
 import manageContest from '@/views/admin/contest/Manage.vue'
 import addQuestion from '@/views/admin/question/Add.vue'
@@ -74,6 +75,11 @@ const routes = [
         path: '/admin',
         component: admin,
         children: [
+            {
+                name: 'adminHome',
+                path: '/',
+                component: adminHome,
+            },
             {
                 name: 'contest-add',
                 path: '/admin/contest-add',

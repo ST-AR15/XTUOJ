@@ -121,13 +121,10 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .balloon {
     width: 95%;
     margin: 0 auto;
     min-width: 1400px;
-}
-h1 {
-    text-align: center;
 }
 </style>

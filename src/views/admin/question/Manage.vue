@@ -1,84 +1,83 @@
-// TODO 这一页亟需优化
 <template>
-    <div class="read" id="read">
-        <questionlist ref="questionlist" :buttons="buttons" @getQuestionDetail="getQuestionDetail" @getQuestionData="getQuestionData" @deleteQuestion="deleteQuestion" />
+    <div class="admin-question-manage" id="admin-question-manage">
+        <questionlist ref="questionlist" :buttons="buttons" @queryDetail="queryDetail" @queryData="queryData" @queryDelete="queryDelete" @queryCompilation = "queryCompilation" />
         <!-- 问题详情 - modal对话框 -->
         <a-modal
-            :visible="questionDetailModal.visible"
-            :title="'问题' + questionDetailModal.questionDetail.ID + ' - ' + questionDetailModal.questionDetail.title + ' - 详情'"
-            @cancel="questionDetailModalCancel"
-            @ok="submitChange"
+            :visible="detailModal.visible"
+            :title="'问题' + detailModal.data.ID + ' - ' + detailModal.data.title + ' - 详情'"
+            @cancel="detailModal.visible = false"
+            @ok="querySubmit"
             okText="修改"
             :width="1000"
         >
             <a-form-model
                 ref="changeForm"
-                :model="questionDetailModal.questionDetail"
-                :label-col="questionDetailModal.labelCol"
-                :wrapper-col="questionDetailModal.wrapperCol"
-                :rules="questionDetailModal.rules"
+                :model="detailModal.data"
+                :label-col="detailModal.labelCol"
+                :wrapper-col="detailModal.wrapperCol"
+                :rules="detailModal.rules"
             >
                 <a-form-model-item label="ID">
                     <a-input 
-                        v-model="questionDetailModal.questionDetail.ID"
+                        v-model="detailModal.data.ID"
                         :disabled="true"
                     ></a-input>
                 </a-form-model-item>
                 <a-form-model-item label="题目名称">
                     <a-input 
-                        v-model="questionDetailModal.questionDetail.title"
+                        v-model="detailModal.data.title"
                     ></a-input>
                 </a-form-model-item>
                 <a-form-model-item label="来源">
                     <a-input 
-                        v-model="questionDetailModal.questionDetail.source"
+                        v-model="detailModal.data.source"
                     ></a-input>
                 </a-form-model-item>
                 <a-form-model-item label="题目内容">
-                    <mavonEditor :tabSize="3" v-model="questionDetailModal.questionDetail.content"></mavonEditor>
+                    <mavonEditor :tabSize="3" v-model="detailModal.data.content"></mavonEditor>
                 </a-form-model-item>
                 <a-form-model-item label="时限">
                     <a-input 
-                        v-model="questionDetailModal.questionDetail.timeLimit"
+                        v-model="detailModal.data.timeLimit"
                     ></a-input>
                 </a-form-model-item>
                 <a-form-model-item label="存限">
                     <a-input 
-                        v-model="questionDetailModal.questionDetail.memoryLimit"
+                        v-model="detailModal.data.memoryLimit"
                     ></a-input>
                 </a-form-model-item>
                 <a-form-model-item label="IsBan">
                     <a-switch
-                        v-model="questionDetailModal.questionDetail.IsBan"
+                        v-model="detailModal.data.IsBan"
                     ></a-switch>
                 </a-form-model-item>
                 <a-form-model-item label="题目类型">
                     <a-radio-group 
-                        v-model="questionDetailModal.questionDetail.QType"
+                        v-model="detailModal.data.QType"
                     >
                         <a-radio value="normal">普通验证</a-radio>
                         <a-radio value="special">特别验证</a-radio>
                     </a-radio-group>
                     <transition name="cross2">
-                        <a-button type="primary" v-if="questionDetailModal.questionDetail.QType == 'special'">上传特判文件</a-button>
+                        <a-button type="primary" v-if="detailModal.data.QType == 'special'">上传特判文件</a-button>
                     </transition>
                 </a-form-model-item>
                 <a-form-model-item label="tips">
-                    <template v-for="(tip, index) in questionDetailModal.questionDetail.tips">
-                        <a-tag :key="tip" closable @close="deleteTip(index)">
+                    <template v-for="(tip, index) in detailModal.data.tips">
+                        <a-tag :key="tip" closable @close="queryTipDelete(index)">
                             {{ tip }}
                         </a-tag>
                     </template>
                     <a-input
-                        v-if="tipInputVisible"
+                        v-if="tipInput.visible"
                         ref="tipInput"
                         type="text"
                         size="small"
                         :style="{ width: '78px' }"
-                        :value="inputValue"
+                        :value="tipInput.value"
                         @change="inputTip"
-                        @blur="addTip"
-                        @keyup.enter="addTip"
+                        @blur="queryTipAdd"
+                        @keyup.enter="queryTipAdd"
                     />
                     <a-tag v-else style="background: #fff; borderStyle: dashed;" @click="showInput">
                         <a-icon type="plus" /> 新标签
@@ -90,33 +89,36 @@
         </a-modal>
         <!-- 数据管理 - modal对话框 -->
         <a-modal
-            :visible="questionDataModal.visible"
-            :title="'问题' + questionDataModal.ID + ' - ' + questionDataModal.title + ' - 数据管理'"
-            @cancel="questionDataModalCancel"
+            :visible="dataModal.visible"
+            :title="'问题' + dataModal.ID + ' - ' + dataModal.title + ' - 数据管理'"
+            @cancel="dataModal.visible = false"
             width= "900px"
         >
-            <div :key="i" v-for="(data,i) in questionDataModal.data.input" style="display:flex;width:700px;margin-bottom: 5px">
-                <a-textarea v-model="questionDataModal.data.input[i]"></a-textarea>
-                <div style="white-space: nowrap; margin: 0 20px">
-                    输入
-                    <a-divider type="vertical" />
-                    输出
-                </div>
-                <a-textarea v-model="questionDataModal.data.output[i]"></a-textarea>
-            </div>
-            <a-divider />
-            <div style="display:flex;align-items:center">
-                <div style="display:flex;width:700px;flex-shrink:0">
-                    <a-textarea v-model="dataInputIn"></a-textarea>
-                    <div style="white-space: nowrap; margin: 0 20px">
-                        输入
-                        <a-divider type="vertical" />
-                        输出
-                    </div>
-                    <a-textarea v-model="dataInputOut"></a-textarea>
-                </div>
-                <a-button type="primary" style="margin-left: 20px" @click="addData()">添加</a-button>
-            </div>
+            
+        </a-modal>
+        <!-- 编译信息 - modal对话框 -->
+        <a-modal
+            :visible="compilationModal.visible"
+            title="编译信息"
+            @cancel="compilationModal.visible = false"
+            width="90%"
+            :footer="null"
+        >
+            <a-table
+                :columns="compilationModal.columns"
+                :data-source="compilationModal.data"
+                :scroll="{x: 1100}"
+                :pagination="false"
+                rowKey="name"
+                bordered
+            >
+                <span slot="timeToStandard" slot-scope="timeToStandard">
+                    <span v-text="timeToStandard.toFixed(2)"></span>
+                </span>
+                <span slot="memoryToStandard" slot-scope="memoryToStandard">
+                    <span v-text="memoryToStandard.toFixed(2)"></span>
+                </span>
+            </a-table>
         </a-modal>
     </div>
 </template>
@@ -133,27 +135,28 @@ export default {
     },
     data() {
         return {
-            buttons: [    // 传给questionlist组件的按钮  
+            buttons: [               // 传给questionlist组件的按钮  
                 {
                     text: "题目详情",
-                    method: "getQuestionDetail"
+                    method: "queryDetail"
                 },
                 {
                     text: "数据管理",
-                    method: "getQuestionData"
+                    method: "queryData"
+                },
+                {
+                    text: "管理编译信息",
+                    method: "queryCompilation"
                 },
                 {
                     text: "删除题目",
-                    method: "deleteQuestion"
-                }
+                    method: "queryDelete",
+                    isDanger: true,
+                },
             ],
-            tipInputVisible: false,  // 添加tip时的input是否出现
-            inputValue: "",          // 添加标签时输入的内容
-            dataInputIn: "",         // 题目数据 - 输入的输入框
-            dataInputOut: "",        // 题目数据 - 输出的输入框
-            questionDetailModal : {  // 问题详情的modal
+            detailModal : {          // 问题详情的modal
                 visible: false,
-                questionDetail: {
+                data: {
                     ID: NaN,
                     title: "",
                     tips: [],
@@ -167,55 +170,196 @@ export default {
                 labelCol: { span: 4 },
                 wrapperCol: { span: 19 },
                 rules: {                     // 表单规则
-                name: [                  // 题目名称规则：比如输入内容，否则提示“请输入题目名称”
-                    { required: true, message: '请输入题目名称', trigger: 'change' },
-                ],
+                    name: [                  // 题目名称规则：比如输入内容，否则提示“请输入题目名称”
+                        { required: true, message: '请输入题目名称', trigger: 'change' },
+                    ],
+                },
             },
+            tipInput: {              // 问题详情的标签input
+                visible: false,
+                value: "",
             },
-            questionDataModal: { // 问题数据管理的modal
+            dataModal: {             // 问题数据管理的modal
                 visible: false,
                 ID: 0,
                 title: "",
                 data: {},
             },
+            compilationModal: {      // 编译信息的modal
+                visible: false,
+                data: [
+                    {
+                        name: "GCC",
+                        isC: 1,
+                        address: "/user/bin/g++",
+                        complieCommand: "g++/home/oj/user/main.cpp-o/home/oj/user/main",
+                        runCommand: "/home/oj/user/main,main",
+                        maxStack: 32768,
+                        maxOutputSize: 131072,
+                        maxSingleRunTime: 60000,
+                        maxSingleRunMemory: 1048576,
+                        timeToStandard: 1.00,
+                        memoryToStandard: 1.00,
+                        compileWithRun: 0,
+                        suffix: ".cpp",
+                        languageNum: 1,
+                    },
+                    {
+                        name: "python3",
+                        isC: 1,
+                        address: "/user/bin/g++",
+                        complieCommand: "g++/home/oj/user/main.cpp-o/home/oj/user/main",
+                        runCommand: "/home/oj/user/main,main",
+                        maxStack: 32768,
+                        maxOutputSize: 131072,
+                        maxSingleRunTime: 60000,
+                        maxSingleRunMemory: 1048576,
+                        timeToStandard: 1.00,
+                        memoryToStandard: 1.00,
+                        compileWithRun: 0,
+                        suffix: ".cpp",
+                        languageNum: 1,
+                    },
+                    {
+                        name: "G++",
+                        isC: 1,
+                        address: "/user/bin/g++",
+                        complieCommand: "g++/home/oj/user/main.cpp-o/home/oj/user/main",
+                        runCommand: "/home/oj/user/main,main",
+                        maxStack: 32768,
+                        maxOutputSize: 131072,
+                        maxSingleRunTime: 60000,
+                        maxSingleRunMemory: 1048576,
+                        timeToStandard: 1.00,
+                        memoryToStandard: 1.00,
+                        compileWithRun: 0,
+                        suffix: ".cpp",
+                        languageNum: 1,
+                    },
+                ],
+                columns: [
+                    {
+                        title: "name",
+                        dataIndex: "name",
+                        key: "name",
+                        width: 100,
+                        fixed: 'left'
+                    },
+                    {
+                        title: "c_or_cplusplus",
+                        dataIndex: "isC",
+                        key: "isC",
+                        width: 120
+                    },
+                    {
+                        title: "address",
+                        dataIndex: "address",
+                        key: "address",
+                        width: 150
+                    },
+                    {
+                        title: "complie_command",
+                        dataIndex: "complieCommand",
+                        key: "complieCommand",
+                        width: 300
+                    },
+                    {
+                        title: "run_command",
+                        dataIndex: "runCommand",
+                        key: "runCommand",
+                        width: 300
+                    },
+                    {
+                        title: "max_stack",
+                        dataIndex: "maxStack",
+                        key: "maxStack",
+                        width: 120
+                    },
+                    {
+                        title: "max_output_size",
+                        dataIndex: "maxOutputSize",
+                        key: "maxOutputSize",
+                        width: 120
+                    },
+                    {
+                        title: "max_single_run_time",
+                        dataIndex: "maxSingleRunTime",
+                        key: "maxSingleRunTime",
+                        width: 120
+                    },
+                    {
+                        title: "max_single_run_memory",
+                        dataIndex: "maxSingleRunMemory",
+                        key: "maxSingleRunMemory",
+                        width: 120
+                    },
+                    {
+                        title: "time_to_standard",
+                        dataIndex: "timeToStandard",
+                        key: "timeToStandard",
+                        scopedSlots: { customRender: 'timeToStandard' },
+                        width: 120
+                    },
+                    {
+                        title: "memory_to_standard",
+                        dataIndex: "memoryToStandard",
+                        key: "memoryToStandard",
+                        scopedSlots: { customRender: 'memoryToStandard' },
+                        width: 120
+                    },
+                    {
+                        title: "compile_with_run",
+                        dataIndex: "compileWithRun",
+                        key: "compileWithRun",
+                        width: 120
+                    },
+                    {
+                        title: "suffix",
+                        dataIndex: "suffix",
+                        key: "suffix",
+                        width: 120
+                    },
+                    {
+                        title: "LanguageNum",
+                        dataIndex: "languageNum",
+                        key: "languageNum",
+                        width: 120
+                    }
+                ]
+            }
         }
     },
     methods: {
-        getQuestionDetail(info) {  // 获取题目详情和修改
+        queryDetail(info) {  // 获取题目详情和修改
             let that = this;
             // 使用info.ID来调取题目信息
             let url = "/api/problem/" + info.ID;
             this.$axios.get(url).then(rep => {
                 // 把获取到的信息赋值给questionDetail
                 const data = rep.data.data;
-                that.questionDetailModal.questionDetail.ID = data.Pid;
-                that.questionDetailModal.questionDetail.title = data.Tittle;
-                that.questionDetailModal.questionDetail.source = data.Source==null? data.Source:"admin";
-                that.questionDetailModal.questionDetail.content = data.Content;
-                that.questionDetailModal.questionDetail.timeLimit = data.TimeLimit;
-                that.questionDetailModal.questionDetail.memoryLimit = data.MemoryLimit;
-                that.questionDetailModal.questionDetail.IsBan = data.IsBan;
-                that.questionDetailModal.questionDetail.QType = "normal"
+                that.detailModal.data.ID = data.Pid;
+                that.detailModal.data.title = data.Tittle;
+                that.detailModal.data.source = data.Source==null? data.Source:"admin";
+                that.detailModal.data.content = data.Content;
+                that.detailModal.data.timeLimit = data.TimeLimit;
+                that.detailModal.data.memoryLimit = data.MemoryLimit;
+                that.detailModal.data.IsBan = data.IsBan;
+                that.detailModal.data.QType = "normal"
             })
-            this.questionDetailModal.ID = info.ID;
-            this.questionDetailModal.title = info.title;
+            this.detailModal.ID = info.ID;
+            this.detailModal.title = info.title;
             if(info.tips) {
-                this.questionDetailModal.tips = JSON.parse(JSON.stringify(info.tips));
+                this.detailModal.tips = JSON.parse(JSON.stringify(info.tips));
             }
-            this.questionDetailModal.visible = true;
+            this.detailModal.visible = true;
             console.log('打开对话框');
         },
-        getQuestionData(info) {  //获取题目数据和修改
-            this.questionDataModal.ID = info.ID;
-            this.questionDataModal.title = info.title;
-            // TODO 这个要从后端调取，先随便写个
-            this.questionDataModal.data = {
-                input: ["2,2","3,3"],
-                output: ["3","4"]
-            };
-            this.questionDataModal.visible = true;
+        queryData(info) {  //获取题目数据和修改
+            this.dataModal.ID = info.ID;
+            this.dataModal.tittle = info.title;
+            this.dataModal.visible = true;
         },
-        deleteQuestion(info) { // 删除题目
+        queryDelete(info) { // 删除题目
             let url = "/api/problem/" + info.ID;
             this.$axios.delete(url).then(rep => {
                 if(parseInt(rep.status/100) == 2) { // 返回2开头的成功码
@@ -226,19 +370,18 @@ export default {
                 }
             })
         },
-        questionDetailModalCancel() { // 关闭问题详情
-            this.questionDetailModal.visible = false;
-            console.log('关闭对话框');
+        queryCompilation() { // 获取编译信息
+            this.compilationModal.visible = true;
         },
-        submitChange() { // 提交问题修改
-            const url = '/api/problem/' + this.questionDetailModal.questionDetail.ID;
+        querySubmit() { // 提交问题修改
+            const url = '/api/problem/' + this.detailModal.data.ID;
             const info = {
-                Tittle: this.questionDetailModal.questionDetail.title,
-                Source: this.questionDetailModal.questionDetail.source,
-                Content: this.questionDetailModal.questionDetail.content,
-                TimeLimit: this.questionDetailModal.questionDetail.timeLimit,
-                MemoryLimit: this.questionDetailModal.questionDetail.memoryLimit,
-                IsBan: this.questionDetailModal.questionDetail.IsBan,
+                Tittle: this.detailModal.data.title,
+                Source: this.detailModal.data.source,
+                Content: this.detailModal.data.content,
+                TimeLimit: this.detailModal.data.timeLimit,
+                MemoryLimit: this.detailModal.data.memoryLimit,
+                IsBan: this.detailModal.data.IsBan,
             }
             console.log(info);
             this.$axios.put(url, { params: info }).then(rep => {
@@ -246,38 +389,30 @@ export default {
                 this.$message.success("修改成功！");
             })
         },
-        questionDataModalCancel() {   // 关闭数据管理
-            this.questionDataModal.visible = false;
-            console.log('关闭对话框');
-        },
-        deleteTip(i) {  // 删除标签
-            console.log('删除下标为' + i + '的标签' + this.questionDetailModal.questionDetail.tips[i])
-            let tips = this.questionDetailModal.questionDetail.tips;
+        queryTipDelete(i) {  // 删除标签
+            console.log('删除下标为' + i + '的标签' + this.detailModal.data.tips[i])
+            let tips = this.detailModal.data.tips;
             tips.splice(i,1);
-            this.questionDetailModal.questionDetail.tips = tips;
+            this.detailModal.data.tips = tips;
+        },
+        queryTipAdd() { // 添加标签
+            this.tipInput.visible = false;     // 去掉input
+            if(this.tipInput.value != "") {       // 空值不要
+                this.detailModal.data.tips.push(this.tipInput.value);
+                this.tipInput.value = "";
+            }
         },
         showInput() { // 添加标签时显示input
-            this.tipInputVisible = true;     // 显示input
+            this.tipInput.visible = true;     // 显示input
             this.$nextTick(function() {      // 聚焦
                 this.$refs.tipInput.focus();
             });
         },
         inputTip(e) {  // 添加标签时修改内容
-            this.inputValue = e.target.value;
+            this.tipInput.value = e.target.value;
         },
-        addTip() { // 添加标签
-            this.tipInputVisible = false;     // 去掉input
-            if(this.inputValue != "") {       // 空值不要
-                this.questionDetailModal.questionDetail.tips.push(this.inputValue);
-                this.inputValue = "";
-            }
-        },
-        addData() { // 添加数据
-            this.questionDataModal.data.input.push(this.dataInputIn);
-            this.dataInputIn = "";
-            this.questionDataModal.data.output.push(this.dataInputOut);
-            this.dataInputOut = "";
-        }
+        
+        
         
     }
 }

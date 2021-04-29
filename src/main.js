@@ -19,7 +19,7 @@ import '@/styles/antd.css'
 import '@/styles/tips.css'
 import '@/styles/animation.css'
 import '@/styles/mavonEditor.css'
-import '@/styles/main.css'
+import '@/styles/globle.css'
 // js
 import '@/utils/axiosConfig'
 

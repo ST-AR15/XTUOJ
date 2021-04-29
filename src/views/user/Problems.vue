@@ -1,6 +1,6 @@
 <template>
     <div class="problems" id="problems">
-        <div class="container">
+        <div class="container user-container">
             <questionlist :buttons="buttons" @queryQuestion="queryQuestion" />
         </div>
     </div>
@@ -33,8 +33,8 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
     .problems {
-        margin-top: 10px;
+        padding-top: 10px;
     }
 </style>

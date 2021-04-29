@@ -1,5 +1,5 @@
 <template>
-    <div class="contests" id="contests">
+    <div class="contests user-container" id="contests">
         <!-- 竞赛列表 -->
         <transition name="cross">
             <div v-show="pageNow == 'contests'" class="contest-list contents-item" id="contest-list">
@@ -129,10 +129,7 @@ export default {
         letter-spacing: 1px;
     }
     .contests {
-        margin-top: 10px;
-    }
-    .ant-table-title {
-        padding: 10px 20px;
+        padding-top: 10px;
     }
     .contents-item {
         position: absolute;

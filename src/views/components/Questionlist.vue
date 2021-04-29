@@ -7,14 +7,19 @@
             style="width:98%; background-color:#FCFDFE; margin:0 auto"
             :pagination="pagination"
             :loading="loading"
+            rowKey="ID"
             @change="handleTableChange"
         >
             <!-- ID -->
             <span slot="ID"></span>
             <!-- title -->
-            <span slot="title"></span>
+            <span slot="QTitle"></span>
             <!-- tips -->
-            <span slot="tips"></span>
+            <span slot="tips" slot-scope="tips">
+                <a-tag v-for="item in tips" :key="item">
+                    <span>{{ item }}</span>
+                </a-tag>
+            </span>
             <!-- status -->
             <span slot="status"></span>
             <!-- AC/Total -->
@@ -34,7 +39,10 @@
             <span slot="buttons" slot-scope="text, record">
                 <a-space>
                     <template v-for="(item,i) in buttons">
-                        <a-button type="primary" :key="i" @click="callbackMethod(item.method,record)">
+                        <a-button v-if="!item.isDanger" type="primary" :key="i" @click="callbackMethod(item.method,record)">
+                            {{ item.text }}
+                        </a-button>
+                        <a-button v-else type="danger" :key="i" @click="callbackMethod(item.method,record)">
                             {{ item.text }}
                         </a-button>
                     </template>
@@ -65,11 +73,12 @@ export default {
                 },
                 {
                     title: "题目名称",
-                    dataIndex: "title",
+                    dataIndex: "tittle",
                 },
                 {
                     title: "标签",
                     dataIndex: "tips",
+                    scopedSlots: { customRender: 'tips' },
                 },
                 {
                     title: "来源",
@@ -92,7 +101,7 @@ export default {
                 // {
                 //     key: "1000",
                 //     ID: 1000,
-                //     title: "A+BA",
+                //     tittle: "A+BA",
                 //     tips: ["dp","geometry","math","greedy"],
                 //     status: "ATTEMPT",
                 //     accept: 100,
@@ -102,7 +111,7 @@ export default {
                 // {
                 //     key: "1001",
                 //     ID: 1001,
-                //     title: "A+BW",
+                //     tittle: "A+BW",
                 //     tips: ["dp","geometry","math","greedy"],
                 //     status: "ACCEPT",
                 //     accept: 100,
@@ -162,9 +171,13 @@ export default {
                 // 循环复制给数组questions
                 for(let i=(that.pagination.current-1)*that.pagination.pageSize,j=0;j<data.data.length;i++,j++) {
                     that.questions[i] = {};
-                    that.questions[i]["key"] = data.data[j].Pid;
                     that.questions[i]["ID"] = data.data[j].Pid;
-                    that.questions[i]["title"] = data.data[j].Tittle;
+                    that.questions[i]["tittle"] = data.data[j].Tittle;
+                    that.questions[i]["tips"] = ['测试','test'];
+                    that.questions[i]["source"] = "测试来源";
+                    that.questions[i]["status"] = "测试状态";
+                    that.questions[i]["accept"] = "100";
+                    that.questions[i]["total"] = "200";
                 }
                 // 结束加载
                 that.loading = false;
@@ -193,17 +206,6 @@ export default {
 </script>
 
 <style>
-    .questionlist * {
-        font-size: 15px;
-        letter-spacing: 1px;
-    }
-    .questionlist .ant-table-title {
-        padding: 10px 20px;
-    }
-    .highlight {
-        background-color: rgb(255, 192, 105);
-        padding: 0px;
-    }
     .refreshIcon {
         margin-left: 20px;
         cursor: pointer;

@@ -1,14 +1,21 @@
 <template>
     <div class="user" id="user">
-        <a-layout>
-            <a-layout-header style="position: relative">
-                <div class="logo">
-                    <p>XiangTan University</p>
+            <header class="user-header">
+                <div class="logo">XiangTan University</div>
+                <div class="loginzoom">
+                    <a-button class="navButton" v-if="!$store.state.token" @click="loginVisible = true">登录</a-button>
+                    <a-dropdown class="navButton" v-else>
+                        <a-button>欢迎</a-button>
+                        <a-menu slot="overlay">
+                            <a-menu-item @click="queryPerson">个人中心</a-menu-item>
+                            <a-menu-item @click="logout">退出登录</a-menu-item>
+                        </a-menu>
+                    </a-dropdown>
                 </div>
                 <a-menu
                     class="menu"
                     mode="horizontal"
-                    style="user-select:none"
+                    :style="{ lineHeight: '64px', userSelect: 'none' }"
                     v-model="page"
                 >
                     <a-menu-item key="home" @click="queryPage('/')">
@@ -32,24 +39,13 @@
                         排名
                     </a-menu-item> -->
                 </a-menu>
-                <div class="loginzoom">
-                    <a-button class="navButton" v-if="!$store.state.token" @click="loginVisible = true">登录</a-button>
-                    <a-dropdown class="navButton" v-else>
-                        <a-button>欢迎</a-button>
-                        <a-menu slot="overlay">
-                            <a-menu-item @click="queryPerson">个人中心</a-menu-item>
-                            <a-menu-item @click="logout">退出登录</a-menu-item>
-                        </a-menu>
-                    </a-dropdown>
-                </div>
-            </a-layout-header>
-            <a-layout-content>
+            </header>
+            <main class="user-main">
                 <transition name="cross">
                     <router-view />
                 </transition>
-            </a-layout-content>
-        </a-layout>
-        <login :visible="loginVisible" @ok="login" @close="loginVisible = false" />
+            </main>
+            <login :visible="loginVisible" @ok="login" @close="loginVisible = false" />
     </div>
 </template>
 
@@ -103,7 +99,6 @@ export default {
         try {
             document.body.removeChild(document.getElementById('app-loader'));
         } catch(e) { return e }
-        console.log(this.$store.state);
         // menu切换
         if(this.$route.path.slice(1)) {
             this.page[0] = this.$route.path.slice(1);
@@ -126,70 +121,47 @@ export default {
 }
 </script>
 
-<style scoped>
-    /* 整个页面 */
+<style>
     .user {
         min-width: 1000px;
         height: 100vh;
         background-color: #F2F4F9;
         overflow: hidden;
+    }
+    .user-header {
+        height: 66px;
+    }
+    .user-main {
         position: relative;
+        height: calc(100vh - 66px);
     }
-    /* header */
-    .user .ant-layout-header {
-        display: flex;
-        align-items: center;
-        border-bottom: 1px solid #E8E8E8;
-        /* position: relative; */
-        background-color: rgb(252, 253, 254);
-        color: rgb(90, 90, 90);
-        /* overflow: hidden; */
-        height: 64px; /* 一开始不打算写死高度的- -为了后面的内容还是写一下吧，毕竟这样才能让它保持在最顶上 */
+    .user-main > div {
         width: 100%;
-        position: fixed;
-        top: 0;
-        left: 0;
-    }
-    .user .ant-layout-header > .logo {
-        min-width: 180px;
         height: 100%;
-        letter-spacing: 1px;
-		font-size: 18px;
-		line-height: 66px;
-        margin-right: 20px;
-        white-space: nowrap;
-    }
-    .user .ant-layout-header > .menu {
-        height: 64px;
-        line-height: 64px;
-    }
-    .user .ant-layout-header > .menu li {
-        height: 64px;
-        margin: 0 5px;
-    }
-    .user .loginzoom {
+        box-sizing: border-box;
         position: absolute;
-        right: 0;
-        /* margin-right: 60px; */
-        margin-right: 2%;
     }
-    .user .loginzoom > button {
+    .logo {
+        float: left;
+        height: 31px;
+        line-height: 31px;
+        margin: 16px 28px 16px 3%;
+    }
+    .loginzoom {
+        float: right;
+        height: 31px;
+        line-height: 31px;
+        margin: 16px 3% 16px 28px;
+    }
+    .loginzoom > button {
         color: rgb(81, 141, 225);
         font-weight: 700;
         padding: 0 20px;
     }
-    /* content */
-    .user .ant-layout-content {
-        overflow: hidden;
-        width: 100%;
-        height: calc(100vh - 64px);
-        position: relative;
-    }
-    .user .ant-layout-content > div {
+    .ant-layout-content > div {
         width: 100%;
         height: 100%;
         overflow-x: hidden;
         position: absolute;
     }
-    
 </style>

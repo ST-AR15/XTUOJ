@@ -5,12 +5,12 @@
             title="返回"
             @back="back"
         />
-        <div class="container">
-            <div class="left" :style="{ width: leftW + 'px' }">
+        <div class="question-container">
+            <div class="question-left" :style="{ width: leftW + 'px' }">
                 <a-tabs v-model="tabkey" @change="handleTab">
-                    <a-tab-pane class="left-container" key="question" tab="问题">
+                    <a-tab-pane class="question-left-container" key="question" tab="问题">
                         <a-spin :spinning="loading">
-                            <section class="question-section">
+                            <section class="question-section-question">
                                 <!-- 题目ID和title -->
                                 <h1>
                                     ID {{ ID }}:{{ question.title }}
@@ -30,9 +30,9 @@
                             </section>
                         </a-spin>
                     </a-tab-pane>
-                    <a-tab-pane class="left-container" key="discuss" tab="讨论">
+                    <a-tab-pane class="question-left-container" key="discuss" tab="讨论">
                         <a-spin :spinning="commentLoading">
-                            <section class="discuss-section" id="discuss-section">
+                            <section class="question-section-discuss" id="question-section-discuss">
                                 <div class="comment" style="margin-top: 10px">
                                     <a-textarea :disabled="!$store.state.uid" :placeholder="$store.state.uid? '想说什么，尽管说吧~': '请先登录~'" v-model="comment" :rows="4" />
                                     <a-button style="margin-top: 5px" type="primary" @click="sendComment(false)">发表</a-button>
@@ -102,7 +102,7 @@
                             </section>
                         </a-spin>
                     </a-tab-pane>
-                    <a-tab-pane class="left-container" key="submit" tab="提交情况"></a-tab-pane>
+                    <a-tab-pane class="question-left-container" key="submit" tab="提交情况"></a-tab-pane>
                 </a-tabs>
                 <div class="buttons">
                     <a-space>
@@ -111,10 +111,10 @@
                     </a-space>
                 </div>
             </div>
-            <div class="bar" draggable="true" @dragend="dragBar">
+            <div class="question-bar" draggable="true" @dragend="dragBar">
             </div>
-            <div class="right" :style="{ width: rightW + 'px' }">
-                <div class="right-header">
+            <div class="question-right" :style="{ width: rightW + 'px' }">
+                <div class="question-right-header">
                     <span>语言：</span>
                     <a-select v-model="question.language" style="width: 120px" defult-value="c">
                         <template v-for="item in question.language_allowed">
@@ -144,8 +144,6 @@
                 <div class="buttons">
                     <a-space>
                         <span style="color: #999999;">*可以通过拖拽文件方式来快速填写代码</span>
-                        <a-button type="primary" @click="question.code = ''">重置</a-button>
-                        <a-button type="primary" @click="querysubmit">提交</a-button>
                         <!-- TODO 根据文件后缀自动转换语言 -->
                         <a-upload
                             name="codeFile"
@@ -154,6 +152,8 @@
                         >
                             <a-button type="primary">上传文件</a-button>
                         </a-upload>
+                        <a-button type="primary" @click="question.code = ''">重置</a-button>
+                        <a-button type="primary" @click="querysubmit">提交</a-button>
                     </a-space>
                 </div>
             </div>
@@ -263,7 +263,6 @@ export default {
             console.log(this.question.code);
         },
         queryQuestion() {  // 加载问题
-            console.log("打开了题目" + this.ID);
             this.loading = true; // 开始加载题目
             this.question.questionDetail = ""; // 暂时删除内容
             this.tabkey = 'question'; // 切换到问题内容
@@ -477,63 +476,64 @@ export default {
     margin: 0 auto;
     overflow: hidden;
 }
-.question > .container {
+.question-container {
     width: 100%;
     height: calc(100% - 64px);
     overflow: hidden;
     display: flex;
 }
-.question > .container > div {
+.question-container > div {
     height: 100%;
     position: relative;
 }
-.question .left {
+.question-left {
     min-width: 400px;
 }
-.left .ant-tabs {
+.question-left .ant-tabs {
     position: relative;
     height: calc(100% - 64px);
 }
-.left .ant-tabs-content {
+.question-left .ant-tabs-content {
     height: calc(100% - 61px);
 }
-.question .left-container {
+.question-left-container {
     overflow-y: auto;
     padding: 0 15px;
 }
-.question .left-container > section {
+.question-left-container > section {
     overflow: visible;
 }
-.question .bar {
+.question-bar {
     width: 10px;
     cursor: col-resize;
     background-color: blanchedalmond;
     transition: all .6s;
 }
-.question .bar:hover {
+.question-bar:hover {
     background-color: burlywood;
 }
-.question .right {
+.question-right {
     min-width: 400px;
 }
-.question .question-section > h1 {
+.question-section-question > h1 {
     font-size: 26px;
     border-left: 8px solid #1890FF;
     padding-left: 4px;
+    text-align: left;
 }
-.question .question-section > p {
+.question-section-question > p {
     font-size: 20px;
 }
-.question .discuss-section .context {
+.question-section-discuss .context {
     margin-top: 20px;
 }
-.question .discuss-section .context-inner {
+.question-section-discuss .context-inner {
     width: 100%;
     min-height: 100px;
     margin: 10px 0;
     border-bottom: 1px solid #666666;
 }
-.question .discuss-section .context-recomment {
+.question-section-discuss .context-recomment {
     display: flex;
     flex-direction: column;
     border: 1px solid #777777;
@@ -542,34 +542,34 @@ export default {
     padding: 0 5%;
     margin: 5px 0;
 }
-.question .discuss-section .context-textarea {
+.question-section-discuss .context-textarea {
     margin-bottom: 5px;
 }
-.question .discuss-section .context-item {
+.question-section-discuss .context-item {
     width: 100%;
     min-height: 100px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
-.question .discuss-section .context-header {
+.question-section-discuss .context-header {
     height: 30px;
     line-height: 30px;
     display: flex;
     justify-content: space-between;
 }
-.question .discuss-section .context-footer {
+.question-section-discuss .context-footer {
     height: 30px;
     line-height: 30px;
 }
-.question .context-footer span {
+.question-section-discuss .context-footer span {
     cursor: pointer;
     user-select: none;
 }
-.question .context-footer span:hover {
+.question-section-discuss .context-footer span:hover {
     color: #1890FF;
 }
-.question .right .right-header {
+.question-right .question-right-header {
     height: 46px;
     padding-left: 5px
 }

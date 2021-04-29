@@ -1,7 +1,7 @@
 <template>
-    <div class="user-search" id="user-search">
+    <div class="admin-user-search" id="admin-user-search">
         <a-spin :spinning="loading">
-            <h2>搜索用户</h2>
+            <h2 class="admin-title">搜索用户</h2>
             <a-space style="margin-left: 20px">
                 <span>查询ID</span>
                 <a-input v-model="id" placeholder="请输入对方的ID" @pressEnter="queryInfo()"></a-input>

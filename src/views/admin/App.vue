@@ -136,10 +136,10 @@ export default {
     background-color: #F9F9F9;
 }
 .admin-sider {
-    width: 240px;
+    width: 200px;
 }
 .admin-main {
-    width: calc(100% - 240px);
+    width: calc(100% - 200px);
     padding: 10px 20px;
     
 }

@@ -132,7 +132,6 @@ export default {
         padding-top: 10px;
     }
     .contents-item {
-        position: absolute;
         width: 100%;
     }
 </style>

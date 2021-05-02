@@ -1,46 +1,22 @@
 /* 动画效果 */
 
-/* fade:透明消失 */
-.fade-enter-active, .fade-leave-active {
-    transition: all 2s ease;
-}
-.fade-enter, .fade-leave-to  {
-    opacity: 0;
-    transform: scale(.7);
-}
-
-/* cross：水平移动 */
-.cross-enter-active, .cross-leave-active {
+/* cross：水平移动 - 左往右 */
+.cross-enter-active {
     transition: all .6s ease;
+}
+.cross-leave-active {
+    display: none;
 }
 .cross-enter, .cross-leave-to  {
     opacity: 0;
     transform: translateX(-10px);
 }
 
-/* cross2：水平移动 */
+/* cross2：水平移动 - 右往左 */
 .cross2-enter-active, .cross2-leave-active {
     transition: all .6s ease;
 }
 .cross2-enter, .cross2-leave-to  {
     opacity: 0;
     transform: translateX(10px);
-}
-
-/* opacity：淡入淡出 */
-.opacity-enter-active, .opacity-leave-active {
-    opacity: 1;
-}
-.opacity-enter, .opacity-leave-to  {
-    opacity: 0;
-}
-
-/* cross：高度 */
-.height-enter-active, .height-leave-active {
-    transition: all .6s ease;
-    transform-origin: top;
-}
-.height-enter, .height-leave-to  {
-    opacity: 0;
-    transform: scaleY(0);
 }

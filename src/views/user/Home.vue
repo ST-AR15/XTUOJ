@@ -1,29 +1,27 @@
 <template>
-    <div class="home" id="home">
-        <div class="user-container">
-            <div class="home-header">
-                <h2 style="font-size: 22px">欢迎使用湘潭大学OJ系统！</h2>
+    <div class="home user-container" id="home">
+        <div class="home-header">
+            <h2 style="font-size: 22px">欢迎使用湘潭大学OJ系统！</h2>
+        </div>
+        <div class="home-container">
+            <div class="home-left">
+                <a-timeline>
+                    <a-timeline-item v-for="(item, i) in timer" :key="i" :color="item.color">
+                        <p style="margin: 0">{{ item.time }}</p>
+                        <p style="margin: 0">{{ item.content }}</p>
+                    </a-timeline-item>
+                </a-timeline>
             </div>
-            <div class="home-container">
-                <div class="home-left">
-                    <a-timeline>
-                        <a-timeline-item v-for="(item, i) in timer" :key="i" :color="item.color">
-                            <p style="margin: 0">{{ item.time }}</p>
-                            <p style="margin: 0">{{ item.content }}</p>
-                        </a-timeline-item>
-                    </a-timeline>
-                </div>
-                <div class="home-right">
-                    <a-list item-layout="horizontal" :data-source="announcements">
-                        <a-list-item slot="renderItem" slot-scope="item">
-                            <a-list-item-meta>
-                                <span slot="title">{{ item.title }}</span>
-                                <span slot="description" v-html="item.description"></span>
-                            </a-list-item-meta>
-                            <span style="margin-left: 30px">{{ item.time }}</span>
-                        </a-list-item>
-                    </a-list>
-                </div>
+            <div class="home-right">
+                <a-list item-layout="horizontal" :data-source="announcements">
+                    <a-list-item slot="renderItem" slot-scope="item">
+                        <a-list-item-meta>
+                            <span slot="title">{{ item.title }}</span>
+                            <span slot="description" v-html="item.description"></span>
+                        </a-list-item-meta>
+                        <span style="margin-left: 30px">{{ item.time }}</span>
+                    </a-list-item>
+                </a-list>
             </div>
         </div>
     </div>
@@ -203,15 +201,14 @@ export default {
         padding: 10px 0;
     }
     .home-left {
-        width: 15%;
+        width: 200px;
         min-width: 200px;
         background-color: #FFFFFF;
         padding: 20px;
         overflow: auto;
     }
     .home-right {
-        width: 84%;
-        
+        width: calc(100% - 220px);
         background-color: #FFFFFF;
         padding: 0 20px 20px 20px;
         overflow: auto;

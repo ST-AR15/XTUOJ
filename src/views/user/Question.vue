@@ -1,9 +1,9 @@
-// TODO 完成当目标题目不存在的时候进行提示且返回之前题目的内容
 <template>
     <div class="question" id="question">
         <a-page-header 
             title="返回"
             @back="back"
+            style="box-shadow: 0 -4px #EEE inset"
         />
         <div class="question-container">
             <div class="question-left" :style="{ width: leftW + 'px' }">
@@ -471,6 +471,7 @@ export default {
 <style>
 .question {
     width: 100%;
+    height: calc(100vh - 66px);
     background-color: #FAFAFA;
     position: relative;
     margin: 0 auto;
@@ -571,6 +572,7 @@ export default {
 }
 .question-right .question-right-header {
     height: 46px;
+    line-height: 46px;
     padding-left: 5px
 }
 .question .buttons {

@@ -1,8 +1,6 @@
 <template>
-    <div class="problems" id="problems">
-        <div class="container user-container">
-            <questionlist :buttons="buttons" @queryQuestion="queryQuestion" />
-        </div>
+    <div class="problems user-container" id="problems">
+        <questionlist :buttons="buttons" @queryQuestion="queryQuestion" />
     </div>
 </template>
 
@@ -26,7 +24,6 @@ export default {
         // 打开题目页面，传入题目ID
         queryQuestion(param) {
             // 修改路由到question
-            console.log(param);
             this.$router.push('/problems/' + param.ID);
         },
     }

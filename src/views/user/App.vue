@@ -1,51 +1,51 @@
 <template>
     <div class="user" id="user">
-            <header class="user-header">
-                <div class="logo">XiangTan University</div>
-                <div class="loginzoom">
-                    <a-button class="navButton" v-if="!$store.state.token" @click="loginVisible = true">登录</a-button>
-                    <a-dropdown class="navButton" v-else>
-                        <a-button>欢迎</a-button>
-                        <a-menu slot="overlay">
-                            <a-menu-item @click="queryPerson">个人中心</a-menu-item>
-                            <a-menu-item @click="logout">退出登录</a-menu-item>
-                        </a-menu>
-                    </a-dropdown>
-                </div>
-                <a-menu
-                    class="menu"
-                    mode="horizontal"
-                    :style="{ lineHeight: '64px', userSelect: 'none' }"
-                    v-model="page"
-                >
-                    <a-menu-item key="home" @click="queryPage('/')">
-                        <a-icon type="home" />
-                        首页
-                    </a-menu-item>
-                    <a-menu-item key="problems" @click="queryPage('problems')">
-                        <a-icon type="profile" />
-                        问题
-                    </a-menu-item>
-                    <a-menu-item key="contests" @click="queryPage('contests')">
-                        <a-icon type="trophy" />
-                        竞赛
-                    </a-menu-item>
-                    <a-menu-item key="status" @click="queryPage('status')">
-                        <a-icon type="branches" />
-                        状态
-                    </a-menu-item>
-                    <!-- <a-menu-item key="ranklist" @click="queryPage('ranklist')">
-                        <a-icon type="bar-chart" />
-                        排名
-                    </a-menu-item> -->
-                </a-menu>
-            </header>
-            <main class="user-main">
-                <transition name="cross">
-                    <router-view />
-                </transition>
-            </main>
-            <login :visible="loginVisible" @ok="login" @close="loginVisible = false" />
+        <header class="user-header">
+            <div class="logo">XiangTan University</div>
+            <div class="loginzoom">
+                <a-button class="navButton" v-if="!$store.state.token" @click="loginVisible = true">登录</a-button>
+                <a-dropdown class="navButton" v-else>
+                    <a-button>欢迎</a-button>
+                    <a-menu slot="overlay">
+                        <a-menu-item @click="queryPerson">个人中心</a-menu-item>
+                        <a-menu-item @click="logout">退出登录</a-menu-item>
+                    </a-menu>
+                </a-dropdown>
+            </div>
+            <a-menu
+                class="menu"
+                mode="horizontal"
+                :style="{ lineHeight: '64px', userSelect: 'none' }"
+                v-model="page"
+            >
+                <a-menu-item key="home" @click="queryPage('/')">
+                    <a-icon type="home" />
+                    首页
+                </a-menu-item>
+                <a-menu-item key="problems" @click="queryPage('problems')">
+                    <a-icon type="profile" />
+                    问题
+                </a-menu-item>
+                <a-menu-item key="contests" @click="queryPage('contests')">
+                    <a-icon type="trophy" />
+                    竞赛
+                </a-menu-item>
+                <a-menu-item key="status" @click="queryPage('status')">
+                    <a-icon type="branches" />
+                    状态
+                </a-menu-item>
+                <!-- <a-menu-item key="ranklist" @click="queryPage('ranklist')">
+                    <a-icon type="bar-chart" />
+                    排名
+                </a-menu-item> -->
+            </a-menu>
+        </header>
+        <main class="user-main">
+            <transition name="cross">
+                <router-view />
+            </transition>
+        </main>
+        <login :visible="loginVisible" @ok="login" @close="loginVisible = false" />
     </div>
 </template>
 
@@ -124,22 +124,24 @@ export default {
 <style>
     .user {
         min-width: 1000px;
-        height: 100vh;
+        min-height: 100vh;
         background-color: #F2F4F9;
         overflow: hidden;
     }
     .user-header {
+        width: 100%;
         height: 66px;
+        position: fixed;
+        z-index: 499;
     }
     .user-main {
-        position: relative;
-        height: calc(100vh - 66px);
+        /* height: calc(100vh - 66px); */
+        margin-top: 66px;
     }
     .user-main > div {
         width: 100%;
-        height: 100%;
         box-sizing: border-box;
-        position: absolute;
+        position: relative;
     }
     .logo {
         float: left;

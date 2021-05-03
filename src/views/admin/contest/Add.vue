@@ -21,25 +21,68 @@
                 ></a-input>
             </a-form-model-item>
 
+            <a-form-model-item label="是否屏蔽">
+                <a-radio-group
+                    v-model="form.defunct"
+                >
+                    <a-radio value="Y">是</a-radio>
+                    <a-radio value="N">否</a-radio>
+                </a-radio-group>
+            </a-form-model-item>
+
+            <a-form-model-item label="参加方式">
+                <a-radio-group v-model="form.contestType">
+                    <a-radio :value="0">公开</a-radio>
+                    <a-radio :value="1">注册</a-radio>
+                    <a-radio :value="2">私人</a-radio>
+                </a-radio-group>
+            </a-form-model-item>
+
+            <transition name="cross">
+                <a-form-model-item label="比赛密码" v-show="form.contestType == '1'">
+                    <a-input v-model="form.password" placeholder="私有比赛密码"></a-input>
+                </a-form-model-item>
+            </transition>
+
+            <a-form-model-item label="比赛形式">
+                <a-radio-group
+                    v-model="form.contestant"
+                >
+                    <a-radio :value="0">个人赛</a-radio>
+                    <a-radio :value="1">团队赛</a-radio>
+                </a-radio-group>
+            </a-form-model-item>
+
+            <a-form-model-item label="语言类型">
+                <a-checkbox-group v-model="form.language" :options="this.$language"></a-checkbox-group>
+            </a-form-model-item>
+
             <a-form-model-item label="判题方式">
                 <a-radio-group
                     v-model="form.judge"
                 >
-                    <a-radio value="ICPC">ICPC</a-radio>
-                    <a-radio value="OI">OI</a-radio>
-                    <a-radio value="HOI">半OI</a-radio>
-                    <a-radio value="CF">CF</a-radio>
+                    <a-radio value="AcmMode">AcmMode</a-radio>
+                    <a-radio value="OiMode">OiMode</a-radio>
+                    <a-radio value="HalfOiMode">HalfOiMode</a-radio>
                 </a-radio-group>
             </a-form-model-item>
 
-            <a-form-model-item label="允许使用的编译器">
-                <a-checkbox-group v-model="form.compiler" :options="compilerList"></a-checkbox-group>
+            <a-form-model-item label="比赛内容">
+                <a-input v-model="form.contest"></a-input>
             </a-form-model-item>
 
-            <a-form-model-item label="题目">
+            <a-form-model-item label="比赛时间">
+                <a-range-picker
+                    style="width: 500px"
+                    :show-time="{ format: 'HH:mm' }"
+                    format="YYYY-MM-DD HH:mm"
+                    :placeholder="['开始时间', '结束时间']"
+                    @ok="handleTime"
+                />
+            </a-form-model-item>
+
+            <!-- <a-form-model-item label="题目">
                 <transition-group name="cross">
-                    <!-- 可以把这个div设置成absolute，然后根据i来设置top属性，这样整个动画就能更加连贯 -->
-                    <!-- 后续需求如果需要就这样改 -->
                     <div class="contests-question" style="display:flex;align-items:center;margin-top:5px;position:relative" v-for="(data,i) in form.questions" :key="data.key">
                         <a-icon :style="{
                             fontSize:'22px',
@@ -53,28 +96,16 @@
                     </div>
                 </transition-group>
                 <p>当前题目数量：<span v-text="form.questions.length-1"></span></p>
-            </a-form-model-item>
+            </a-form-model-item> -->
 
-            <a-form-model-item label="参加方式">
-                <a-radio-group v-model="form.join">
-                    <a-radio value="public">公开</a-radio>
-                    <a-radio value="private">私有</a-radio>
-                    <a-radio value="group">群组</a-radio>
-                </a-radio-group>
-            </a-form-model-item>
-
-            <transition name="cross">
-                <a-form-model-item label="比赛密码" v-show="form.join == 'private'">
-                    <a-input v-model="form.password" placeholder="私有比赛密码"></a-input>
-                </a-form-model-item>
-            </transition>
+            
             
 
             <a-divider />
 
             <a-form-model-item :wrapper-col="{ span: 4, offset: 2 }">
-                <a-button @click="submitForm" type="primary">上传</a-button>
-                <a-button @click="resetForm" style="margin-left:10px;">重置</a-button>
+                <a-button @click="submitForm" type="primary">创建</a-button>
+                <a-button @click="resetForm" type="danger" style="margin-left:10px;">重置</a-button>
             </a-form-model-item>
         </a-form-model>
         <div v-if="createMode=='clone'">
@@ -90,24 +121,29 @@
 </template>
 
 <script>
+import { toBinary, timeFormatter } from "@/utils/tools.js"
 export default {
     data() {
         return {
             createMode: "new",  // new是新建比赛，clone是克隆比赛
-            compilerList: ["GCC","Java","C++","Python"],  // 可使用的编译器列表
             form: {
                 name: "",
-                judge: "ICPC",
-                compiler: ["GCC","Java"],
-                questions: [
-                    {
-                        key: 0,
-                        ID: "",
-                        name: "",
-                        isValid: false,
-                    }
-                ],
-                join: "public",
+                defunct: "N",     // 用"N"或者"Y"表示比赛是否屏蔽
+                contestType: 0,   // 比赛类型，0为公开，1为注册，2为私人
+                contestant: 0,    // 0为个人赛，1为团队赛
+                language: [],     // 语言类型
+                judge: "AcmMode", // 判题方式
+                content: "",      // 比赛内容
+                // TODO 这个比赛内容是什么？
+                time: [],
+                // questions: [
+                //     {
+                //         key: 0,
+                //         ID: "",
+                //         name: "",
+                //         isValid: false,
+                //     }
+                // ],
                 password: "",
             },
             rules: {                     // 表单规则
@@ -119,6 +155,10 @@ export default {
         
     },
     methods: {
+        handleTime(e) {
+            this.form.time[0] = e[0]._d;
+            this.form.time[1] = e[1]._d;
+        },
         handleQuestion(i) {  //删除或者添加某个问题
             if(i == this.form.questions.length-1) {  //如果是最后的问题，那就是添加
                 // 只有isValid为true才允许添加
@@ -160,7 +200,24 @@ export default {
             
         },
         submitForm() { // 上传表单
-
+            // TODO 接口用不了
+            const url = "/api/contest"
+            const info = {
+                Tittle: this.form.name,
+                Defunct: this.form.defunct,
+                ContestType: this.form.contestType,
+                Contestant: this.form.contestant,
+                Language: toBinary(this.form.language, this.$language),
+                JudegWay: this.form.judge,
+                Contest: this.form.contest,
+                // TODO 问一下这个date数据类型
+                StartTime: timeFormatter(this.form.time[0].getTime(), true),
+                EndTime: timeFormatter(this.form.time[1].getTime(), true),
+            }
+            console.log(info);
+            this.$axios.post(url, info).then(rep => {
+                console.log(rep);
+            })
         },
         resetForm() { // 重置表单
             

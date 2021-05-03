@@ -1,30 +1,10 @@
 <template>
     <div class="admin-contest-manage" id="admin-contest-manage">
-        <a-table
-            :columns="columns"
-            :data-source="contests"
-            :pagination="pagination"
-        >
-            <!-- ID -->
-            <span slot="ID"></span>
-            <span slot="title"></span>
-            <!-- 表头 -->
-            <template slot="title">
-                <h2 style="font-size: 22px">比赛列表</h2>
-            </template>
-            <!-- 操作 -->
-            <span slot="buttons" slot-scope="text, record">
-                <a-space>
-                    <a-button type="primary" @click="queryNamelist(record.ID)">名单管理</a-button>
-                    <a-button type="primary" @click="queryQuestion(record.ID)">题目管理</a-button>
-                    <a-button type="primary" @click="queryNotice(record.ID)">发送通知</a-button>
-                    <a-button type="danger">重判</a-button>
-                </a-space>
-            </span>
-        </a-table>
-        <!-- 名单管理modal -->
+        <!-- TODO 没有重判的接口 -->
+        <contestlist :buttons="buttons" @queryNamelist="queryNamelist" @queryQuestion="queryQuestion" @queryNotice="queryNotice" />
+        <!-- 题目管理modal -->
         <a-modal
-            :title="questionModal.ID + '名单管理'"
+            :title="questionModal.ID + '题目管理'"
             :visible="questionModal.isVisible"
             @cancel="questionModal.isVisible = false"
         >
@@ -59,51 +39,30 @@
 <script>
 import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
+import contestlist from '@/views/components/Contestlist.vue'
 export default {
     components: {
-        mavonEditor
+        mavonEditor,
+        contestlist
     },
     data() {
         return {
-            pagination: {       // 页面设置
-                pageSize:10,    // 每页题目数量
-            },
-            contests: [         // 表格内容
+            buttons: [
                 {
-                    key: "1000",
-                    ID: 1000,
-                    title: "A+BA",
-                    source: "昶浩",
+                    text: "名单管理",
+                    method: "queryNamelist",
                 },
                 {
-                    key: "1001",
-                    ID: 1001,
-                    title: "A+BA",
-                    source: "昶浩",
-                },
-            ],
-            columns: [          // 表格的表头
-                {
-                    title: "ID",
-                    dataIndex: "ID",
+                    text: "题目管理",
+                    method: "queryQuestion"
                 },
                 {
-                    title: "比赛名称",
-                    dataIndex: "title",
+                    text: "发送通知",
+                    method: "queryNotice"
                 },
                 {
-                    title: "发布人",
-                    dataIndex: "source"
-                },
-                {
-                    title: "比赛开始时间"
-                },
-                {
-                    title: "总时长"
-                },
-                {
-                    title: "操作",
-                    scopedSlots: { customRender: 'buttons' },
+                    text: "重判",
+                    isDanger: true,
                 }
             ],
             questionModal: {            // 题目管理对话框的内容
@@ -130,11 +89,11 @@ export default {
         }
     },
     methods: {
-        queryNamelist(contestID) {  // 管理名单
-            console.log(contestID);
+        queryNamelist(info) {  // 管理名单
+            console.log(info.ID);
         },
-        queryQuestion(contestID) { // 管理题目
-            console.log(contestID);
+        queryQuestion(info) { // 管理题目
+            console.log(info);
             this.questionModal.isVisible = true;
         },
         handleQuestion(i) { // 修改题目
@@ -155,8 +114,7 @@ export default {
                 this.questionModal.data.splice(i,1);
             }
         },
-        queryQuestionTitle(i) {
-            // 获取题目名字
+        queryQuestionTitle(i) {  // 获取题目名字
             // 限定四位数
             if(this.questionModal.data[i].ID/1000 >= 1 && this.questionModal.data[i].ID/1000 < 10) {
                 this.questionModal.data[i].name = "< 查询中…… >";

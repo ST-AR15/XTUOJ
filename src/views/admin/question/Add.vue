@@ -185,7 +185,7 @@ export default {
                         timeLimit = (parseInt(that.form.timeLimit/500)+1)*500;
                         this.$message.info(`已将时限的${ that.form.timeLimit }修改为${ timeLimit }`);
                     }
-                    let info = {    // 传给后端的info
+                    const info = {    // 传给后端的info
                         Tittle: that.form.name,
                         source: that.form.source,
                         Content: that.form.contents,
@@ -196,7 +196,7 @@ export default {
                         // TODO: 没有判题输入和判题输出
                     };
                     // url
-                    let url = "/api/problem";
+                    const url = "/api/problem";
                     that.$axios.post(url, info).then(rep => {
                         console.log(rep);
                         // 弹出对话框

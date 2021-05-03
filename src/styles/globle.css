@@ -15,10 +15,9 @@ h1 {
 }
 /* user通用 */
 .user-container {
-    width: 98%;
+    padding: 10px 1%;
     min-width: 1000px;
     position: relative;
-    margin: 0 auto;
     height: 100%;
     overflow: hidden;
 }

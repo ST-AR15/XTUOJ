@@ -59,6 +59,11 @@ const routes = [
                 component: question,
             },
             {
+                name: 'question_contest',
+                path: '/problems/:CID/:ID',
+                component: question,
+            },
+            {
                 name: 'contests',
                 path: '/contests',
                 component: contests,

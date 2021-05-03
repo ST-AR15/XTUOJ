@@ -44,9 +44,9 @@ export function filterEmptyValue(obj) {
 export function timeFormatter(flag, isFull = false) {
     let time = new Date(parseInt(flag));
     if(isFull) {
-        return `${time.getFullYear()}-${(time.getMonth()+1)<10? '0'+(time.getMonth()+1) : (time.getMonth()+1)}-${time.getDate()} ${time.getHours()}:${time.getMinutes()<10? '0'+time.getMinutes():time.getMinutes()}:${time.getSeconds()<10? '0'+time.getSeconds():time.getSeconds()}`
+        return `${ time.getFullYear() }-${ (time.getMonth()+1) }-${ time.getDate() } ${ time.getHours() }:${ time.getMinutes()<10? '0'+time.getMinutes():time.getMinutes() }:${ time.getSeconds()<10? '0'+time.getSeconds():time.getSeconds() }`
     } else {
-        return `${time.getHours()}:${time.getMinutes()<10? '0'+time.getMinutes():time.getMinutes()}:${time.getSeconds()<10? '0'+time.getSeconds():time.getSeconds()}`
+        return `${ time.getHours() }:${ time.getMinutes() }:${ time.getSeconds()<10? '0'+time.getSeconds():time.getSeconds() }`
     }
 }
 
@@ -82,4 +82,26 @@ export function copy(text) {
         document.body.removeChild(input);
     }
     
+}
+/**
+ * 对比两数组并把原数组变成二进制
+ * @param { Array } arr 原数组
+ * @param { Array } full 目标数组
+ * @param { Boolean } isSort 是否需要进行排序，默认否
+ */
+export function toBinary(arr, full, isSort = false) {
+    if(isSort) {
+        arr = arr.sort();
+        full = full.sort();
+    }
+    let str = "";
+    for(let i = 0,j = 0; i < full.length ;i++) {
+        if(arr[j] == full[i]) {
+            str += "1";
+            j++;
+        } else {
+            str += "0";
+        }
+    }
+    return parseInt(str);
 }

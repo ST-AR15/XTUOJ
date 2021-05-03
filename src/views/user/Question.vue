@@ -116,7 +116,7 @@
             <div class="question-right" :style="{ width: rightW + 'px' }">
                 <div class="question-right-header">
                     <span>语言：</span>
-                    <a-select v-model="question.language" style="width: 120px" defult-value="c">
+                    <a-select v-model="question.language" style="width: 120px" defult-value="GCC">
                         <template v-for="item in question.language_allowed">
                             <a-select-option :key="item" :value="item">
                                 {{ item }}
@@ -166,6 +166,7 @@ import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 import { codemirror } from 'vue-codemirror'
 import 'codemirror/theme/ambiance.css'
+import { Base64 } from 'js-base64'
 require('codemirror/mode/javascript/javascript')
 require('codemirror/mode/clike/clike')
 export default {
@@ -198,10 +199,10 @@ export default {
                 matchBrackets: true,
             },
             question: {
-                language: "C",
+                language: "GCC",
                 timeLimit: 128,
                 memoryLimit: 128,
-                language_allowed: ["C","C++","Java","JavaScript","PHP","Ruby"],
+                language_allowed: this.$language,
                 title: "题目打开中",
                 tips: [],
                 questionDetail: "请稍候……",
@@ -260,7 +261,15 @@ export default {
             return false;
         },
         querysubmit() {  // 提交代码
-            console.log(this.question.code);
+            const url = `/api/problem/${ this.ID }/submit`;
+            const info = {
+                Code: Base64.encode(this.question.code),
+                Language: this.question.language
+            }
+            this.$axios.post(url, info).then(rep => {
+                console.log(rep);
+            })
+            // TODO 这个API不能用
         },
         queryQuestion() {  // 加载问题
             this.loading = true; // 开始加载题目

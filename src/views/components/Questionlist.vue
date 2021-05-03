@@ -4,7 +4,6 @@
         <a-table
             :columns="columns"
             :data-source="questions"
-            style="width:98%; background-color:#FCFDFE; margin:0 auto"
             :pagination="pagination"
             :loading="loading"
             rowKey="ID"

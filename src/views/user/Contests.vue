@@ -14,11 +14,12 @@
                     :data-source="questions"
                     :pagination="false"
                     rowKey="ID"
+                    :loading="questionLoader"
                 >
                     <!-- 表头 -->
                     <template slot="title">
                         <h2 style="font-size: 22px">
-                            <a-icon type="arrow-left" @click="pageNow = 'contests'" />
+                            <a-icon type="arrow-left" @click="handleBack" />
                             返回
                         </h2>
                     </template>
@@ -41,7 +42,6 @@ export default {
     data() {
         return {
             pageNow: "contests", // contests是竞赛列表，questions是问题列表
-            CID: 0, // 当前比赛ID
             contestButtons: [
                 {
                     text: "开始比赛",
@@ -71,28 +71,67 @@ export default {
                     ID: 1001,
                     tittle: "打字机",
                 },
-            ]
+            ],
+            questionLoader: false,
         }
     },
     methods: {
-        queryStart(info) {  // 开始比赛
-            this.pageNow = "questions";  // 切换页面
+        handleBack() {  // 比赛题目详情回到比赛列表
+            this.$router.push(`/contests`);  // 修改route
+        },
+        queryStart(info) {  // 跳转至比赛题目列表
+            // TODO 好像没登录的账号也能查到比赛，但是看不到题目
+            this.$router.push(`/contests/${ info.ID }`);  // 修改route
+        },
+        queryQuestionList() {  // 获取比赛题目
+            this.questions = [];  // 清空列表
+            this.questionLoader = true;// 开始加载
             // 加载题目列表
-            // TODO 这个接口不可用
-            const url = `api/contest/${ info.ID }/problem`;
-            this.CID = info.ID; // TODO 下面成了之后就把这个删了
+            const url = `api/contest/${ this.$route.params.CID }/problem`;
             this.$axios.get(url).then(rep => {
-                this.CID = info.ID;
-                console.log(rep);
+                const data = rep.data.data;
+                for(let i in data) {
+                    const question = {
+                        ID: data[i].c_pid,
+                        tittle: data[i].Tittle,
+                    }
+                    this.questions.push(question);
+                }
+                // 结束加载
+                this.questionLoader = false;
+            }).catch(err => {
+                // 发生错误也停止加载
+                console.log(err);
+                this.questionLoader = false;
             })
         },
         queryQuestion(ID) { // 打开题目
-            this.$router.push(`/problems/${ this.CID }/${ ID }`);
+            this.$router.push(`/problems/${ this.$route.params.CID }/${ ID }`);
         },
         createContest() {  // 创建比赛
             // TODO 完成创建比赛
 
         }
+    },
+    mounted() {
+        if(this.$route.name == "contests_detail") {  // 如果route上是比赛页
+            this.pageNow = "questions";
+            // 加载题目
+            this.queryQuestionList({ ID: this.$route.params.CID });
+        } else {
+            this.pageNow = "contests";
+        }
+    },
+    watch: {
+        $route() {
+            if(this.$route.name == "contests_detail") {  // 如果route上是比赛页
+                this.pageNow = "questions";
+                // 加载题目
+                this.queryQuestionList({ ID: this.$route.params.CID });
+            } else {
+                this.pageNow = "contests";
+            }
+        },
     },
 }
 </script>

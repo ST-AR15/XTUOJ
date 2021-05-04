@@ -69,6 +69,11 @@ const routes = [
                 component: contests,
             },
             {
+                name: 'contests_detail',
+                path: '/contests/:CID',
+                component: contests,
+            },
+            {
                 name: 'status',
                 path: '/status',
                 component: status,

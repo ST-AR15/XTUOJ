@@ -275,9 +275,21 @@ export default {
             this.loading = true; // 开始加载题目
             this.question.questionDetail = ""; // 暂时删除内容
             this.tabkey = 'question'; // 切换到问题内容
-            let url = '/api/problem/' + this.ID;
+            let url;
+            if(this.$route.name == "question_contest") {   // 比赛模式加载
+                url = `/api/contest/${ this.$route.params.CID }/problem/${ this.ID }`;
+            } else {  // 普通模式加载
+                url = '/api/problem/' + this.ID;
+            }
             this.$axios.get(url).then(rep => {
-                const data = rep.data.data;
+                // TODO 题目详情里都没写允许的语言
+                let data;
+                if(this.$route.name == "question_contest") {   // 比赛模式
+                    data = rep.data.data[0];
+                } else {  // 普通模式加载
+                    data = rep.data.data;
+                }
+                console.log(data);
                 // Pid
                 this.question.title = data.Tittle;
                 // source

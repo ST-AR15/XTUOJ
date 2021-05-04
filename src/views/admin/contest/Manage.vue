@@ -1,16 +1,18 @@
 <template>
     <div class="admin-contest-manage" id="admin-contest-manage">
         <!-- TODO 没有重判的接口 -->
-        <contestlist :buttons="buttons" @queryNamelist="queryNamelist" @queryQuestion="queryQuestion" @queryNotice="queryNotice" />
+        <contestlist ref="contestlist" :buttons="buttons" @queryNamelist="queryNamelist" @queryQuestion="queryQuestion" @queryNotice="queryNotice" @queryDelete="queryDelete" />
         <!-- 题目管理modal -->
         <a-modal
-            :title="questionModal.ID + '题目管理'"
+            :title="'比赛' + questionModal.ID + ' - 题目管理'"
             :visible="questionModal.isVisible"
             @cancel="questionModal.isVisible = false"
+            @ok="queryQuestionAdd"
         >
-            <transition-group name="cross">
+            <a-spin v-if="questionModal.isLoading" :spinning="true"></a-spin>
+            <transition-group name="cross2">
                 <div style="margin-top:5px" v-for="(data,i) in questionModal.data" :key="data.key">
-                    <a-space>
+                    <a-space v-if="!questionModal.isLoading">
                         <a-icon :style="{
                             fontSize:'22px',
                             cursor:'pointer',
@@ -49,6 +51,9 @@ export default {
         return {
             buttons: [
                 {
+                    text: "信息修改",
+                },
+                {
                     text: "名单管理",
                     method: "queryNamelist",
                 },
@@ -63,25 +68,26 @@ export default {
                 {
                     text: "重判",
                     isDanger: true,
+                },
+                {
+                    text: "删除比赛",
+                    isDanger: true,
+                    method: "queryDelete"
                 }
             ],
             questionModal: {            // 题目管理对话框的内容
+                isLoading: false,
                 isVisible: false,
                 ID: 1000,
                 data: [
-                    {
-                        key: 1,
-                        ID: 1000,
-                        name: "已经添加的题目",
-                        isValid: true,
-                    },
                     {
                         key: 2,
                         ID: "",
                         name: "",
                         isValid: false,
                     }
-                ]
+                ],
+                add: [],
             },
             noticeModal: {      // 发送通知对话框
                 isVisible: false,
@@ -93,13 +99,57 @@ export default {
             console.log(info.ID);
         },
         queryQuestion(info) { // 管理题目
-            console.log(info);
+            // 先把原数组清空
+            this.questionModal.data = [
+                {
+                    key: 2,
+                    ID: "",
+                    name: "",
+                    isValid: false,
+                }
+            ];
+            // 修改ID
+            this.questionModal.ID = info.ID;
+            // 显示
             this.questionModal.isVisible = true;
+            // 开始加载
+            this.questionModal.isLoading = true;
+            // 把现有的题目加上去
+            const url = `/api/contest/${ info.ID }/problem`
+            this.$axios.get(url).then(rep => {
+                const data = rep.data.data;
+                for(let i in data) {
+                    // 从后往前
+                    let question = {
+                        key: Symbol(i),
+                        ID: data[data.length-1-i].c_pid,
+                        name: data[data.length-1-i].Tittle,
+                        isValid: true,
+                    };
+                    this.questionModal.data.unshift(question);
+                }
+                this.questionModal.isLoading = false; // 结束加载
+            });
+        },
+        queryDelete(info) {  // 删除题目
+            const url = `/api/contest/${ info.ID }`;
+            this.$axios.delete(url).then(rep => {
+                if(parseInt(rep.status/100) == 2) { // 返回2开头的成功码
+                    // 提示操作结果
+                    this.$message.info('删除成功');
+                    // 刷新表格
+                    this.$refs.contestlist.refresh();
+                }
+            })
+            console.log(info);
         },
         handleQuestion(i) { // 修改题目
             if(i == this.questionModal.data.length-1) {  //如果是最后的问题，那就是添加
                 // 只有isValid为true才允许添加
                 if(this.questionModal.data[i].isValid) {
+                    // add数组增加
+                    this.questionModal.add.push(parseInt(this.questionModal.data[i].ID));
+                    // data数组新增一项
                     this.questionModal.data.push({
                         key: Symbol(i),
                         ID: parseInt(this.questionModal.data[i].ID) + 1,
@@ -111,8 +161,23 @@ export default {
                     this.$message.warn('这道题是无效的！');
                 }
             } else {
-                this.questionModal.data.splice(i,1);
+                if(this.questionModal.add.find(o => o == this.questionModal.data[i].ID)) {
+                    this.questionModal.add.splice(this.questionModal.add.findIndex(o => o == this.questionModal.data[i].ID), 1);
+                    this.questionModal.data.splice(i,1);
+                } else {
+                    this.$message.error('无法删除曾经添加过的题目')
+                }
             }
+            //TODO 好像没有删除题目啊
+        },
+        queryQuestionAdd() { // 上传添加题目
+            const url = `/api/contest/${ this.questionModal.ID }/problem`;
+            let params = JSON.stringify({data: this.questionModal.add});
+            console.log(params);
+            this.$axios.post(url, params).then(rep => {
+                // TODO 无法使用
+                console.log(rep);
+            }) 
         },
         queryQuestionTitle(i) {  // 获取题目名字
             // 限定四位数

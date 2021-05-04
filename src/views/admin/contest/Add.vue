@@ -5,111 +5,8 @@
             <a-radio value="new">新建</a-radio>
             <a-radio value="clone">克隆</a-radio>
         </a-radio-group>
-        <a-form-model
-            ref="addForm"
-            :model="form"
-            :label-col="{ span: 3 }"
-            :wrapper-col="{ span: 12 }"
-            :rules="rules"
-            v-show="createMode=='new'"
-        >
-            <a-form-model-item label="比赛名称">
-                <a-input 
-                    style="width: 210px"
-                    v-model="form.name"
-                    placeholder="题目名称"
-                ></a-input>
-            </a-form-model-item>
-
-            <a-form-model-item label="是否屏蔽">
-                <a-radio-group
-                    v-model="form.defunct"
-                >
-                    <a-radio value="Y">是</a-radio>
-                    <a-radio value="N">否</a-radio>
-                </a-radio-group>
-            </a-form-model-item>
-
-            <a-form-model-item label="参加方式">
-                <a-radio-group v-model="form.contestType">
-                    <a-radio :value="0">公开</a-radio>
-                    <a-radio :value="1">注册</a-radio>
-                    <a-radio :value="2">私人</a-radio>
-                </a-radio-group>
-            </a-form-model-item>
-
-            <transition name="cross">
-                <a-form-model-item label="比赛密码" v-show="form.contestType == '1'">
-                    <a-input v-model="form.password" placeholder="私有比赛密码"></a-input>
-                </a-form-model-item>
-            </transition>
-
-            <a-form-model-item label="比赛形式">
-                <a-radio-group
-                    v-model="form.contestant"
-                >
-                    <a-radio :value="0">个人赛</a-radio>
-                    <a-radio :value="1">团队赛</a-radio>
-                </a-radio-group>
-            </a-form-model-item>
-
-            <a-form-model-item label="语言类型">
-                <a-checkbox-group v-model="form.language" :options="this.$language"></a-checkbox-group>
-            </a-form-model-item>
-
-            <a-form-model-item label="判题方式">
-                <a-radio-group
-                    v-model="form.judge"
-                >
-                    <a-radio value="AcmMode">AcmMode</a-radio>
-                    <a-radio value="OiMode">OiMode</a-radio>
-                    <a-radio value="HalfOiMode">HalfOiMode</a-radio>
-                </a-radio-group>
-            </a-form-model-item>
-
-            <a-form-model-item label="比赛内容">
-                <a-input v-model="form.contest"></a-input>
-            </a-form-model-item>
-
-            <a-form-model-item label="比赛时间">
-                <a-range-picker
-                    style="width: 500px"
-                    :show-time="{ format: 'HH:mm' }"
-                    format="YYYY-MM-DD HH:mm"
-                    :placeholder="['开始时间', '结束时间']"
-                    @ok="handleTime"
-                />
-            </a-form-model-item>
-
-            <!-- <a-form-model-item label="题目">
-                <transition-group name="cross">
-                    <div class="contests-question" style="display:flex;align-items:center;margin-top:5px;position:relative" v-for="(data,i) in form.questions" :key="data.key">
-                        <a-icon :style="{
-                            fontSize:'22px',
-                            cursor:'pointer',
-                            color:i==form.questions.length-1? 'black':'red',
-                            transform:i==form.questions.length-1?'':'rotate(45deg)',
-                            transition: 'all .6s'
-                        }" @click="handleQuestion(i)" type="plus-circle" v-bind:title="i==form.questions.length-1?'新增':'删除'" />
-                        <a-input style="width:100px;margin:0 5px" @change="queryTitle(i)" v-model="data.ID" placeholder="题目ID"></a-input>
-                        <a-input style="width: 210px" :value="data.name" placeholder="< 题目名称 >" :disabled="true" v-bind:style="{ 'color': data.isValid? '#52c41a':'#FF0000' }"></a-input>
-                    </div>
-                </transition-group>
-                <p>当前题目数量：<span v-text="form.questions.length-1"></span></p>
-            </a-form-model-item> -->
-
-            
-            
-
-            <a-divider />
-
-            <a-form-model-item :wrapper-col="{ span: 4, offset: 2 }">
-                <a-button @click="submitForm" type="primary">创建</a-button>
-                <a-button @click="resetForm" type="danger" style="margin-left:10px;">重置</a-button>
-            </a-form-model-item>
-        </a-form-model>
         <div v-if="createMode=='clone'">
-            <div style="white-space:nowrap;margin-left:218px">
+            <div style="white-space:nowrap;">
                 <a-space>
                     <span>对象比赛ID</span>
                     <a-input></a-input>
@@ -117,47 +14,85 @@
             </div>
             <a-button style="margin-left:218px" type="primary">确认</a-button>
         </div>
+
+        <contestform okText="创建" @querySubmit="querySubmit" v-else />
+        
+
+        <!-- 比赛添加题目的modal -->
+        <a-modal
+            :title="'请为刚创建的比赛' + addModal.ID + '添加题目！'"
+            :visible="addModal.isVisible"
+            @cancel="addModal.isVisible = false"
+        >
+            <!-- TODO 后续完成这里的添加题目 -->
+            <transition-group name="cross">
+                <div style="margin-top:5px" v-for="(data,i) in addModal.data" :key="data.key">
+                    <a-space>
+                        <a-icon :style="{
+                            fontSize:'22px',
+                            cursor:'pointer',
+                            color:i==addModal.data.length-1? 'black':'red',
+                            transform:i==addModal.data.length-1?'':'rotate(45deg)',
+                            transition: 'all .6s'
+                        }" @click="handleQuestion(i)" type="plus-circle" :title="i==addModal.data.length-1?'新增':'删除'" />
+                        <a-input style="width:100px;margin:0 5px" v-model="data.ID" @change="queryQuestionTitle(i)" placeholder="题目ID"></a-input>
+                        <a-input :value="data.name" placeholder="< 题目名称 >" :disabled="true" v-bind:style="{ 'color': data.isValid? '#52c41a':'#FF0000' }"></a-input>
+                    </a-space>
+                </div>
+            </transition-group>
+            <p style="margin-top: 1rem; margin-bottom: 0">当前题目数量：<span v-text="addModal.data.length-1"></span></p>
+        </a-modal>
     </div>
 </template>
 
 <script>
 import { toBinary, timeFormatter } from "@/utils/tools.js"
+import contestform from '@/views/components/ContestForm.vue'
 export default {
+    components: {
+        contestform
+    },
     data() {
         return {
             createMode: "new",  // new是新建比赛，clone是克隆比赛
-            form: {
-                name: "",
-                defunct: "N",     // 用"N"或者"Y"表示比赛是否屏蔽
-                contestType: 0,   // 比赛类型，0为公开，1为注册，2为私人
-                contestant: 0,    // 0为个人赛，1为团队赛
-                language: [],     // 语言类型
-                judge: "AcmMode", // 判题方式
-                content: "",      // 比赛内容
-                // TODO 这个比赛内容是什么？
-                time: [],
-                // questions: [
-                //     {
-                //         key: 0,
-                //         ID: "",
-                //         name: "",
-                //         isValid: false,
-                //     }
-                // ],
-                password: "",
-            },
-            rules: {                     // 表单规则
-                name: [                  // 题目名称规则：比如输入内容，否则提示“请输入题目名称”
-                    { required: true, message: '请输入比赛名称', trigger: 'change' },
-                ],
+            addModal: {
+                isVisible: false,
+                ID: 0,
+                data: [
+                    {
+                        key: 0,
+                        ID: "",
+                        name: "",
+                        isValid: false,
+                    }
+                ]
             },
         }
         
     },
     methods: {
-        handleTime(e) {
-            this.form.time[0] = e[0]._d;
-            this.form.time[1] = e[1]._d;
+        querySubmit(info) { // 上传的回调
+            const url = "/api/contest"
+            const params = {
+                Tittle: info.name,
+                Defunct: info.defunct,
+                ContestType: info.contestType,
+                Contestant: info.contestant,
+                Language: parseInt(toBinary(info.language, this.$language), 2),
+                JudgeWay: info.judge,
+                // TODO 这个比赛内容是啥
+                Contest: info.contest,
+                StartTime: timeFormatter(info.time[0].getTime(), true),
+                EndTime: timeFormatter(info.time[1].getTime(), true),
+            }
+            this.$axios.post(url, params).then(rep => {
+                if(parseInt(rep.status/100) == 2) {
+                    this.$message.info('创建成功');
+                    this.addModal.isVisible = true; // 弹出添加题目的页面
+                    //TODO 比赛创建成功最好给我返回这个题目的ID，我能直接让它添加题目
+                    // this.resetForm(); // TODO 调用子类的重置表单
+                }
+            })
         },
         handleQuestion(i) {  //删除或者添加某个问题
             if(i == this.form.questions.length-1) {  //如果是最后的问题，那就是添加
@@ -199,29 +134,7 @@ export default {
             
             
         },
-        submitForm() { // 上传表单
-            // TODO 接口用不了
-            const url = "/api/contest"
-            const info = {
-                Tittle: this.form.name,
-                Defunct: this.form.defunct,
-                ContestType: this.form.contestType,
-                Contestant: this.form.contestant,
-                Language: toBinary(this.form.language, this.$language),
-                JudegWay: this.form.judge,
-                Contest: this.form.contest,
-                // TODO 问一下这个date数据类型
-                StartTime: timeFormatter(this.form.time[0].getTime(), true),
-                EndTime: timeFormatter(this.form.time[1].getTime(), true),
-            }
-            console.log(info);
-            this.$axios.post(url, info).then(rep => {
-                console.log(rep);
-            })
-        },
-        resetForm() { // 重置表单
-            
-        }
+        
     }
 }
 </script>

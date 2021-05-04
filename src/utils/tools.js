@@ -105,3 +105,20 @@ export function toBinary(arr, full, isSort = false) {
     }
     return parseInt(str);
 }
+
+
+/**
+ * 对比数组和一个二进制数来返回新的数组
+ * @param {Array} full 目标数组
+ * @param {Number} num 二进制数
+ */
+export function binaryToArray(full, num) {
+    let arr = num.toString().split('');
+    let newArr = [];
+    for(let i in arr) {
+        if(arr[i] == '1') {
+            newArr.push(full[i]);
+        }
+    }
+    return newArr;
+}

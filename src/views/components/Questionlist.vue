@@ -1,4 +1,5 @@
 // 传入一个数组，数组的每一项是一个对象，每个对象里面一个text和一个method，text是按钮名字，method是方法。记得监听。
+// TODO 和contestlist一样翻页有BUG
 <template>
     <div class="questionlist" id="questionlist">
         <a-table
@@ -41,9 +42,18 @@
                         <a-button v-if="!item.isDanger" type="primary" :key="i" @click="callbackMethod(item.method,record)">
                             {{ item.text }}
                         </a-button>
-                        <a-button v-else type="danger" :key="i" @click="callbackMethod(item.method,record)">
-                            {{ item.text }}
-                        </a-button>
+                        <a-popconfirm
+                            :key="i"
+                            v-else
+                            title="确认这样操作吗？"
+                            ok-text="确认"
+                            cancel-text="取消"
+                            @confirm="callbackMethod(item.method,record)"
+                        >
+                            <a-button type="danger">
+                                {{ item.text }}
+                            </a-button>
+                        </a-popconfirm>
                     </template>
                 </a-space>
             </span>
@@ -182,7 +192,7 @@ export default {
                 that.loading = false;
             }).catch(error => {
                 // 如果检测到错误，也停止加载
-                console.log(error);
+                this.$message.error(`加载问题列表时发生错误${ error }`);
                 that.loading = false;
             })
         },

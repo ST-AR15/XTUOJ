@@ -331,20 +331,19 @@ export default {
     },
     methods: {
         queryDetail(info) {  // 获取题目详情和修改
-            let that = this;
             // 使用info.ID来调取题目信息
             let url = "/api/problem/" + info.ID;
             this.$axios.get(url).then(rep => {
                 // 把获取到的信息赋值给questionDetail
                 const data = rep.data.data;
-                that.detailModal.data.ID = data.Pid;
-                that.detailModal.data.title = data.Tittle;
-                that.detailModal.data.source = data.Source==null? data.Source:"admin";
-                that.detailModal.data.content = data.Content;
-                that.detailModal.data.timeLimit = data.TimeLimit;
-                that.detailModal.data.memoryLimit = data.MemoryLimit;
-                that.detailModal.data.IsBan = data.IsBan;
-                that.detailModal.data.QType = "normal"
+                this.detailModal.data.ID = data.Pid;
+                this.detailModal.data.title = data.Tittle;
+                this.detailModal.data.source = data.Source==null? data.Source:"admin";
+                this.detailModal.data.content = data.Content;
+                this.detailModal.data.timeLimit = data.TimeLimit;
+                this.detailModal.data.memoryLimit = data.MemoryLimit;
+                this.detailModal.data.IsBan = data.IsBan;
+                this.detailModal.data.QType = "normal"
             })
             this.detailModal.ID = info.ID;
             this.detailModal.title = info.title;
@@ -383,10 +382,11 @@ export default {
                 MemoryLimit: this.detailModal.data.memoryLimit,
                 IsBan: this.detailModal.data.IsBan,
             }
-            console.log(info);
+            // TODO solved意义不明
             this.$axios.put(url, { params: info }).then(rep => {
-                console.log(rep);
-                this.$message.success("修改成功！");
+                this.$message.success(rep.statusText);
+                // TODO 这里提示修改成功，但实际上没修改
+                this.detailModal.visible = false;
             })
         },
         queryTipDelete(i) {  // 删除标签

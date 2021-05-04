@@ -49,7 +49,7 @@
                     </transition>
                     <a-form-model-item :wrapper-col="{ span: 14, offset: 7 }">
                         <a-space>
-                            <a-button type="primary" @click="confirm" v-text="isRegister? '确认': '登录'"></a-button>
+                            <a-button type="primary" :loading="loginLoader" @click="confirm" v-text="isRegister? '确认': '登录'"></a-button>
                             <a-button type="primary" @click="register" v-text="isRegister? '直接登录': '前往注册'"></a-button>
                             <a-button type="danger" @click="cancel">取消</a-button>
                         </a-space>
@@ -77,43 +77,45 @@ export default {
                 Age: "",
             },
             isRegister: false,
-            
+            loginLoader: false,  // 登录的加载
         }
     },
     methods: {
         confirm() {
-            let that = this;
             // 分登录和注册
-            if(!that.isRegister) {  // 登录
+            if(!this.isRegister) {  // 登录
+                this.loginLoader = true;  // 开始加载
                 const url = "/api/users/login";
                 let info = {
-                    StudentID: that.loginForm.account,
-                    password: that.loginForm.password,
+                    StudentID: this.loginForm.account,
+                    password: this.loginForm.password,
                 };
-                that.$axios.post(url,info).then(rep => {
-                    this.$store.commit('setUid', rep.data.data.Uid);
-                    this.$store.commit('setToken', rep.data.data.token);
-                    that.$message.success('登录成功');
+                this.$axios.post(url,info).then(rep => {
+                    const data = rep.data.data;
+                    this.$store.commit('setUid', data.Uid);
+                    this.$store.commit('setToken', data.token);
+                    this.$message.success('登录成功');
                     this.$emit('close');
                     this.$emit('ok');
+                    this.loginLoader = false;
+                }).catch( e => {
+                    this.$message.error(`发生错误${ e }`);
+                    this.loginLoader = false;
                 })
             } else {  // 注册
                 const url = "/api/users/register";
                 let info = {
-                    StudentID: that.loginForm.account,
-                    password: that.loginForm.password,
-                    Name: that.loginForm.name,
-                    Profession: that.loginForm.profession,
-                    Age: that.loginForm.age,
+                    StudentID: this.loginForm.account,
+                    password: this.loginForm.password,
+                    Name: this.loginForm.name,
+                    Profession: this.loginForm.profession,
+                    Age: this.loginForm.age,
                 };
-                that.$axios.post(url, info).then(rep => {
+                this.$axios.post(url, info).then(rep => {
                     if(Math.floor(rep.status / 100) == 2) { // 2开头表示成功
                         // 成功则登录
-                        that.isRegister = false;
-                        that.confirm();
-                    }else {
-                        // 否则提示 ..好像不是2开头都不会到这来，会被拦截
-                        that.$message.error(rep.data.data);
+                        this.isRegister = false;
+                        this.confirm();
                     }
                 })
             }
@@ -140,7 +142,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1499;
+    z-index: 999;
     background-color: rgba(77, 77, 77, .7);
 }
 .login-inner {

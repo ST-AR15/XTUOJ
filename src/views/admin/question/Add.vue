@@ -131,7 +131,7 @@ export default {
                 subfield: true,      // 单双栏模式
                 preview: true,       // 预览
             },
-            formDefult: {                // 默认的表单数据
+            formDefault: {                // 默认的表单数据
                 name: "",                // 题目名称
                 timeLimit: 1000,         // 时限，默认1000ms
                 memoryLimit: 128,        // 存限，默认128MB
@@ -192,6 +192,7 @@ export default {
                         TimeLimit: that.form.timeLimit,
                         MemoryLimit: that.form.memoryLimit,
                         IsBan: String(that.form.isBan),
+                        // TODO 和删除题目一样，其实不知道这个isSolved有啥用
                         Solved: that.form.isSolved? "yes": "no",
                         // TODO: 没有判题输入和判题输出
                     };
@@ -210,14 +211,14 @@ export default {
         },
         handleReset() {  //清空表单
             // this.$refs.addForm.resetFields();
-            // this.form = this.formDefult;
-            this.form = JSON.parse(JSON.stringify(this.formDefult));
-            console.log(this.formDefult);
+            // this.form = this.formDefault;
+            this.form = JSON.parse(JSON.stringify(this.formDefault));
+            console.log(this.formDefault);
         },
     },
     mounted:function() {
         // 让form的值变为默认值
-        this.form = JSON.parse(JSON.stringify(this.formDefult));
+        this.form = JSON.parse(JSON.stringify(this.formDefault));
     }
 }
 </script>

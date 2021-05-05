@@ -74,11 +74,12 @@
                     format="YYYY-MM-DD HH:mm"
                     :placeholder="['开始时间', '结束时间']"
                     @ok="handleTime"
+                    :value="form.time"
                 />
             </a-form-model-item>
             
             <a-divider />
-
+            
             <a-form-model-item :wrapper-col="{ span: 4, offset: 2 }">
                 <a-button @click="submitForm" type="primary">{{ okText }}</a-button>
                 <a-button @click="resetForm" type="danger" style="margin-left:10px;">重置</a-button>
@@ -89,36 +90,56 @@
 
 <script>
 // import { toBinary, timeFormatter } from "@/utils/tools.js"
+import moment from 'moment'
+import 'moment/locale/zh-cn';
 export default {
     props: {
         okText: {
             type: String,
             default: "确认"
         },
+        form: {
+            type: Object,
+            default: function() {
+                return {
+                    name: "",
+                    defunct: "N",     // 用"N"或者"Y"表示比赛是否屏蔽
+                    contestType: 0,   // 比赛类型，0为公开，1为注册，2为私人
+                    contestant: 0,    // 0为个人赛，1为团队赛
+                    language: [],     // 语言类型
+                    judge: "AcmMode", // 判题方式
+                    content: "",      // 比赛内容
+                    time: [],
+                    timePicker: Symbol(1),
+                    password: "",
+                }
+            },
+        }
     },
     data() {
         return {
-            form: {
-                name: "",
-                defunct: "N",     // 用"N"或者"Y"表示比赛是否屏蔽
-                contestType: 0,   // 比赛类型，0为公开，1为注册，2为私人
-                contestant: 0,    // 0为个人赛，1为团队赛
-                language: [],     // 语言类型
-                judge: "AcmMode", // 判题方式
-                content: "",      // 比赛内容
-                // TODO 这个比赛内容是什么？
-                time: [],
-                timePicker: Symbol(1),
-                // questions: [
-                //     {
-                //         key: 0,
-                //         ID: "",
-                //         name: "",
-                //         isValid: false,
-                //     }
-                // ],
-                password: "",
-            },
+            moment,
+            // form: {
+            //     name: "",
+            //     defunct: "N",     // 用"N"或者"Y"表示比赛是否屏蔽
+            //     contestType: 0,   // 比赛类型，0为公开，1为注册，2为私人
+            //     contestant: 0,    // 0为个人赛，1为团队赛
+            //     language: [],     // 语言类型
+            //     judge: "AcmMode", // 判题方式
+            //     content: "",      // 比赛内容
+            //     // TODO 这个比赛内容是什么？
+            //     time: [],
+            //     timePicker: Symbol(1),
+            //     // questions: [
+            //     //     {
+            //     //         key: 0,
+            //     //         ID: "",
+            //     //         name: "",
+            //     //         isValid: false,
+            //     //     }
+            //     // ],
+            //     password: "",
+            // },
             formDefault: {
                 name: "",
                 defunct: "N",     // 用"N"或者"Y"表示比赛是否屏蔽
@@ -152,7 +173,7 @@ export default {
         submitForm() { // 创建比赛 - 上传表单
             this.$refs.addForm.validate(valid => {
                 if(valid) {
-                    this.$emit('querySubmit', this.form);
+                    this.$emit('querySubmitForm', this.form);
                 } else {
                     return false;
                 }

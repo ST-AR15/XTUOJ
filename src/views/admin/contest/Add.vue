@@ -15,7 +15,7 @@
             <a-button style="margin-left:218px" type="primary">确认</a-button>
         </div>
 
-        <contestform okText="创建" @querySubmit="querySubmit" v-else />
+        <contestform ref="contestform" okText="创建" @querySubmitForm="querySubmitForm" v-else />
         
 
         <!-- 比赛添加题目的modal -->
@@ -71,7 +71,7 @@ export default {
         
     },
     methods: {
-        querySubmit(info) { // 上传的回调
+        querySubmitForm(info) { // 上传的回调
             const url = "/api/contest"
             const params = {
                 Tittle: info.name,
@@ -90,6 +90,7 @@ export default {
                     this.$message.info('创建成功');
                     this.addModal.isVisible = true; // 弹出添加题目的页面
                     //TODO 比赛创建成功最好给我返回这个题目的ID，我能直接让它添加题目
+                    this.$refs.contestform.resetForm();
                     // this.resetForm(); // TODO 调用子类的重置表单
                 }
             })

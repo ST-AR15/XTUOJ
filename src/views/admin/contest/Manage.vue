@@ -1,7 +1,7 @@
 <template>
     <div class="admin-contest-manage" id="admin-contest-manage">
         <!-- TODO 没有重判的接口 -->
-        <contestlist ref="contestlist" :buttons="buttons" @queryNamelist="queryNamelist" @queryQuestion="queryQuestion" @queryNotice="queryNotice" @queryDelete="queryDelete" />
+        <contestlist ref="contestlist" :buttons="buttons" @queryNamelist="queryNamelist" @queryQuestion="queryQuestion" @queryNotice="queryNotice" @queryDelete="queryDelete" @queryInformation="queryInformation" />
         <!-- 题目管理modal -->
         <a-modal
             :title="'比赛' + questionModal.ID + ' - 题目管理'"
@@ -35,23 +35,40 @@
         >
             <mavon-editor :tabSize="3"></mavon-editor>
         </a-modal>
+        <!-- 管理比赛信息的modal -->
+        <a-modal
+            :title="'比赛' + informationModal.ID + '信息修改'"
+            :visible="informationModal.isVisible"
+            @cancel="informationModal.isVisible = false"
+            :footer="null"
+            :width="1000"
+        >
+            <contestform okText="修改" :form="informationModal.form" @querySubmitForm="querySubmitForm" />
+        </a-modal>
     </div>
 </template>
 
 <script>
+import { toBinary, timeFormatter } from "@/utils/tools.js"
+import moment from 'moment'
+import 'moment/locale/zh-cn';
+import contestform from '@/views/components/ContestForm.vue'
 import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 import contestlist from '@/views/components/Contestlist.vue'
 export default {
     components: {
         mavonEditor,
-        contestlist
+        contestlist,
+        contestform
     },
     data() {
         return {
+            moment,
             buttons: [
                 {
                     text: "信息修改",
+                    method: "queryInformation"
                 },
                 {
                     text: "名单管理",
@@ -91,10 +108,60 @@ export default {
             },
             noticeModal: {      // 发送通知对话框
                 isVisible: false,
+            },
+            informationModal: {  // 比赛信息对话框
+                isVisible: false,
+                ID: 0,
+                form: {
+                    name: "",
+                    defunct: "N",     // 用"N"或者"Y"表示比赛是否屏蔽
+                    contestType: 0,   // 比赛类型，0为公开，1为注册，2为私人
+                    contestant: 0,    // 0为个人赛，1为团队赛
+                    language: [],     // 语言类型
+                    judge: "AcmMode", // 判题方式
+                    content: "",      // 比赛内容
+                    time: [],
+                    timePicker: Symbol(1),
+                    password: "",
+                },
             }
         }
     },
     methods: {
+        querySubmitForm(info) {   // 比赛信息修改回调
+            const url = `api/contest/${ this.informationModal.ID }`;
+            const params = {
+                Tittle: info.name,
+                Defunct: info.defunct,
+                ContestType: info.contestType,
+                Contestant: info.contestant,
+                Language: parseInt(toBinary(info.language, this.$language), 2),
+                JudgeWay: info.judge,
+                // TODO 这个比赛内容是啥
+                Contest: info.contest,
+                StartTime: timeFormatter(info.time[0]._i, true),
+                EndTime: timeFormatter(info.time[1]._i, true),
+            }
+            this.$axios.put(url, params).then(rep => {
+                console.log(rep);
+                if(parseInt(rep.status/100) == 2) {
+                    this.$message.info('修改成功！');
+                    this.$refs.contestlist.refresh();
+                    this.informationModal.isVisible = false;
+                }
+            })
+        },
+        queryInformation(info) {  // 管理比赛信息
+            // 获取到当前比赛信息，然后传给form组件
+            this.informationModal.isVisible = true;
+            this.informationModal.ID = info.ID;
+            this.informationModal.form.name = info.tittle;
+            // TODO 没有  是否屏蔽 和 比赛内容 的信息 可以在get的那个直接传
+            this.informationModal.form.contestType = info.contestType == '公开'? 0: info.contestType == '注册'? 1: 2;
+            this.informationModal.form.contestant = info.contestant == '个人赛'? 0: 1;
+            // TODO 语言类型和 获取比赛题目的时候好像也没有这个  另外还有判题方式
+            this.informationModal.form.time = [moment(info.start), moment(info.end)];
+        },
         queryNamelist(info) {  // 管理名单
             console.log(info.ID);
         },

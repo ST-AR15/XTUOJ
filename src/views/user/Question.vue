@@ -108,10 +108,11 @@
                             :columns="submitColumns"
                             :data-source="submitData"
                             rowKey="JID"
+                            style="min-width: 600px"
                         >
-                            <span slot="title">
-                                <span>{{ $store.state.uid }}在题目{{ID}}提交情况</span>
-                                <span v-if="submitLoading" style="margin-left: 20px; color: #ADADAD">正在重新加载……</span>
+                            <span slot="result" slot-scope="result">
+                                <a-spin v-if="result == 0 || result == -2" />
+                                {{ result }}
                             </span>
                         </a-table>
                         <!-- </a-spin> -->
@@ -200,11 +201,11 @@ export default {
             rightW: 500,              // 右边宽度
             loading: false,           // 题目加载状态
             commentLoading: false,    // 评论区的加载状态
-            submitLoading: false,     // 提交区的加载状态
             submitColumns: [
                 {
                     title: "提交结果",
                     dataIndex: "result",
+                    scopedSlots: { customRender: 'result' },
                 },
                 {
                     title: "执行用时",
@@ -323,9 +324,8 @@ export default {
             
         },
         querySubmitInformation() {  // 加载提交情况
-            // 清空原有数据
             let that = this;
-            console.log(that)
+            // 清空原有数据
             this.submitData = [];
             const url = `/api/problem/${ this.ID }/submit`;
             this.$axios.get(url).then(rep => {
@@ -341,14 +341,38 @@ export default {
                     }
                     this.submitData.push(submitItem);
                 }
-                // TODO 完成这个计时器
-                if(data.find(o => o.result == 0 || o.result == -2) && !this.submitTimer) {
-                    this.submitTimer = setInterval(function() {
-                        console.log(that);
-                        that.querySubmitInformation();
-                    }, 1000);
-                } else {
-                    clearInterval(this.submitTimer);
+                // 如果有内容，而且有题目需要加载
+                // 有内容
+                // 
+                if(data.length != 0) {
+                    // 有题目要加载且还没计时器
+                    if(data.find(o => o.result == 0 || o.result == -2) && !this.timer) {
+                        this.timer = setInterval(function() {
+                            that.$axios.get(url).then(rep => {
+                                // 获取新数据
+                                const data = rep.data.data.data;
+                                let newData = [];
+                                for(let i in data) {
+                                    const submitItem = {
+                                        JID: data[i].Jid,
+                                        result: data[i].result,
+                                        runTime: data[i].RunTime,
+                                        runMemory: data[i].RunMemory,
+                                        language: data[i].Language,
+                                        submitTime: data[i].updated_at,
+                                    }
+                                    newData.push(submitItem);
+                                }
+                                // 判断和以前是不是一样
+                                if(JSON.stringify(newData) != JSON.stringify(that.submitData) ) {
+                                    // 不一样就赋值
+                                    that.submitData = JSON.parse(JSON.stringify(newData));
+                                }
+                            })
+                        }, 1000)
+                    } else {
+                        this.timer = "";
+                    }
                 }
             })
         },

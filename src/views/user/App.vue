@@ -100,7 +100,6 @@ export default {
         // 自动登录
         if(localStorage.getItem('account') && localStorage.getItem('password')) {
             const url = "/api/users/login";
-            console.log('cnm');
             let info = {
                 StudentID: localStorage.getItem('account'),
                 password: localStorage.getItem('password'),

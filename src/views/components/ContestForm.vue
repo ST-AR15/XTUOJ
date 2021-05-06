@@ -1,4 +1,3 @@
-// TODO 传入提交回调、确认文字
 <template>
     <div class="admin-contest-form">
         <a-form-model
@@ -74,7 +73,6 @@
                     format="YYYY-MM-DD HH:mm"
                     :placeholder="['开始时间', '结束时间']"
                     @ok="handleTime"
-                    :value="form.time"
                 />
             </a-form-model-item>
             
@@ -167,8 +165,7 @@ export default {
     },
     methods: {
         handleTime(e) {
-            this.form.time[0] = e[0]._d;
-            this.form.time[1] = e[1]._d;
+            this.form.time = e;
         },
         submitForm() { // 创建比赛 - 上传表单
             this.$refs.addForm.validate(valid => {

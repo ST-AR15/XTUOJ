@@ -90,6 +90,7 @@ export default {
             const url = `api/contest/${ this.$route.params.CID }/problem`;
             this.$axios.get(url).then(rep => {
                 const data = rep.data.data;
+                console.log(rep);
                 for(let i in data) {
                     const question = {
                         ID: data[i].c_pid,

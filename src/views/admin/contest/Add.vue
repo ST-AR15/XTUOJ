@@ -56,7 +56,7 @@ export default {
         return {
             createMode: "new",  // new是新建比赛，clone是克隆比赛
             addModal: {
-                isVisible: false,
+                isVisible: true,
                 ID: 0,
                 data: [
                     {

@@ -20,11 +20,11 @@ export default {
     },
     mounted() {
         try {
+            // 移除加载器
             document.body.removeChild(document.getElementById('app-loader'));
         } catch(e) {
             return e;
         }
-        
     }
 }
 </script>

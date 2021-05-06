@@ -3,6 +3,7 @@
         <header class="user-header">
             <div class="logo">XiangTan University</div>
             <div class="loginzoom">
+                <!-- TODO -->
                 <a-button class="navButton" v-if="!$store.state.token" @click="loginVisible = true">登录</a-button>
                 <a-dropdown class="navButton" v-else>
                     <a-button>欢迎</a-button>
@@ -96,6 +97,24 @@ export default {
         }
     },
     mounted() {
+        // 自动登录
+        if(localStorage.getItem('account') && localStorage.getItem('password')) {
+            const url = "/api/users/login";
+            console.log('cnm');
+            let info = {
+                StudentID: localStorage.getItem('account'),
+                password: localStorage.getItem('password'),
+            };
+            this.$axios.post(url, info).then(rep => {
+                const data = rep.data.data;
+                this.$store.commit('setUid', data.Uid);
+                this.$store.commit('setToken', data.token);
+                this.$message.success('自动登录成功');
+            }).catch(e => {
+                console.log(e);
+                this.$message.info('自动登录失败');
+            })    
+        }
         try {
             document.body.removeChild(document.getElementById('app-loader'));
         } catch(e) { return e }

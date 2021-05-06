@@ -235,7 +235,14 @@ export default {
     methods: {
         copy(text) {
             return copy(text);
+        },
+        queryStatus() {
+            //  TODO 没有全部的提交情况
+            // const url = `/api/problem/{pid}/submit`
         }
+    },
+    mounted() {
+        // 加载数据
     }
 }
 </script>

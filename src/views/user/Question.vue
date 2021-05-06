@@ -102,7 +102,20 @@
                             </section>
                         </a-spin>
                     </a-tab-pane>
-                    <a-tab-pane class="question-left-container" key="submit" tab="提交情况"></a-tab-pane>
+                    <a-tab-pane class="question-left-container" key="submit" tab="提交情况">
+                        <!-- <a-spin :spinning="submitLoading"> -->
+                        <a-table
+                            :columns="submitColumns"
+                            :data-source="submitData"
+                            rowKey="JID"
+                        >
+                            <span slot="title">
+                                <span>{{ $store.state.uid }}在题目{{ID}}提交情况</span>
+                                <span v-if="submitLoading" style="margin-left: 20px; color: #ADADAD">正在重新加载……</span>
+                            </span>
+                        </a-table>
+                        <!-- </a-spin> -->
+                    </a-tab-pane>
                 </a-tabs>
                 <div class="buttons">
                     <a-space>
@@ -153,7 +166,7 @@
                             <a-button type="primary">上传文件</a-button>
                         </a-upload>
                         <a-button type="primary" @click="question.code = ''">重置</a-button>
-                        <a-button type="primary" @click="querysubmit">提交</a-button>
+                        <a-button type="primary" @click="querySubmit">提交</a-button>
                     </a-space>
                 </div>
             </div>
@@ -187,6 +200,31 @@ export default {
             rightW: 500,              // 右边宽度
             loading: false,           // 题目加载状态
             commentLoading: false,    // 评论区的加载状态
+            submitLoading: false,     // 提交区的加载状态
+            submitColumns: [
+                {
+                    title: "提交结果",
+                    dataIndex: "result",
+                },
+                {
+                    title: "执行用时",
+                    dataIndex: "runTime",
+                },
+                {
+                    title: "内存消耗",
+                    dataIndex: "runMemory",
+                },
+                {
+                    title: "使用语言",
+                    dataIndex: "language",
+                },
+                {
+                    title: "提交时间",
+                    dataIndex: "submitTime",
+                }
+            ],                        // 提交区表格头
+            submitData: [],           // 提交区的数据
+            submitTimer: "",          // 提交情况的计时器
             commentReplyNum: [0,0],   // 当前打开的是哪个输入框，第一个数字代表一级评论，第二个数字代表二级
             commentContext: [],       // 评论区内容
             cmOptions:{
@@ -210,6 +248,7 @@ export default {
             },
             tabkey: 'question',
             autoSave: true,
+            
         }
     },
     methods: {
@@ -260,16 +299,58 @@ export default {
             // 返回false表示不调用默认的上传接口
             return false;
         },
-        querysubmit() {  // 提交代码
-            const url = `/api/problem/${ this.ID }/submit`;
+        querySubmit() {  // 提交代码
+            let url
+            if(this.$route.name == "question_contest") {   // 比赛模式提交
+                url = `/api/contest/${ this.$route.params.CID }/problem/${ this.ID }/submit`;
+            } else {  // 普通模式加载
+                url = `/api/problem/${ this.ID }/submit`;
+            }
             const info = {
                 Code: Base64.encode(this.question.code),
                 Language: this.question.language
             }
             this.$axios.post(url, info).then(rep => {
-                console.log(rep);
+                if(parseInt(rep.status/100) == 2) {
+                    this.$message.info('提交成功！');
+                    // 清空代码
+                    this.question.code = "";
+                    // 跳转到提交情况
+                    this.tabkey = "submit";
+                    this.querySubmitInformation();
+                }
             })
-            // TODO 这个API不能用
+            
+        },
+        querySubmitInformation() {  // 加载提交情况
+            // 清空原有数据
+            let that = this;
+            console.log(that)
+            this.submitData = [];
+            const url = `/api/problem/${ this.ID }/submit`;
+            this.$axios.get(url).then(rep => {
+                const data = rep.data.data.data;
+                for(let i in data) {
+                    const submitItem = {
+                        JID: data[i].Jid,
+                        result: data[i].result,
+                        runTime: data[i].RunTime,
+                        runMemory: data[i].RunMemory,
+                        language: data[i].Language,
+                        submitTime: data[i].updated_at,
+                    }
+                    this.submitData.push(submitItem);
+                }
+                // TODO 完成这个计时器
+                if(data.find(o => o.result == 0 || o.result == -2) && !this.submitTimer) {
+                    this.submitTimer = setInterval(function() {
+                        console.log(that);
+                        that.querySubmitInformation();
+                    }, 1000);
+                } else {
+                    clearInterval(this.submitTimer);
+                }
+            })
         },
         queryQuestion() {  // 加载问题
             this.loading = true; // 开始加载题目
@@ -282,14 +363,12 @@ export default {
                 url = '/api/problem/' + this.ID;
             }
             this.$axios.get(url).then(rep => {
-                // TODO 题目详情里都没写允许的语言
                 let data;
                 if(this.$route.name == "question_contest") {   // 比赛模式
                     data = rep.data.data[0];
                 } else {  // 普通模式加载
                     data = rep.data.data;
                 }
-                console.log(data);
                 // Pid
                 this.question.title = data.Tittle;
                 // source
@@ -439,6 +518,8 @@ export default {
             // 切换成讨论
             if(aim == 'discuss') {
                 this.queryComment();
+            } else if(aim == 'submit') {
+                this.querySubmitInformation();
             }
         }
     },

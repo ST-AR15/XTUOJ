@@ -241,7 +241,7 @@ export default {
             const url = `/api/contest/${ this.questionModal.ID }/problem`;
             let params = JSON.stringify({data: this.questionModal.add});
             console.log(params);
-            this.$axios.post(url, params).then(rep => {
+            this.$axios.post(url, { ProblemId:params }).then(rep => {
                 // TODO 无法使用
                 console.log(rep);
             }) 

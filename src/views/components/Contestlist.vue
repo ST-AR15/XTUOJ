@@ -4,9 +4,10 @@
         <a-table
             :columns="columns"
             :data-source="contests"
-            :pagination="false"
+            :pagination="pagination"
             :loading="loading"
             rowKey="ID"
+            @change="handleTableChange"
         >
             <!-- 表头 -->
             <template slot="title">
@@ -83,23 +84,29 @@ export default {
                     scopedSlots: { customRender: 'buttons' },
                 }
             ],
+            pagination: {       // 页面设置
+                pageSize:0,     // 每页题目数量
+                showQuickJumper: true,  // 快速跳转
+                total: 0,
+                current: 1,
+            },
             contests: [
-                {
-                    ID: 3,
-                    tittle: "测试",
-                    contestType: "公开",
-                    contestant: "个人赛",
-                    start: "2021-05-02 16:33:45",
-                    end: "2021-05-02 16:33:45",
-                },
-                {
-                    ID: 4,
-                    tittle: "测试",
-                    contestType: "公开",
-                    contestant: "个人赛",
-                    start: "2021-05-02 16:33:45",
-                    end: "2021-05-02 16:33:45",
-                },
+                // {
+                //     ID: 3,
+                //     tittle: "测试",
+                //     contestType: "公开",
+                //     contestant: "个人赛",
+                //     start: "2021-05-02 16:33:45",
+                //     end: "2021-05-02 16:33:45",
+                // },
+                // {
+                //     ID: 4,
+                //     tittle: "测试",
+                //     contestType: "公开",
+                //     contestant: "个人赛",
+                //     start: "2021-05-02 16:33:45",
+                //     end: "2021-05-02 16:33:45",
+                // },
             ],
         }
     },
@@ -108,8 +115,14 @@ export default {
         callbackMethod(fatherMethod,param) {
             this.$emit(fatherMethod, param);
         },
+        handleTableChange(pagination) {
+            // 修改query
+            this.$router.push({ query: {page: pagination.current }})
+        },
         // 刷新表格
         refresh() { // 刷新表格
+            // 切换到第一页,这里其实可以把page：1删了
+            this.$router.push({ query: {page: 1}})
             // 加载内容
             this.queryContest();
         },
@@ -117,23 +130,36 @@ export default {
         // 只加载内容，其他的不管！
         // 也就是说，这个方法只是对contests变量的操作
         queryContest() { // 加载竞赛
-            // 初始化结果数组
-            this.contests = [];
+            const page = this.$route.query.page? this.$route.query.page: 1;  // 页码,query有内容就是数字,没有就是1
+            // 如果这一页加载过了,就不加载
+            // 每页的大小存在和这一页的第一项存在就说明这一页加载过了
+            if(this.pageSize != 0 && this.contests[(page-1) * this.pagination.pageSize]) {
+                return;
+            }
             // 开始加载
             this.loading = true;
             // url
             const url = '/api/contest';
             // 开始请求
-            this.$axios.get(url).then(rep => {
-                const data = rep.data.data;
-                for(let i in data) {
+            this.$axios.get(url, {
+                params: {
+                    page: page
+                },
+            }).then(rep => {
+                // 先设置页面信息
+                this.pagination.pageSize = rep.data.data.per_page;  // 每页数量
+                this.pagination.total = rep.data.data.total;  // 总数量
+                // 然后设置数据
+                const data = rep.data.data.data;
+                // 第一个数的坐标是页码-1乘以pageSize
+                for(let i = (page - 1) * this.pagination.pageSize, j = 0; j < data.length ;i++,j++) {
                     const contest = {
-                        ID: data[i].Cid,
-                        tittle: data[i].Tittle,
-                        contestType: data[i].ContestType == 0? '公开': data[i].ContestType == 1?'注册': '私人',    // 0为公开，1为注册，2为私人
-                        contestant: data[i].Contestant == 0? '个人赛': '团队赛',  // 0为个人赛，1为团队赛
-                        start: data[i].StartTime,
-                        end: data[i].EndTime,
+                        ID: data[j].Cid,
+                        tittle: data[j].Tittle,
+                        contestType: data[j].ContestType == 0? '公开': data[i].ContestType == 1?'注册': '私人',    // 0为公开，1为注册，2为私人
+                        contestant: data[j].Contestant == 0? '个人赛': '团队赛',  // 0为个人赛，1为团队赛
+                        start: data[j].StartTime,
+                        end: data[j].EndTime,
                     }
                     this.contests.push(contest);
                 }
@@ -145,7 +171,6 @@ export default {
             })
         },
         queryMyContests() {
-            console.log('cnm');
             // 初始化结果数组
             this.contests = [];
             // 开始加载
@@ -187,6 +212,15 @@ export default {
         // 刷新表格
         this.refresh();
     },
+    watch: {
+        // query变化的时候调用，通过query切换表页码，与handleTableChange互补
+        $route(to) {
+            // 页码切换
+            this.pagination.current = Number(to.query.page);
+            // 加载内容
+            this.queryContest();
+        }
+    }
 }
 </script>
 

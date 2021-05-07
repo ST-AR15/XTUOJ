@@ -111,11 +111,60 @@
                             style="min-width: 600px"
                             :pagination="submitPagination"
                         >
+                            <!-- solution -->
+                            <!-- 只有普通的question才能看 -->
+                            <span 
+                                slot="solution"
+                                slot-scope="solution"
+                                :style="{ 
+                                    cursor: $route.name == 'question'? 'pointer':'default',
+                                    color: $route.name == 'question'? '#40A9FF':''
+                                }"
+                            >
+                                <span @click="submitSolution.visible = true" v-text="solution"></span>
+                            </span>
+                            <!-- 结果 -->
                             <span slot="result" slot-scope="result">
                                 <a-spin v-if="result == 0 || result == -2" />
                                 <span v-text="$resultText[result]"></span>
                             </span>
                         </a-table>
+                        <a-modal
+                            title = "solution"
+                            :visible = "submitSolution.visible"
+                            :footer = "null"
+                            width= "1100px"
+                            class="status-solution"
+                            @cancel = "submitSolution.visible = false"
+                        >
+                            <p class="modal-title">
+                                By {{ submitSolution.author }}, contest:{{ submitSolution.contest }}, problem: {{ submitSolution.problem }},
+                                <span :class="submitSolution.result=='Accept'? 'accept':status=='Wrong Answer'? 'wa':'others'">{{ submitSolution.result }}</span>,
+                                <a>#</a>,
+                                <a @click="copy(submitSolution.code)">copy</a>
+                            </p>
+                            <hr />
+                            <codemirror
+                                ref="code"
+                                v-model="submitSolution.code"
+                                :options="cmOptions"
+                                >
+                            </codemirror>
+                            <hr />
+                            <p class="bold" style="margin: 5px 0;">→Judgement Protocol</p>
+                            <div v-for="(item, i) in submitSolution.test" :key="i">
+                                <a-divider />
+                                <p class="bold" v-text="`#${ i + 1 }, time: ${ item.time }ms, memory: ${ item.memory }KB, exit code: ${ item.exit }, checker exit code: ${ item.checker }, verdict: ${ item.verdict }`"></p>
+                                <p v-if="item.input">Input</p>
+                                <pre v-if="item.input" v-text="item.input"></pre>
+                                <p v-if="item.output">Output</p>
+                                <pre v-if="item.output" v-html="item.output"></pre>
+                                <p v-if="item.answer">Answer</p>
+                                <pre v-if="item.answer" v-text="item.answer"></pre>
+                                <p v-if="item.checkLog">CheckLog</p>
+                                <pre v-if="item.checkLog" v-text="item.checkLog"></pre>
+                            </div>
+                        </a-modal>
                         <!-- </a-spin> -->
                     </a-tab-pane>
                 </a-tabs>
@@ -204,6 +253,11 @@ export default {
             commentLoading: false,    // 评论区的加载状态
             submitColumns: [
                 {
+                    title: "Solution",
+                    dataIndex: "JID",
+                    scopedSlots: { customRender: 'solution' },
+                },
+                {
                     title: "提交结果",
                     dataIndex: "result",
                     scopedSlots: { customRender: 'result' },
@@ -232,6 +286,37 @@ export default {
                 current: 1,
             },                        // 提交的分页器
             submitData: [],           // 提交区的数据
+            submitSolution: {
+                visible: false,
+                author: "slight",
+                contest: "Contest 2050 and Codeforces Round #718 (Div. 1 + Div. 2)",
+                problem: "(A) Sum of 2050",
+                result: "Accept",
+                info: "Runtime error on test 1",
+                code: "int main()\n{\n    int a = 1;\n    return 0;\n}\n",
+                test: [
+                    {
+                        time: 93,
+                        memory: 0,
+                        exit: 1,
+                        checker: 0,
+                        verdict: "RUNTIME_ERROR",
+                        input: "1",
+                        output: "1",
+                        answer: "1",
+                        checkLog: "ok 1 numbers",
+                    },
+                    {
+                        time: 93,
+                        memory: 0,
+                        exit: 1,
+                        checker: 0,
+                        verdict: "RUNTIME_ERROR",
+                        input: "1",
+                        checkLog: "Exit code is 1",
+                    }
+                ]
+            },
             submitTimer: "",          // 提交情况的计时器
             commentReplyNum: [0,0],   // 当前打开的是哪个输入框，第一个数字代表一级评论，第二个数字代表二级
             commentContext: [],       // 评论区内容

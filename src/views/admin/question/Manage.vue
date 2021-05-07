@@ -1,6 +1,6 @@
 <template>
     <div class="admin-question-manage" id="admin-question-manage">
-        <questionlist ref="questionlist" :buttons="buttons" @queryDetail="queryDetail" @queryData="queryData" @queryDelete="queryDelete" @queryCompilation = "queryCompilation" />
+        <questionlist ref="questionlist" :buttons="buttons" @queryDetail="queryDetail" @queryData="queryData" @queryDelete="queryDelete" @queryCompilation = "queryCompilation" @queryRejudge="queryRejudge" />
         <!-- 问题详情 - modal对话框 -->
         <a-modal
             :visible="detailModal.visible"
@@ -147,6 +147,11 @@ export default {
                 {
                     text: "管理编译信息",
                     method: "queryCompilation"
+                },
+                {
+                    text: "重判",
+                    method: "queryRejudge",
+                    isDanger: true,
                 },
                 {
                     text: "删除题目",
@@ -366,6 +371,15 @@ export default {
                     message.info('删除成功');
                     // 刷新表格
                     this.$refs.questionlist.refresh();
+                }
+            })
+        },
+        queryRejudge(info) {  // 题目重判
+            const url = `/api/rejudge/problem/${ info.ID }`
+            this.$axios.put(url).then(rep => {
+                console.log(rep);
+                if(parseInt(rep.status/100) == 2) {
+                    this.$message.success(rep.statusText);
                 }
             })
         },

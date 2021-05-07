@@ -213,8 +213,9 @@ export default {
     watch: {
         // query变化的时候调用，通过query切换表页码，与handleTableChange互补
         $route(to) {
+            let page = to.query.page? to.query.page: 1;
             // 页码切换
-            this.pagination.current = Number(to.query.page);
+            this.pagination.current = Number(page);
             // 加载内容
             this.queryPage();
         }

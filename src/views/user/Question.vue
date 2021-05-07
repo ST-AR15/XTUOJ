@@ -109,6 +109,7 @@
                             :data-source="submitData"
                             rowKey="JID"
                             style="min-width: 600px"
+                            :pagination="submitPagination"
                         >
                             <span slot="result" slot-scope="result">
                                 <a-spin v-if="result == 0 || result == -2" />
@@ -224,6 +225,12 @@ export default {
                     dataIndex: "submitTime",
                 }
             ],                        // 提交区表格头
+            submitPagination: {
+                pageSize:0,     // 每页题目数量
+                showQuickJumper: true,  // 快速跳转
+                total: 0,
+                current: 1,
+            },                        // 提交的分页器
             submitData: [],           // 提交区的数据
             submitTimer: "",          // 提交情况的计时器
             commentReplyNum: [0,0],   // 当前打开的是哪个输入框，第一个数字代表一级评论，第二个数字代表二级
@@ -325,10 +332,21 @@ export default {
         },
         querySubmitInformation() {  // 加载提交情况
             let that = this;
-            // 清空原有数据
-            this.submitData = [];
-            const url = `/api/problem/${ this.ID }/submit`;
-            this.$axios.get(url).then(rep => {
+            // 根据情况使用不同API
+            let url = "";
+            if(this.$route.name == "question_contest") {   // 比赛模式加载
+                url = `/api/contest/${ this.$route.params.CID }/submit`;
+            } else {  // 普通模式加载
+                url = `/api/problem/${ this.ID }/submit`;
+            }
+            this.$axios.get(url, {
+                params: {
+                    page: this.submitPagination.current
+                }
+            }).then(rep => {
+                // 设置页面信息
+                this.submitPagination.pageSize = rep.data.data.per_page;
+                this.submitPagination.total = rep.data.data.total;
                 const data = rep.data.data.data;
                 for(let i in data) {
                     const submitItem = {
@@ -339,19 +357,30 @@ export default {
                         language: data[i].Language,
                         submitTime: data[i].updated_at,
                     }
-                    this.submitData.push(submitItem);
+                    this.submitData[parseInt(this.submitPagination.pageSize*(this.submitPagination.current-1)) + parseInt(i)] = submitItem;
                 }
-                this.submitData = this.submitData.reverse();
+                console.log(this.submitData);
                 // 如果有内容，而且有题目需要加载
                 // 有内容
-                if(data.length != 0) {
+                if(this.submitData.length != 0) {
                     // 有题目要加载且还没计时器
-                    if(data.find(o => o.result == 0 || o.result == -2) && !this.timer) {
-                        this.timer = setInterval(function() {
-                            that.$axios.get(url).then(rep => {
+                    // 找到第一个需要加载的题目的页码
+                    let index = this.submitData.findIndex(o => o.result == 0 || o.result == -2);
+                    if(index >= 0 && !this.submitTimer) {
+                        // 设置计时器去查没有加载完的题目
+                        this.submitTimer = setInterval(function() {
+                            console.log(Date.now());
+                            // 根据index计算page
+                            const page = parseInt(index / that.submitPagination.pageSize) + 1;
+                            that.$axios.get(url, {
+                                params: {
+                                    page: page
+                                }
+                            }).then(rep => {
+                                // 页面设置
+                                that.submitPagination.total = rep.data.data.total;
                                 // 获取新数据
                                 const data = rep.data.data.data;
-                                let newData = [];
                                 for(let i in data) {
                                     const submitItem = {
                                         JID: data[i].Jid,
@@ -361,23 +390,15 @@ export default {
                                         language: data[i].Language,
                                         submitTime: data[i].updated_at,
                                     }
-                                    newData.push(submitItem);
+                                    that.$set(that.submitData, parseInt((page - 1) * that.submitPagination.pageSize) + parseInt(i), submitItem)
                                 }
-                                newData = newData.reverse();
-                                // 判断和以前是不是一样
-                                if(JSON.stringify(newData) != JSON.stringify(that.submitData) ) {
-                                    // 不一样就赋值
-                                    that.submitData = JSON.parse(JSON.stringify(newData));
-                                    // 然后判断要不要删除计时器
-                                    if(!newData.find(o => o.result == 0 || o.result == -2)) {
-                                        clearInterval(that.timer);
-                                        that.timer = "";
-                                    }
+                                // 判断是否还有判断中的题目,没有就删除计时器
+                                if(that.submitData.findIndex(o => o.result == 0 || o.result == -2) < 0) {
+                                    clearInterval(that.submitTimer);
+                                    that.submitTimer = "";
                                 }
                             })
                         }, 1000)
-                    } else {
-                        this.timer = "";
                     }
                 }
             })

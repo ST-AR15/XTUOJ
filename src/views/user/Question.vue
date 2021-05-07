@@ -112,7 +112,7 @@
                         >
                             <span slot="result" slot-scope="result">
                                 <a-spin v-if="result == 0 || result == -2" />
-                                {{ result }}
+                                <span v-text="$resultText[result]"></span>
                             </span>
                         </a-table>
                         <!-- </a-spin> -->
@@ -344,7 +344,6 @@ export default {
                 this.submitData = this.submitData.reverse();
                 // 如果有内容，而且有题目需要加载
                 // 有内容
-                // 
                 if(data.length != 0) {
                     // 有题目要加载且还没计时器
                     if(data.find(o => o.result == 0 || o.result == -2) && !this.timer) {
@@ -369,6 +368,11 @@ export default {
                                 if(JSON.stringify(newData) != JSON.stringify(that.submitData) ) {
                                     // 不一样就赋值
                                     that.submitData = JSON.parse(JSON.stringify(newData));
+                                    // 然后判断要不要删除计时器
+                                    if(!newData.find(o => o.result == 0 || o.result == -2)) {
+                                        clearInterval(that.timer);
+                                        that.timer = "";
+                                    }
                                 }
                             })
                         }, 1000)

@@ -14,6 +14,22 @@ Vue.use(Antd, VueCodeMirror)
 Vue.prototype.$axios = axios
 // 允许使用的编译器
 Vue.prototype.$language = ["GCC", "C++", "Python3"];
+// result数字的含义,负数用了下划线
+Vue.prototype.$resultText = {
+    "-2": "Judging",
+    "-1": "ACCEPT",
+    0: "WAITING",
+    1: "WRONG_ANSWER",
+    2: "TIME_LIMIT_EXCEEDED",
+    3: "MEMORY_LIMIT_EXCEEDED",
+    4: "RUNTIME_ERROR",
+    5: "SYSTEM_ERRPR",
+    6: "COMPILE_ERROR",
+    7: "RUNNED",
+    8: "OUTPUT_LIMIT_EXCEEDED",
+    9: "PRESENTATION_ERROR",
+    10:"Test_ERROR",
+};
 
 // 声明自己写的文件
 // 样式

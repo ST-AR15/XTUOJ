@@ -23,7 +23,7 @@ Vue.prototype.$resultText = {
     2: "TIME_LIMIT_EXCEEDED",
     3: "MEMORY_LIMIT_EXCEEDED",
     4: "RUNTIME_ERROR",
-    5: "SYSTEM_ERRPR",
+    5: "SYSTEM_ERROR",
     6: "COMPILE_ERROR",
     7: "RUNNED",
     8: "OUTPUT_LIMIT_EXCEEDED",

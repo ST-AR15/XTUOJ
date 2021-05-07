@@ -130,7 +130,12 @@ export default {
         }
     },
     methods: {
-        // TODO 如果开始加载的不是第一页，再去加载第一页，就会控制台报错。原因不明。
+        /**
+         * 修改路由 ----------------------------------                                  
+         *                                           |->  切换表格页 + 获取数据
+         * 切换表格页页面 -> 监听修改 ->  修改路由 -----
+         */
+
         // a-table监测页面切换前调用
         // 只用用a-table自己的方法切换页面才调用（按下面的数字或者输入跳转）
         handleTableChange(pagination) {
@@ -143,27 +148,23 @@ export default {
             this.$emit(fatherMethod, param);
         },
         // 刷新表格
-        refresh(p = 1) { // 刷新表格
-            let that = this;
-            // 变到第一页。如果传了值就加载那一页。
-            that.pagination.current = p;
-            // 初始化结果数组
+        refresh() { // 刷新表格
+            // 既然要刷新,就肯定得先清空
             this.questions = [];
-            // 加载第一页的内容，并确认每一页的内容数量和总页数
-            this.loadPage(p);
-            // console.log(that.pagination.current);
+            // 获取当前页内容
+            this.queryPage();
         },
         // 加载某一页的内容
-        // 只加载内容，其他的不管！
+        // 只加载内容，其他的不管
         // 也就是说，这个方法只是对question变量的操作
-        loadPage(page) { // 加载某一页
-            let that = this;
+        queryPage() { // 加载当前页
+            const page = this.$route.query.page? this.$route.query.page: 1;  // 页码,query有内容就是数字,没有就是1;
             // 如果已经加载过了，就不加载
-            if(that.questions[(page-1) * that.pagination.pageSize] ) {
+            if(this.questions[(page-1) * this.pagination.pageSize] ) {
                 return ;
             }
             // 开始加载
-            that.loading = true;
+            this.loading = true;
             // url
             let url = '/api/problem';
             // 开始请求
@@ -174,33 +175,36 @@ export default {
             }).then(rep => {
                 const data = rep.data.data;
                 // 设置页码相关的东西
-                that.pagination.pageSize = data.per_page;
-                that.pagination.total = data.total;
-                // console.log(that.pagination.pageSize);
+                this.pagination.pageSize = data.per_page;
+                this.pagination.total = data.total;
                 // 循环复制给数组questions
-                for(let i=(that.pagination.current-1)*that.pagination.pageSize,j=0;j<data.data.length;i++,j++) {
-                    that.questions[i] = {};
-                    that.questions[i]["ID"] = data.data[j].Pid;
-                    that.questions[i]["tittle"] = data.data[j].Tittle;
-                    that.questions[i]["tips"] = ['测试','test'];
-                    that.questions[i]["source"] = "测试来源";
-                    that.questions[i]["status"] = "测试状态";
-                    that.questions[i]["accept"] = "100";
-                    that.questions[i]["total"] = "200";
+                for(let i=(page-1)*this.pagination.pageSize,j=0;j<data.data.length;i++,j++) {
+                    let question = {
+                        ID: data.data[j].Pid,
+                        tittle: data.data[j].Tittle,
+                        tips: ['测试','test'],
+                        source: "测试来源",
+                        status: "测试状态",
+                        accept: 100,
+                        total: 200,
+                    }
+                    this.$set(this.questions, i, question);
                 }
                 // 结束加载
-                that.loading = false;
+                this.loading = false;
             }).catch(error => {
                 // 如果检测到错误，也停止加载
                 this.$message.error(`加载问题列表时发生错误${ error }`);
-                that.loading = false;
+                this.loading = false;
             })
         },
     },
     mounted: function() {
-        let that = this;
-        // 刷新表格
-        that.refresh(Number(this.$route.query.page)? Number(this.$route.query.page): 1);
+        let page = this.$route.query.page? this.$route.query.page: 1;
+        // 页码切换
+        this.pagination.current = Number(page);
+        // 加载内容
+        this.queryPage();
     },
     watch: {
         // query变化的时候调用，通过query切换表页码，与handleTableChange互补
@@ -208,7 +212,7 @@ export default {
             // 页码切换
             this.pagination.current = Number(to.query.page);
             // 加载内容
-            this.loadPage(Number(to.query.page));
+            this.queryPage();
         }
     }
 }

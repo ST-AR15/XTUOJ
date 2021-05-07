@@ -341,6 +341,7 @@ export default {
                     }
                     this.submitData.push(submitItem);
                 }
+                this.submitData = this.submitData.reverse();
                 // 如果有内容，而且有题目需要加载
                 // 有内容
                 // 
@@ -363,6 +364,7 @@ export default {
                                     }
                                     newData.push(submitItem);
                                 }
+                                newData = newData.reverse();
                                 // 判断和以前是不是一样
                                 if(JSON.stringify(newData) != JSON.stringify(that.submitData) ) {
                                     // 不一样就赋值

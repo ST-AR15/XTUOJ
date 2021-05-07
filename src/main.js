@@ -13,7 +13,7 @@ import 'codemirror/lib/codemirror.css'
 Vue.use(Antd, VueCodeMirror)
 Vue.prototype.$axios = axios
 // 允许使用的编译器
-Vue.prototype.$language = ["GCC", "C++", "Python"];
+Vue.prototype.$language = ["GCC", "C++", "Python3"];
 
 // 声明自己写的文件
 // 样式

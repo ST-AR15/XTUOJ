@@ -97,8 +97,9 @@ export default {
         }
     },
     mounted() {
-        // 自动登录
-        if(localStorage.getItem('account') && localStorage.getItem('password')) {
+        // 如果没有登录，自动登录
+
+        if(!this.$store.state.token && localStorage.getItem('account') && localStorage.getItem('password')) {
             const url = "/api/users/login";
             let info = {
                 StudentID: localStorage.getItem('account'),

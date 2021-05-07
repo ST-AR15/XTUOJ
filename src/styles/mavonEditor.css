@@ -1,2 +1,10 @@
 .v-note-wrapper { z-index: inherit !important; } /* 防止编辑器在其他组件上方（这个z-index默认为1500，antd的默认为1000） */
 .fullscreen { z-index: 1501 !important; }
+
+/* 编辑器内边距优化 */
+.v-note-wrapper .content-input-wrapper {
+    padding: 0 !important;
+}
+.v-note-wrapper textarea{
+    padding: 8px 25px 15px 25px !important;
+}

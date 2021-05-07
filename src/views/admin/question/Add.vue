@@ -57,7 +57,7 @@
                 </transition>
             </a-form-model-item>
 
-            <a-form-model-item label="题目内容">
+            <a-form-model-item label="题目内容" :wrapper-col="{ span: 21, offset: 0 }">
                 <mavon-editor :tabSize="3" :toolbars="editorOption" v-model="form.contents"></mavon-editor>
             </a-form-model-item>
 

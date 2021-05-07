@@ -111,6 +111,12 @@ export default {
         }
     },
     methods: {
+        /**
+         * 修改路由 ----------------------------------                                  
+         *                                           |->  切换表格页 + 获取数据
+         * 切换表格页页面 -> 监听修改 ->  修改路由 -----
+         */
+
         // 用于调用父接口
         callbackMethod(fatherMethod,param) {
             this.$emit(fatherMethod, param);
@@ -121,8 +127,8 @@ export default {
         },
         // 刷新表格
         refresh() { // 刷新表格
-            // 切换到第一页,这里其实可以把page：1删了
-            this.$router.push({ query: {page: 1}})
+            // 情况内容
+            this.contests = [];
             // 加载内容
             this.queryContest();
         },
@@ -134,6 +140,7 @@ export default {
             // 如果这一页加载过了,就不加载
             // 每页的大小存在和这一页的第一项存在就说明这一页加载过了
             if(this.pageSize != 0 && this.contests[(page-1) * this.pagination.pageSize]) {
+                console.log('跳过');
                 return;
             }
             // 开始加载
@@ -161,7 +168,7 @@ export default {
                         start: data[j].StartTime,
                         end: data[j].EndTime,
                     }
-                    this.contests.push(contest);
+                    this.$set(this.contests, i, contest);
                 }
                 this.loading = false;
             }).catch(error => {
@@ -209,14 +216,18 @@ export default {
         }
     },
     mounted: function() {
-        // 刷新表格
-        this.refresh();
+        let page = this.$route.query.page? this.$route.query.page: 1;
+        // 页码切换
+        this.pagination.current = Number(page);
+        // 加载内容
+        this.queryContest();
     },
     watch: {
         // query变化的时候调用，通过query切换表页码，与handleTableChange互补
         $route(to) {
+            const page = to.query.page? to.query.page: 1;
             // 页码切换
-            this.pagination.current = Number(to.query.page);
+            this.pagination.current = Number(page);
             // 加载内容
             this.queryContest();
         }

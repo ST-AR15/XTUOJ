@@ -155,9 +155,9 @@
                     style="height: calc(100% - 46px - 64px); position: relative"
                     >
                 </codemirror>
+                <span style="color: #999999;position: absolute;width: 40%; left: 30%; text-align: center; top:45%; user-select: none" v-if="question.code == ''">*可以通过拖拽文件方式来快速填写代码</span>
                 <div class="buttons">
                     <a-space>
-                        <span style="color: #999999;">*可以通过拖拽文件方式来快速填写代码</span>
                         <!-- TODO 根据文件后缀自动转换语言 -->
                         <a-upload
                             name="codeFile"

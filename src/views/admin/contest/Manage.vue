@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { toBinary, timeFormatter } from "@/utils/tools.js"
+import { timeFormatter } from "@/utils/tools.js"
 import moment from 'moment'
 import 'moment/locale/zh-cn';
 import contestform from '@/views/components/ContestForm.vue'
@@ -127,14 +127,17 @@ export default {
     methods: {
         querySubmitForm(info) {   // 比赛信息修改回调
             const url = `api/contest/${ this.informationModal.ID }`;
+            let language = 0;
+            for(let i in info.language) {
+                language += this.$language.num[this.$language.name.findIndex(o => o == info.language[i])];
+            }
             const params = {
                 Tittle: info.name,
                 Defunct: info.defunct,
                 ContestType: info.contestType,
                 Contestant: info.contestant,
-                Language: parseInt(toBinary(info.language, this.$language), 2),
+                Language: language,
                 JudgeWay: info.judge,
-                // TODO 这个比赛内容是啥
                 Contest: info.contest,
                 StartTime: timeFormatter(info.time[0]._i, true),
                 EndTime: timeFormatter(info.time[1]._i, true),

@@ -48,16 +48,16 @@
             </a-form-model-item>
 
             <a-form-model-item prop="language" label="语言类型">
-                <a-checkbox-group v-model="form.language" :options="this.$language"></a-checkbox-group>
+                <a-checkbox-group v-model="form.language" :options="this.$language.name" @change="test"></a-checkbox-group>
             </a-form-model-item>
 
-            <a-form-model-item label="判题方式">
+            <a-form-model-item prop="judge" label="判题方式">
                 <a-radio-group
                     v-model="form.judge"
                 >
-                    <a-radio value="AcmMode">AcmMode</a-radio>
-                    <a-radio value="OiMode">OiMode</a-radio>
-                    <a-radio value="HalfOiMode">HalfOiMode</a-radio>
+                    <a-radio v-for="item in $judge" :key="item" :value="item">
+                        {{ item }}
+                    </a-radio>
                 </a-radio-group>
             </a-form-model-item>
 
@@ -117,27 +117,6 @@ export default {
     data() {
         return {
             moment,
-            // form: {
-            //     name: "",
-            //     defunct: "N",     // 用"N"或者"Y"表示比赛是否屏蔽
-            //     contestType: 0,   // 比赛类型，0为公开，1为注册，2为私人
-            //     contestant: 0,    // 0为个人赛，1为团队赛
-            //     language: [],     // 语言类型
-            //     judge: "AcmMode", // 判题方式
-            //     content: "",      // 比赛内容
-            //     // TODO 这个比赛内容是什么？
-            //     time: [],
-            //     timePicker: Symbol(1),
-            //     // questions: [
-            //     //     {
-            //     //         key: 0,
-            //     //         ID: "",
-            //     //         name: "",
-            //     //         isValid: false,
-            //     //     }
-            //     // ],
-            //     password: "",
-            // },
             formDefault: {
                 name: "",
                 defunct: "N",     // 用"N"或者"Y"表示比赛是否屏蔽
@@ -157,6 +136,9 @@ export default {
                 language: [  // 语言类型需求
                     { required: true, message: '请选择语言类型', trigger: 'change' },
                 ],
+                judge: [  // 语言类型需求
+                    { required: true, message: '请选择判题方式', trigger: 'change' },
+                ],
                 // time: [  // 语言类型需求
                 //     { required: true, message: '请选择比赛时间', trigger: 'change' },
                 // ],
@@ -164,6 +146,9 @@ export default {
         }
     },
     methods: {
+        test() {
+            console.log(this.form);
+        },
         handleTime(e) {
             this.form.time = e;
         },

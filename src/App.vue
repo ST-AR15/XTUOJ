@@ -19,6 +19,16 @@ export default {
         }
     },
     mounted() {
+        // 获取language值
+        const url = '/api/config';
+        this.$axios.get(url).then(rep => {
+            const data = rep.data.data;
+            for(let i in data) {
+                this.$language.name[i] = data[i].name;
+                this.$language.num[i] = data[i].LanguageNum;
+            }
+            console.log(this.$language);
+        })
         try {
             // 移除加载器
             document.body.removeChild(document.getElementById('app-loader'));

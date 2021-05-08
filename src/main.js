@@ -13,7 +13,11 @@ import 'codemirror/lib/codemirror.css'
 Vue.use(Antd, VueCodeMirror)
 Vue.prototype.$axios = axios
 // 允许使用的编译器
-Vue.prototype.$language = ["GCC", "C++", "Python3"];
+Vue.prototype.$language = {
+    name: [],
+    num: [],
+};
+Vue.prototype.$judge = ["AcmMode", "OiMode", "HalfOiMode"];
 // result数字的含义,负数用了下划线
 Vue.prototype.$resultText = {
     "-2": "Judging",

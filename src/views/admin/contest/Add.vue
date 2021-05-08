@@ -46,7 +46,6 @@
 </template>
 
 <script>
-import { toBinary, timeFormatter } from "@/utils/tools.js"
 import contestform from '@/views/components/ContestForm.vue'
 export default {
     components: {
@@ -73,17 +72,20 @@ export default {
     methods: {
         querySubmitForm(info) { // 上传的回调
             const url = "/api/contest"
+            let language = 0;
+            for(let i in info.language) {
+                language += this.$language.num[this.$language.name.findIndex(o => o == info.language[i])];
+            }
             const params = {
                 Tittle: info.name,
                 Defunct: info.defunct,
                 ContestType: info.contestType,
                 Contestant: info.contestant,
-                Language: parseInt(toBinary(info.language, this.$language), 2),
+                Language: language,
                 JudgeWay: info.judge,
-                // TODO 这个比赛内容是啥
                 Contest: info.contest,
-                StartTime: timeFormatter(info.time[0].getTime(), true),
-                EndTime: timeFormatter(info.time[1].getTime(), true),
+                StartTime: info.time[0].format('YYYY-MM-DD HH:mm'),
+                EndTime: info.time[1].format('YYYY-MM-DD HH:mm'),
             }
             this.$axios.post(url, params).then(rep => {
                 if(parseInt(rep.status/100) == 2) {
@@ -91,7 +93,6 @@ export default {
                     this.addModal.isVisible = true; // 弹出添加题目的页面
                     //TODO 比赛创建成功最好给我返回这个题目的ID，我能直接让它添加题目
                     this.$refs.contestform.resetForm();
-                    // this.resetForm(); // TODO 调用子类的重置表单
                 }
             })
         },

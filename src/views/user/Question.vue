@@ -120,7 +120,7 @@
                                     color: $route.name == 'question'? '#40A9FF':''
                                 }"
                             >
-                                <span @click="submitSolution.visible = true" v-text="solution"></span>
+                                <span @click="querySolution(solution)" v-text="solution"></span>
                             </span>
                             <!-- 结果 -->
                             <span slot="result" slot-scope="result">
@@ -137,10 +137,11 @@
                             @cancel = "submitSolution.visible = false"
                         >
                             <p class="modal-title">
-                                By {{ submitSolution.author }}, contest:{{ submitSolution.contest }}, problem: {{ submitSolution.problem }},
+                                <span>solution: {{ submitSolution.JID}}, </span>
+                                <span v-if="this.$route.name == 'question_contest'">contest: {{ this.$route.params.CID }}, </span>
+                                <span>problem: {{ this.$route.params.ID }}, </span>
+                                <span>result: </span>
                                 <span :class="submitSolution.result=='Accept'? 'accept':status=='Wrong Answer'? 'wa':'others'">{{ submitSolution.result }}</span>,
-                                <a>#</a>,
-                                <a @click="copy(submitSolution.code)">copy</a>
                             </p>
                             <hr />
                             <codemirror
@@ -288,33 +289,31 @@ export default {
             submitData: [],           // 提交区的数据
             submitSolution: {
                 visible: false,
-                author: "slight",
-                contest: "Contest 2050 and Codeforces Round #718 (Div. 1 + Div. 2)",
-                problem: "(A) Sum of 2050",
-                result: "Accept",
-                info: "Runtime error on test 1",
-                code: "int main()\n{\n    int a = 1;\n    return 0;\n}\n",
+                JID: 0,
+                result: "result",
+                info: "solution info",
+                code: "code detail",
                 test: [
-                    {
-                        time: 93,
-                        memory: 0,
-                        exit: 1,
-                        checker: 0,
-                        verdict: "RUNTIME_ERROR",
-                        input: "1",
-                        output: "1",
-                        answer: "1",
-                        checkLog: "ok 1 numbers",
-                    },
-                    {
-                        time: 93,
-                        memory: 0,
-                        exit: 1,
-                        checker: 0,
-                        verdict: "RUNTIME_ERROR",
-                        input: "1",
-                        checkLog: "Exit code is 1",
-                    }
+                    // {
+                    //     time: 93,
+                    //     memory: 0,
+                    //     exit: 1,
+                    //     checker: 0,
+                    //     verdict: "RUNTIME_ERROR",
+                    //     input: "1",
+                    //     output: "1",
+                    //     answer: "1",
+                    //     checkLog: "ok 1 numbers",
+                    // },
+                    // {
+                    //     time: 93,
+                    //     memory: 0,
+                    //     exit: 1,
+                    //     checker: 0,
+                    //     verdict: "RUNTIME_ERROR",
+                    //     input: "1",
+                    //     checkLog: "Exit code is 1",
+                    // }
                 ]
             },
             submitTimer: "",          // 提交情况的计时器
@@ -427,6 +426,16 @@ export default {
                 }
             })
             
+        },
+        querySolution(JID) {
+            // 展示弹框
+            this.submitSolution.visible = true;
+            this.submitSolution.JID = JID;
+            // URL
+            let url = `/api/problem/${ this.$route.params.ID }/submit/${ JID }`;
+            this.$axios.get(url).then(rep => {
+                console.log(rep);
+            })
         },
         querySubmitInformation() {  // 加载提交情况
             let that = this;

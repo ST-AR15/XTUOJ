@@ -12,11 +12,10 @@
             <!-- 表头 -->
             <template slot="title">
                 <h2 style="font-size: 22px">
-                    比赛列表
+                    {{ $route.name == 'contests'? '比赛列表': '我创建的比赛' }}
                     <a-icon class="refreshIcon" type="redo" @click="refresh" />
                     <span v-if="!$store.state.uid" style="margin-left: 30px; color: #9A9A9A">找不到比赛？试试登录</span>
-                    <!-- TODO 这个按钮不知道为什么按不了 -->
-                    <a-button v-if="$store.state.uid" type="primary" style="margin-left: 30px" @click="queryMyContests">查看我创建的比赛</a-button>
+                    <a-button v-if="$store.state.uid" type="primary" style="margin-left: 30px" @click="handleContests" v-text="$route.name == 'contests'? '查看我创建的比赛': '查看全部比赛'"></a-button>
                 </h2>
             </template>
             <!-- 时间 -->
@@ -50,7 +49,7 @@
 </template>
 
 <script>
-import { binaryToArray } from '@/utils/tools.js'
+// import { binaryToArray } from '@/utils/tools.js'
 export default {
     props: {
         buttons: Array
@@ -125,6 +124,14 @@ export default {
             // 修改query
             this.$router.push({ query: {page: pagination.current }})
         },
+        handleContests() {  // 切换比赛
+            // 直接切换页面的name,然后交给路由监听解决
+            if(this.$route.name == 'contests') {
+                this.$router.push({ name: 'contests_my' });
+            } else {
+                this.$router.push({ name: 'contests' });
+            }
+        },
         // 刷新表格
         refresh() { // 刷新表格
             // 情况内容
@@ -146,7 +153,12 @@ export default {
             // 开始加载
             this.loading = true;
             // url
-            const url = '/api/contest';
+            let url = '';
+            if(this.$route.name == 'contest') {
+                url = '/api/contest';
+            } else {
+                url = '/api/contest/my';
+            }
             // 开始请求
             this.$axios.get(url, {
                 params: {
@@ -177,43 +189,6 @@ export default {
                 this.loading = false;
             })
         },
-        queryMyContests() {
-            // 初始化结果数组
-            this.contests = [];
-            // 开始加载
-            this.loading = true;
-            // url
-            const url = '/api/contest/my';
-            // 开始请求
-            this.$axios.get(url).then(rep => {
-                const data = rep.data.data;
-                for(let i in data) {
-                    const contest = {
-                        ID: data[i].Cid,
-                        tittle: data[i].Tittle,
-                        defunct: data[i].Defunct == 'Y'? true: false,
-                        contestType: data[i].ContestType == 0? '公开': data[i].ContestType == 1?'注册': '私人',    // 0为公开，1为注册，2为私人
-                        contestant: data[i].Contestant == 0? '个人赛': '团队赛',  // 0为个人赛，1为团队赛
-                        language: binaryToArray(this.$language, data[i].Language),
-                        creator: data[i].Creator,
-                        judgeWay: data[i].JudgeWay,
-                        start: data[i].StartTime,
-                        end: data[i].EndTime,
-                        createTime: data[i].created_at,
-                        updateTime: data[i].updated_at,
-                        inviteCode: data[i].InviteCode,
-                        content: data[i].Content,
-                    }
-                    this.contests.push(contest); 
-                }
-                this.loading = false;
-            }).catch(error => {
-                // 如果检测到错误，也停止加载
-                this.$message.error('加载比赛列表时发生意外错误' + error);
-                this.loading = false;
-            })
-
-        }
     },
     mounted: function() {
         let page = this.$route.query.page? this.$route.query.page: 1;
@@ -224,7 +199,11 @@ export default {
     },
     watch: {
         // query变化的时候调用，通过query切换表页码，与handleTableChange互补
-        $route(to) {
+        $route(to, from) {
+            if(from.name != to.name) {
+                // 如果发生了name的切换,就清空表格
+                this.contests = [];
+            }
             const page = to.query.page? to.query.page: 1;
             // 页码切换
             this.pagination.current = Number(page);

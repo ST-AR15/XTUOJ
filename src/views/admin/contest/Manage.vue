@@ -22,6 +22,7 @@
                         }" @click="handleQuestion(i)" type="plus-circle" :title="i==questionModal.data.length-1?'新增':'删除'" />
                         <a-input style="width:100px;margin:0 5px" v-model="data.ID" @change="queryQuestionTitle(i)" placeholder="题目ID"></a-input>
                         <a-input :value="data.name" placeholder="< 题目名称 >" :disabled="true" v-bind:style="{ 'color': data.isValid? '#52c41a':'#FF0000' }"></a-input>
+                        <a-button type="danger" v-if="i < questionModal.data.length-questionModal.add.length-1" @click="queryRejudge(questionModal.ID,questionModal.data[i].ID)">重判</a-button>
                     </a-space>
                 </div>
             </transition-group>
@@ -81,10 +82,6 @@ export default {
                 {
                     text: "发送通知",
                     method: "queryNotice"
-                },
-                {
-                    text: "重判",
-                    isDanger: true,
                 },
                 {
                     text: "删除比赛",
@@ -165,6 +162,15 @@ export default {
         queryNamelist(info) {  // 管理名单
             console.log(info.ID);
         },
+        queryRejudge(CID, PID) {  // 题目重判
+            const url = `/api/rejudge/contest/${ CID }/problem/${ PID }`;
+            // TODO API写的是post,但提示是put
+            this.$axios.put(url).then(rep => {
+                if(parseInt(rep.status/100) == 2) {
+                    this.$message.success(rep.statusText);
+                }
+            })
+        },
         queryQuestion(info) { // 管理题目
             // 先把原数组清空
             this.questionModal.data = [
@@ -198,7 +204,7 @@ export default {
                 this.questionModal.isLoading = false; // 结束加载
             });
         },
-        queryDelete(info) {  // 删除题目
+        queryDelete(info) {  // 删除比赛
             const url = `/api/contest/${ info.ID }`;
             this.$axios.delete(url).then(rep => {
                 if(parseInt(rep.status/100) == 2) { // 返回2开头的成功码

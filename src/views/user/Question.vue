@@ -141,7 +141,7 @@
                                 <span v-if="this.$route.name == 'question_contest'">contest: {{ this.$route.params.CID }}, </span>
                                 <span>problem: {{ this.$route.params.ID }}, </span>
                                 <span>result: </span>
-                                <span :class="submitSolution.result=='Accept'? 'accept':status=='Wrong Answer'? 'wa':'others'">{{ submitSolution.result }}</span>,
+                                <span :class="submitSolution.result=='Accept'? 'accept':submitSolution.result=='Wrong Answer'? 'wa':'others'">{{ submitSolution.result }}</span>,
                             </p>
                             <hr />
                             <codemirror
@@ -342,7 +342,7 @@ export default {
                 language: "GCC",
                 timeLimit: 128,
                 memoryLimit: 128,
-                language_allowed: this.$language,
+                language_allowed: this.$language.name,
                 title: "题目打开中",
                 tips: [],
                 questionDetail: "请稍候……",

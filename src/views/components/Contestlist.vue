@@ -12,10 +12,10 @@
             <!-- 表头 -->
             <template slot="title">
                 <h2 style="font-size: 22px">
-                    {{ $route.name == 'contests'? '比赛列表': '我创建的比赛' }}
+                    {{ $route.query.type == 'my'? '我创建的比赛': '比赛列表' }}
                     <a-icon class="refreshIcon" type="redo" @click="refresh" />
                     <span v-if="!$store.state.uid" style="margin-left: 30px; color: #9A9A9A">找不到比赛？试试登录</span>
-                    <a-button v-if="$store.state.uid" type="primary" style="margin-left: 30px" @click="handleContests" v-text="$route.name == 'contests'? '查看我创建的比赛': '查看全部比赛'"></a-button>
+                    <a-button v-if="$store.state.uid" type="primary" style="margin-left: 30px" @click="handleContests" v-text="$route.query.type == 'my'? '查看全部比赛': '查看我创建的比赛'"></a-button>
                 </h2>
             </template>
             <!-- 时间 -->
@@ -122,19 +122,37 @@ export default {
         },
         handleTableChange(pagination) {
             // 修改query
-            this.$router.push({ query: {page: pagination.current }})
+            if(this.$route.query.type == 'my') {
+                this.$router.push({
+                    query: {
+                        type: 'my',
+                        page: pagination.current
+                    }
+                });
+            } else {
+                this.$router.push({
+                    query: {
+                        page: pagination.current
+                    }
+                });
+            }
         },
         handleContests() {  // 切换比赛
             // 直接切换页面的name,然后交给路由监听解决
-            if(this.$route.name == 'contests') {
-                this.$router.push({ name: 'contests_my' });
+            if(this.$route.query.type == 'my') {
+                this.$router.push({query: {  }});
             } else {
-                this.$router.push({ name: 'contests' });
+                this.$router.push({
+                    query: {
+                        type : 'my'
+                    }
+                });
             }
+            
         },
         // 刷新表格
         refresh() { // 刷新表格
-            // 情况内容
+            // 清空内容
             this.contests = [];
             // 加载内容
             this.queryContest();
@@ -147,17 +165,17 @@ export default {
             // 如果这一页加载过了,就不加载
             // 每页的大小存在和这一页的第一项存在就说明这一页加载过了
             if(this.pageSize != 0 && this.contests[(page-1) * this.pagination.pageSize]) {
-                console.log('跳过');
                 return;
             }
             // 开始加载
             this.loading = true;
             // url
             let url = '';
-            if(this.$route.name == 'contest') {
-                url = '/api/contest';
-            } else {
+            if(this.$route.query.type == 'my') {
                 url = '/api/contest/my';
+                
+            } else {
+                url = '/api/contest';
             }
             // 开始请求
             this.$axios.get(url, {
@@ -200,8 +218,8 @@ export default {
     watch: {
         // query变化的时候调用，通过query切换表页码，与handleTableChange互补
         $route(to, from) {
-            if(from.name != to.name) {
-                // 如果发生了name的切换,就清空表格
+            if(from.query.type != to.query.type) {
+                // 如果发生了type的切换,就清空表格
                 this.contests = [];
             }
             const page = to.query.page? to.query.page: 1;

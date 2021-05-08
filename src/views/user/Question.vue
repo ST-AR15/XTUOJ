@@ -231,6 +231,7 @@ import 'mavon-editor/dist/css/index.css'
 import { codemirror } from 'vue-codemirror'
 import 'codemirror/theme/ambiance.css'
 import { Base64 } from 'js-base64'
+import { message } from 'ant-design-vue'
 require('codemirror/mode/clike/clike')
 require('codemirror/mode/python/python')
 export default {
@@ -328,6 +329,11 @@ export default {
                 readOnly:false,
                 lineNumbers: true,
                 matchBrackets: true,
+                extraKeys: {
+                    "Ctrl-S": function() {
+                        message.info('已保存');
+                    }
+                }
             },
             cmModeText: {
                 GCC: 'text/x-csrc',

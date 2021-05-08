@@ -1,5 +1,5 @@
 <template>
-    <div class="admin-contest-form">
+    <div class="contest-form">
         <a-form-model
             ref="addForm"
             :model="form"

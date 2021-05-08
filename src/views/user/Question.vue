@@ -180,7 +180,7 @@
             <div class="question-right" :style="{ width: rightW + 'px' }">
                 <div class="question-right-header">
                     <span>语言：</span>
-                    <a-select v-model="question.language" style="width: 120px" defult-value="GCC">
+                    <a-select v-model="question.language" style="width: 120px" defult-value="GCC" @change="handleComplier">
                         <template v-for="item in question.language_allowed">
                             <a-select-option :key="item" :value="item">
                                 {{ item }}
@@ -231,8 +231,8 @@ import 'mavon-editor/dist/css/index.css'
 import { codemirror } from 'vue-codemirror'
 import 'codemirror/theme/ambiance.css'
 import { Base64 } from 'js-base64'
-require('codemirror/mode/javascript/javascript')
 require('codemirror/mode/clike/clike')
+require('codemirror/mode/python/python')
 export default {
     components: {
         mavonEditor,
@@ -329,6 +329,11 @@ export default {
                 lineNumbers: true,
                 matchBrackets: true,
             },
+            cmModeText: {
+                GCC: 'text/x-csrc',
+                'C++': 'text/x-c++src',
+                Python3: 'text/x-python',
+            },
             question: {
                 language: "GCC",
                 timeLimit: 128,
@@ -348,6 +353,9 @@ export default {
         back() {  //返回上一页的方法
             // this.$emit("back");
             this.$router.go(-1 * (this.jump + 1));
+        },
+        handleComplier() {  // 切换编译器
+            this.cmOptions.mode = this.cmModeText[this.question.language];
         },
         handleCode() {
             // 输入代码时，自动存储代码到localStorage

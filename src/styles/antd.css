@@ -25,6 +25,10 @@
     background-color:#FCFDFE;
     margin: 0 auto;
 }
+.ant-modal-body {
+    max-height: 700px;
+    overflow: auto;
+}
 
 /* 自定义的，type为green的a-button */
 .ant-btn-green {

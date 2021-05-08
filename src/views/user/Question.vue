@@ -1,10 +1,9 @@
 <template>
     <div class="question" id="question">
-        <a-page-header 
-            title="返回"
-            @back="back"
-            style="box-shadow: 0 -4px #EEE inset"
-        />
+        <div class="question-header">
+            <a-icon style="margin-right: 10px" @click="back" type="arrow-left" />
+            <span class="bold" style="font-size: 20px; color: rgba(0,0,0,0.85); cursor: pointer" @click="back">返回</span>
+        </div>
         <div class="question-container">
             <div class="question-left" :style="{ width: leftW + 'px' }">
                 <a-tabs v-model="tabkey" @change="handleTab">
@@ -728,6 +727,12 @@ export default {
     position: relative;
     margin: 0 auto;
     overflow: hidden;
+}
+.question-header {
+    height: 64px;
+    line-height: 64px;
+    padding-left: 20px;
+    box-shadow: 0 -4px #EEE inset;
 }
 .question-container {
     width: 100%;

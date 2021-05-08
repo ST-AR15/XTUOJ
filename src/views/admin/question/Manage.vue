@@ -6,86 +6,10 @@
             :visible="detailModal.visible"
             :title="'问题' + detailModal.data.ID + ' - ' + detailModal.data.title + ' - 详情'"
             @cancel="detailModal.visible = false"
-            @ok="querySubmit"
-            okText="修改"
-            :width="1000"
+            width="90%"
+            :footer="null"
         >
-            <a-form-model
-                ref="changeForm"
-                :model="detailModal.data"
-                :label-col="detailModal.labelCol"
-                :wrapper-col="detailModal.wrapperCol"
-                :rules="detailModal.rules"
-            >
-                <a-form-model-item label="ID">
-                    <a-input 
-                        v-model="detailModal.data.ID"
-                        :disabled="true"
-                    ></a-input>
-                </a-form-model-item>
-                <a-form-model-item label="题目名称">
-                    <a-input 
-                        v-model="detailModal.data.title"
-                    ></a-input>
-                </a-form-model-item>
-                <a-form-model-item label="来源">
-                    <a-input 
-                        v-model="detailModal.data.source"
-                    ></a-input>
-                </a-form-model-item>
-                <a-form-model-item label="题目内容">
-                    <mavonEditor :tabSize="3" v-model="detailModal.data.content"></mavonEditor>
-                </a-form-model-item>
-                <a-form-model-item label="时限">
-                    <a-input 
-                        v-model="detailModal.data.timeLimit"
-                    ></a-input>
-                </a-form-model-item>
-                <a-form-model-item label="存限">
-                    <a-input 
-                        v-model="detailModal.data.memoryLimit"
-                    ></a-input>
-                </a-form-model-item>
-                <a-form-model-item label="IsBan">
-                    <a-switch
-                        v-model="detailModal.data.IsBan"
-                    ></a-switch>
-                </a-form-model-item>
-                <a-form-model-item label="题目类型">
-                    <a-radio-group 
-                        v-model="detailModal.data.QType"
-                    >
-                        <a-radio value="normal">普通验证</a-radio>
-                        <a-radio value="special">特别验证</a-radio>
-                    </a-radio-group>
-                    <transition name="cross2">
-                        <a-button type="primary" v-if="detailModal.data.QType == 'special'">上传特判文件</a-button>
-                    </transition>
-                </a-form-model-item>
-                <a-form-model-item label="tips">
-                    <template v-for="(tip, index) in detailModal.data.tips">
-                        <a-tag :key="tip" closable @close="queryTipDelete(index)">
-                            {{ tip }}
-                        </a-tag>
-                    </template>
-                    <a-input
-                        v-if="tipInput.visible"
-                        ref="tipInput"
-                        type="text"
-                        size="small"
-                        :style="{ width: '78px' }"
-                        :value="tipInput.value"
-                        @change="inputTip"
-                        @blur="queryTipAdd"
-                        @keyup.enter="queryTipAdd"
-                    />
-                    <a-tag v-else style="background: #fff; borderStyle: dashed;" @click="showInput">
-                        <a-icon type="plus" /> 新标签
-                    </a-tag>
-                </a-form-model-item>
-            </a-form-model>
-            
-            
+            <questionform ref="questionForm" :form="detailModal.data" okText="修改" @querySubmit="queryChange" />
         </a-modal>
         <!-- 数据管理 - modal对话框 -->
         <a-modal
@@ -125,13 +49,12 @@
 
 <script>
 import questionlist from '@/views/components/Questionlist.vue'
-import { mavonEditor } from 'mavon-editor'
-import 'mavon-editor/dist/css/index.css'
+import questionform from '@/views/components/QuestionForm.vue'
 import { message } from 'ant-design-vue'
 export default {
     components: {
         questionlist,
-        mavonEditor
+        questionform
     },
     data() {
         return {
@@ -164,25 +87,13 @@ export default {
                 data: {
                     ID: NaN,
                     title: "",
-                    tips: [],
-                    source: " ",
+                    source: "",
                     content: "",
                     timeLimit: NaN,
                     memoryLimit: NaN,
                     IsBan: false,
                     QType: "",
                 },
-                labelCol: { span: 4 },
-                wrapperCol: { span: 19 },
-                rules: {                     // 表单规则
-                    name: [                  // 题目名称规则：比如输入内容，否则提示“请输入题目名称”
-                        { required: true, message: '请输入题目名称', trigger: 'change' },
-                    ],
-                },
-            },
-            tipInput: {              // 问题详情的标签input
-                visible: false,
-                value: "",
             },
             dataModal: {             // 问题数据管理的modal
                 visible: false,
@@ -339,12 +250,13 @@ export default {
             // 使用info.ID来调取题目信息
             let url = "/api/problem/" + info.ID;
             this.$axios.get(url).then(rep => {
-                // 把获取到的信息赋值给questionDetail
+                // 把获取到的信息赋值给detailModal
                 const data = rep.data.data;
+                console.log(rep);
                 this.detailModal.data.ID = data.Pid;
                 this.detailModal.data.title = data.Tittle;
-                this.detailModal.data.source = data.Source==null? data.Source:"admin";
-                this.detailModal.data.content = data.Content;
+                this.detailModal.data.source = data.Source==null? "admin":data.Source;
+                this.detailModal.data.contents = data.Content;
                 this.detailModal.data.timeLimit = data.TimeLimit;
                 this.detailModal.data.memoryLimit = data.MemoryLimit;
                 this.detailModal.data.IsBan = data.IsBan;
@@ -352,11 +264,7 @@ export default {
             })
             this.detailModal.ID = info.ID;
             this.detailModal.title = info.title;
-            if(info.tips) {
-                this.detailModal.tips = JSON.parse(JSON.stringify(info.tips));
-            }
             this.detailModal.visible = true;
-            console.log('打开对话框');
         },
         queryData(info) {  //获取题目数据和修改
             this.dataModal.ID = info.ID;
@@ -386,7 +294,7 @@ export default {
         queryCompilation() { // 获取编译信息
             this.compilationModal.visible = true;
         },
-        querySubmit() { // 提交问题修改
+        queryChange() { // 提交问题修改
             const url = '/api/problem/' + this.detailModal.data.ID;
             const info = {
                 Tittle: this.detailModal.data.title,
@@ -403,31 +311,6 @@ export default {
                 this.detailModal.visible = false;
             })
         },
-        queryTipDelete(i) {  // 删除标签
-            console.log('删除下标为' + i + '的标签' + this.detailModal.data.tips[i])
-            let tips = this.detailModal.data.tips;
-            tips.splice(i,1);
-            this.detailModal.data.tips = tips;
-        },
-        queryTipAdd() { // 添加标签
-            this.tipInput.visible = false;     // 去掉input
-            if(this.tipInput.value != "") {       // 空值不要
-                this.detailModal.data.tips.push(this.tipInput.value);
-                this.tipInput.value = "";
-            }
-        },
-        showInput() { // 添加标签时显示input
-            this.tipInput.visible = true;     // 显示input
-            this.$nextTick(function() {      // 聚焦
-                this.$refs.tipInput.focus();
-            });
-        },
-        inputTip(e) {  // 添加标签时修改内容
-            this.tipInput.value = e.target.value;
-        },
-        
-        
-        
     }
 }
 </script>

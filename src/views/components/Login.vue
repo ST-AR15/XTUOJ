@@ -94,7 +94,7 @@ export default {
                     const data = rep.data.data;
                     this.$store.commit('setUid', data.Uid);
                     this.$store.commit('setToken', data.token);
-                    this.$message.success('登录成功');
+                    this.$message.success(`登录成功!欢迎您,${ data.Uid }`);
                     this.$emit('close');
                     this.$emit('ok');
                     this.loginLoader = false;

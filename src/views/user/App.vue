@@ -98,7 +98,6 @@ export default {
     },
     mounted() {
         // 如果没有登录，自动登录
-
         if(!this.$store.state.token && localStorage.getItem('account') && localStorage.getItem('password')) {
             const url = "/api/users/login";
             let info = {
@@ -109,7 +108,7 @@ export default {
                 const data = rep.data.data;
                 this.$store.commit('setUid', data.Uid);
                 this.$store.commit('setToken', data.token);
-                this.$message.success('自动登录成功');
+                this.$message.success(`自动登录成功!欢迎您,${ this.$store.state.uid }`);
             }).catch(e => {
                 console.log(e);
                 this.$message.info('自动登录失败');

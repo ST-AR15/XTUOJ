@@ -140,8 +140,9 @@
                                 <span>solution: {{ submitSolution.JID}}, </span>
                                 <span v-if="this.$route.name == 'question_contest'">contest: {{ this.$route.params.CID }}, </span>
                                 <span>problem: {{ this.$route.params.ID }}, </span>
-                                <span>result: </span>
-                                <span :class="submitSolution.result=='Accept'? 'accept':submitSolution.result=='Wrong Answer'? 'wa':'others'">{{ submitSolution.result }}</span>,
+                                <span>compile_error: {{ submitSolution.compileError }}, </span>
+                                <span>system_error: {{ submitSolution.systemError }}, </span>
+                                <span v-if="submitSolution.compileErrorInfo">compile_error_info: {{ submitSolution.compileErrorInfo }}, </span>
                             </p>
                             <hr />
                             <codemirror
@@ -154,7 +155,7 @@
                             <p class="bold" style="margin: 5px 0;">→Judgement Protocol</p>
                             <div v-for="(item, i) in submitSolution.test" :key="i">
                                 <a-divider />
-                                <p class="bold" v-text="`#${ i + 1 }, time: ${ item.time }ms, memory: ${ item.memory }KB, exit code: ${ item.exit }, checker exit code: ${ item.checker }, verdict: ${ item.verdict }`"></p>
+                                <p class="bold" v-text="`#${ i + 1 }, time: ${ item.time }ms, memory: ${ item.memory }KB, verdict: ${ item.verdict }`"></p>
                                 <p v-if="item.input">Input</p>
                                 <pre v-if="item.input" v-text="item.input"></pre>
                                 <p v-if="item.output">Output</p>
@@ -290,7 +291,9 @@ export default {
             submitSolution: {
                 visible: false,
                 JID: 0,
-                result: "result",
+                compileError: "0",
+                systemError: "0",
+                compileErrorInfo: "",
                 info: "solution info",
                 code: "code detail",
                 test: [
@@ -438,7 +441,29 @@ export default {
             // URL
             let url = `/api/problem/${ this.$route.params.ID }/submit/${ JID }`;
             this.$axios.get(url).then(rep => {
-                console.log(rep);
+                const data = rep.data.data;
+                const runTimeInfo = JSON.parse(Base64.decode(data.RunTimeInfo));
+                // 代码
+                this.submitSolution.code = data.Code;
+                this.submitSolution.compileError = runTimeInfo.compile_error;
+                this.submitSolution.compileErrorInfo = runTimeInfo.compile_error_info;
+                this.submitSolution.systemError = runTimeInfo.system_error;
+                // test,以result为基准
+                for(let i in runTimeInfo.output) {
+                    const testItem = {
+                        time: runTimeInfo.time[i],
+                        memory: runTimeInfo.memory[i],
+                        // exit,checker
+                        verdict: this.$resultText[runTimeInfo.result[i]],
+                        // input
+                        // input: runTimeInfo.input[i],
+                        // TODO 不要使用这个replaceAll方法
+                        output: Base64.decode(runTimeInfo.output[i]).replaceAll('\\n','\n'),
+                        // answer,checklog
+                    }
+                    this.submitSolution.test.push(testItem);
+                }
+                console.log(this.submitSolution);
             })
         },
         querySubmitInformation() {  // 加载提交情况

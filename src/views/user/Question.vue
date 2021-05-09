@@ -394,7 +394,6 @@ export default {
             const reader = new FileReader();
             reader.readAsText(file);
             reader.onload = (result) => {
-                console.log(result.target.result);
                 // 如果之前有代码，则提示已经替换
                 if(this.question.code) {
                     this.$message.info('已经替换了之前的代码，可通过ctrl+z撤销');
@@ -466,7 +465,6 @@ export default {
                     }
                     this.submitData[parseInt(this.submitPagination.pageSize*(this.submitPagination.current-1)) + parseInt(i)] = submitItem;
                 }
-                console.log(this.submitData);
                 // 如果有内容，而且有题目需要加载
                 // 有内容
                 if(this.submitData.length != 0) {
@@ -476,7 +474,6 @@ export default {
                     if(index >= 0 && !this.submitTimer) {
                         // 设置计时器去查没有加载完的题目
                         this.submitTimer = setInterval(function() {
-                            console.log(Date.now());
                             // 根据index计算page
                             const page = parseInt(index / that.submitPagination.pageSize) + 1;
                             that.$axios.get(url, {
@@ -569,7 +566,6 @@ export default {
             this.$axios.get(url).then(rep => {
                 const data = rep.data.data;  // 评论的数据
                 for(let i in data) {
-                    // console.log(data[i]);
                     let info = {
                         Rid: data[i].Rid,
                         Uid: data[i].Uid,
@@ -579,7 +575,6 @@ export default {
                         time: data[i].create_at,
                         ip: data[i].Ip,
                     }
-                    // console.log(info);
                     if(info.postId == null) {
                         // 如果没有postID，就说明是一级评论，直接push到comment数组里
                         // 先添加部分额外属性
@@ -601,7 +596,6 @@ export default {
                 }
                 // 由于最新的评论应该放在最前面，所以要逆序处理
                 that.commentContext.reverse();
-                // console.log(that.commentContext);
                 that.commentLoading = false; // 停止加载
             })
             
@@ -611,19 +605,16 @@ export default {
             let params = {
                 Rid: Rid,
             }
-            console.log(params);
             this.$axios.delete(url, { data: params }).then(rep => {
-                console.log(rep);
-                // 刷新评论
-                this.$message.success("删除成功！");
+                if(parseInt(rep.status/100) == 2) {
+                    this.$message.success("删除成功！");
+                }
                 this.commentContext = [];
                 this.queryComment();
             })
         },
         sendComment(reply) {  // 提交评论
-            // console.log(reply)
             let that = this;
-            // console.log(that.commentPost);
             let info = {
                 Pid: that.ID,
                 Context: reply? that.commentReply: that.comment,
@@ -631,7 +622,6 @@ export default {
             };
             const url = "/api/reply";
             this.$axios.post(url, info).then(rep => {
-                // console.log(rep);
                 // 如果创建成功，就刷评论列表，然后清空评论栏
                 if(Math.floor(rep.status)) {
                     that.$message.success('评论成功！');  // 提示成功
@@ -664,8 +654,6 @@ export default {
             if(typeof id !== 'string') {
                 id += "";
             }
-            console.log(this.$router);
-            console.log(this.$route);
             if(this.$route.params.ID == id) {
                 this.$message.error(`你已经打开ID${id}了哦`);
             } else {

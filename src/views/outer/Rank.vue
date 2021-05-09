@@ -1575,7 +1575,6 @@ export default {
                 let organization = [];
                 for(let i in this.starSchool) {
                     organization.push('"' + this.school.find(o => o.id == this.starSchool[i]).name + '"');
-                    // console.log(i);
                 }
                 // 只有有内容才会被加入字符串
                 if(organization.toString()) {

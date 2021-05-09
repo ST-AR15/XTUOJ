@@ -84,15 +84,13 @@ export default {
         logout() {
             let url = "/api/users/logout";
             this.$axios.get(url).then(rep => {
-                this.$message.success('登出成功!');
+                this.$message.success(rep.data.data);
                 this.$store.commit('setUid', null);
                 this.$store.commit('setToken', null);
-                console.log(rep.data.data);
             }).catch(err => {
-                this.$message.success('登出成功!');
+                this.$message.info(err);
                 this.$store.commit('setUid', null);
                 this.$store.commit('setToken', null);
-                console.log(err);
             })
         }
     },
@@ -110,8 +108,8 @@ export default {
                 this.$store.commit('setToken', data.token);
                 this.$message.success(`自动登录成功!欢迎您,${ this.$store.state.uid }`);
             }).catch(e => {
-                console.log(e);
                 this.$message.info('自动登录失败');
+                return e;
             })    
         }
         try {

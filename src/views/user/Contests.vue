@@ -90,7 +90,6 @@ export default {
             const url = `api/contest/${ this.$route.params.CID }/problem`;
             this.$axios.get(url).then(rep => {
                 const data = rep.data.data;
-                console.log(rep);
                 for(let i in data) {
                     const question = {
                         ID: data[i].c_pid,
@@ -102,8 +101,8 @@ export default {
                 this.questionLoader = false;
             }).catch(err => {
                 // 发生错误也停止加载
-                console.log(err);
                 this.questionLoader = false;
+                return err;
             })
         },
         queryQuestion(ID) { // 打开题目

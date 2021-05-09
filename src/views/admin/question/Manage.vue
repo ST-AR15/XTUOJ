@@ -252,7 +252,6 @@ export default {
             this.$axios.get(url).then(rep => {
                 // 把获取到的信息赋值给detailModal
                 const data = rep.data.data;
-                console.log(rep);
                 this.detailModal.data.ID = data.Pid;
                 this.detailModal.data.title = data.Tittle;
                 this.detailModal.data.source = data.Source==null? "admin":data.Source;
@@ -285,7 +284,6 @@ export default {
         queryRejudge(info) {  // 题目重判
             const url = `/api/rejudge/problem/${ info.ID }`
             this.$axios.put(url).then(rep => {
-                console.log(rep);
                 if(parseInt(rep.status/100) == 2) {
                     this.$message.success(rep.statusText);
                 }

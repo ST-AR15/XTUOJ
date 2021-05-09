@@ -48,7 +48,7 @@
             </a-form-model-item>
 
             <a-form-model-item prop="language" label="语言类型">
-                <a-checkbox-group v-model="form.language" :options="this.$language.name" @change="test"></a-checkbox-group>
+                <a-checkbox-group v-model="form.language" :options="this.$language.name"></a-checkbox-group>
             </a-form-model-item>
 
             <a-form-model-item prop="judge" label="判题方式">
@@ -146,9 +146,6 @@ export default {
         }
     },
     methods: {
-        test() {
-            console.log(this.form);
-        },
         handleTime(e) {
             this.form.time = e;
         },

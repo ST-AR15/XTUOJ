@@ -143,7 +143,6 @@ export default {
                 EndTime: timeFormatter(info.time[1]._i, true),
             }
             this.$axios.put(url, params).then(rep => {
-                console.log(rep);
                 if(parseInt(rep.status/100) == 2) {
                     this.$message.info('修改成功！');
                     this.$refs.contestlist.refresh();
@@ -217,7 +216,6 @@ export default {
                     this.$refs.contestlist.refresh();
                 }
             })
-            console.log(info);
         },
         handleQuestion(i) { // 修改题目
             if(i == this.questionModal.data.length-1) {  //如果是最后的问题，那就是添加

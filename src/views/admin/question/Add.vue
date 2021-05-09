@@ -33,7 +33,6 @@ export default {
     },
     methods: {
         queryForm(form) {     //提交表单
-            console.log(form);
             const info = {    // 传给后端的info
                 Tittle: form.name,
                 Source: form.source,

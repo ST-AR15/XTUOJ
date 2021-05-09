@@ -27,7 +27,6 @@ export default {
                 this.$language.name[i] = data[i].name;
                 this.$language.num[i] = data[i].LanguageNum;
             }
-            console.log(this.$language);
         })
         try {
             // 移除加载器

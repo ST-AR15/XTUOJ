@@ -336,11 +336,6 @@ export default {
                     }
                 }
             },
-            cmModeText: {
-                GCC: 'text/x-csrc',
-                'C++': 'text/x-c++src',
-                Python3: 'text/x-python',
-            },
             question: {
                 language: "GCC",
                 timeLimit: 128,
@@ -362,7 +357,7 @@ export default {
             this.$router.go(-1 * (this.jump + 1));
         },
         handleComplier() {  // 切换编译器
-            this.cmOptions.mode = this.cmModeText[this.question.language];
+            this.cmOptions.mode = this.$cmModeText[this.question.language];
         },
         handleCode() {
             // 输入代码时，自动存储代码到localStorage
@@ -463,7 +458,6 @@ export default {
                     }
                     this.submitSolution.test.push(testItem);
                 }
-                console.log(this.submitSolution);
             })
         },
         querySubmitInformation() {  // 加载提交情况

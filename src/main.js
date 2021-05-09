@@ -17,6 +17,12 @@ Vue.prototype.$language = {
     name: [],
     num: [],
 };
+Vue.prototype.$cmModeText= {
+    GCC: 'text/x-csrc',
+    'G++': 'text/x-c++src',
+    python3: 'text/x-python',
+    java:'text/x-java'
+},
 Vue.prototype.$judge = ["AcmMode", "OiMode", "HalfOiMode"];
 // result数字的含义,负数用了下划线
 Vue.prototype.$resultText = {

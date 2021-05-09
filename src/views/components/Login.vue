@@ -95,6 +95,8 @@ export default {
                     this.$store.commit('setUid', data.Uid);
                     this.$store.commit('setToken', data.token);
                     this.$message.success(`登录成功!欢迎您,${ data.Uid }`);
+                    localStorage.setItem('account', this.loginForm.account);
+                    localStorage.setItem('password', this.loginForm.password);
                     this.$emit('close');
                     this.$emit('ok');
                     this.loginLoader = false;

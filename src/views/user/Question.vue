@@ -217,7 +217,7 @@
                             <a-button type="primary">上传文件</a-button>
                         </a-upload>
                         <a-button type="primary" @click="question.code = ''">重置</a-button>
-                        <a-button type="primary" @click="querySubmit">提交</a-button>
+                        <a-button type="primary" @click="querySubmit" :loading="codeLoading">提交</a-button>
                     </a-space>
                 </div>
             </div>
@@ -350,7 +350,7 @@ export default {
             },
             tabkey: 'question',
             autoSave: true,
-            
+            codeLoading: false,
         }
     },
     methods: {
@@ -404,6 +404,8 @@ export default {
             return false;
         },
         querySubmit() {  // 提交代码
+            // 开始加载
+            this.codeLoading = true;
             let url
             if(this.$route.name == "question_contest") {   // 比赛模式提交
                 url = `/api/contest/${ this.$route.params.CID }/problem/${ this.ID }/submit`;
@@ -421,6 +423,11 @@ export default {
                     this.tabkey = "submit";
                     this.querySubmitInformation();
                 }
+                this.codeLoading = false;
+            }).catch(e => {
+                this.codeLoading = false;
+                this.$message.error(`发生错误${ e }`);
+                return e;
             })
             
         },

@@ -417,8 +417,6 @@ export default {
             this.$axios.post(url, info).then(rep => {
                 if(parseInt(rep.status/100) == 2) {
                     this.$message.info('提交成功！');
-                    // 清空代码
-                    this.question.code = "";
                     // 跳转到提交情况
                     this.tabkey = "submit";
                     this.querySubmitInformation();

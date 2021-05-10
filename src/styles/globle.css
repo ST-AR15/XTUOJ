@@ -27,13 +27,16 @@ h1 {
     font-size: 1.6rem
 }
 /* 部分颜色 */
-.accept {
+.problem-accept {
+    transition: color .4s;
     color: #13C965;
 }
-.wa {
+.problem-wa {
+    transition: color .4s;
     color: #FF0000;
 }
-.others {
+.problem-others {
+    transition: color .4s;
     color: #0000FF;
 }
 /* 部分特殊化 */

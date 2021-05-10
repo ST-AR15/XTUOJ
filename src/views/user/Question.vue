@@ -125,7 +125,7 @@
                             <!-- 结果 -->
                             <span slot="result" slot-scope="result">
                                 <a-spin v-if="result == 0 || result == -2" />
-                                <span v-text="$resultText[result]"></span>
+                                <span v-text="$resultText[result]" :class="result == -1? 'problem-accept': result == 0 || result == -2? 'problem-others': 'problem-wa'"></span>
                             </span>
                         </a-table>
                         <a-modal
@@ -140,8 +140,8 @@
                                 <span>solution: {{ submitSolution.JID}}, </span>
                                 <span v-if="this.$route.name == 'question_contest'">contest: {{ this.$route.params.CID }}, </span>
                                 <span>problem: {{ this.$route.params.ID }}, </span>
-                                <span>compile_error: {{ submitSolution.compileError }}, </span>
-                                <span>system_error: {{ submitSolution.systemError }}, </span>
+                                <span class="problem-wa" v-if="submitSolution.compileError != 0">compile_error, </span>
+                                <span class="problem-wa" v-if="submitSolution.systemError != 0">system_error, </span>
                                 <span v-if="submitSolution.compileErrorInfo">compile_error_info: {{ submitSolution.compileErrorInfo }}, </span>
                                 <a-button type="link" @click="handleCopy">copy</a-button>
                             </p>

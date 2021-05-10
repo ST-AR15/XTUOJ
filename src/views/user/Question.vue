@@ -438,6 +438,8 @@ export default {
             // 展示弹框
             this.submitSolution.visible = true;
             this.submitSolution.JID = JID;
+            // 清空弹框原来的内容
+            this.submitSolution.test = [];
             // URL
             let url = `/api/problem/${ this.$route.params.ID }/submit/${ JID }`;
             this.$axios.get(url).then(rep => {

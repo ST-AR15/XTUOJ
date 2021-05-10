@@ -149,7 +149,8 @@
                             <codemirror
                                 ref="code"
                                 v-model="submitSolution.code"
-                                :options="cmOptions"
+                                :options="solutionCmOptions"
+                                :readOnly="true"
                                 >
                             </codemirror>
                             <hr />
@@ -336,7 +337,17 @@ export default {
                     "Ctrl-S": function() {
                         message.info('已保存');
                     }
-                }
+                },
+                
+            },
+            solutionCmOptions:{
+                value:'',
+                mode:"text/x-csrc",
+                // mode详细：https://codemirror.net/mode/clike/，clike换成python之类就能获得对应的内容
+                indentUnit: 4,
+                readOnly:true,
+                lineNumbers: true,
+                matchBrackets: true,
             },
             question: {
                 language: "GCC",

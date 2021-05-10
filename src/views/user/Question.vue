@@ -143,6 +143,7 @@
                                 <span>compile_error: {{ submitSolution.compileError }}, </span>
                                 <span>system_error: {{ submitSolution.systemError }}, </span>
                                 <span v-if="submitSolution.compileErrorInfo">compile_error_info: {{ submitSolution.compileErrorInfo }}, </span>
+                                <a-button type="link" @click="handleCopy">copy</a-button>
                             </p>
                             <hr />
                             <codemirror
@@ -227,6 +228,7 @@
 </template>
 
 <script>
+import { copy } from '@/utils/tools.js'
 import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 import { codemirror } from 'vue-codemirror'
@@ -355,6 +357,9 @@ export default {
         back() {  //返回上一页的方法
             // this.$emit("back");
             this.$router.go(-1 * (this.jump + 1));
+        },
+        handleCopy() {  // 复制代码
+            copy(this.submitSolution.code);
         },
         handleComplier() {  // 切换编译器
             this.cmOptions.mode = this.$cmModeText[this.question.language];

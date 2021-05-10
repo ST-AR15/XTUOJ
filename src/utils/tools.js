@@ -67,19 +67,19 @@ export function msToTime(ms) {
  * @param { String } text 需要复制的内容
  */
 export function copy(text) {
-    let input = document.createElement('input');
-    input.setAttribute('readonly', 'readonly');
-    input.setAttribute('value', text);
-    document.body.appendChild(input);
-    input.select();
-    input.setSelectionRange(0, 9999);
+    let textarea = document.createElement('textarea');
+    textarea.setAttribute('readonly', 'readonly');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    textarea.setSelectionRange(0, 9999);
     try {
         document.execCommand('Copy');
         message.success('复制成功');
     } catch (e) {
         message.error('复制失败');
     } finally {
-        document.body.removeChild(input);
+        document.body.removeChild(textarea);
     }
     
 }

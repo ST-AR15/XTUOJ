@@ -40,7 +40,32 @@ Vue.prototype.$resultText = {
     9: "PRESENTATION_ERROR",
     10:"Test_ERROR",
 };
-
+Vue.prototype.$mavonExternalLink = {
+    markdown_css: function() {
+        // 这是你的markdown css文件路径
+        return '/source/markdown/github-markdown.min.css';
+    },
+    hljs_js: function() {
+        // 这是你的hljs文件路径
+        return '/source/highlightjs/highlight.min.js';
+    },
+    hljs_css: function(css) {
+        // 这是你的代码高亮配色文件路径
+        return '/source/highlightjs/styles/' + css + '.min.css';
+    },
+    hljs_lang: function(lang) {
+        // 这是你的代码高亮语言解析路径
+        return '/source/highlightjs/languages/' + lang + '.min.js';
+    },
+    katex_css: function() {
+        // 这是你的katex配色方案路径路径
+        return '/source/katex/katex.min.css';
+    },
+    katex_js: function() {
+        // 这是你的katex.js路径
+        return '/source/katex/katex.min.js';
+    },
+}
 // 声明自己写的文件
 // 样式
 import '@/styles/antd.css'

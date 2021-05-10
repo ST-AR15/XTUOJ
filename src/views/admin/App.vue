@@ -59,7 +59,9 @@
                 </a-menu>
             </aside>
             <main class="admin-main">
-                <router-view />
+                <transition name="cross-up">
+                    <router-view />
+                </transition>
             </main>
         </section>
     </div>

@@ -1,7 +1,9 @@
 <template>
     <div class="app" id="app">
         <a-config-provider :locale="zh_CN">
-            <router-view/>
+            <transition name="cross">
+                <router-view />
+            </transition>
         </a-config-provider>
     </div>
 </template>

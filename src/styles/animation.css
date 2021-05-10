@@ -12,6 +12,18 @@
     transform: translateX(-10px);
 }
 
+/* cross-up：水平移动 - 下往上 */
+.cross-up-enter-active {
+    transition: all .6s ease;
+}
+.cross-up-leave-active {
+    display: none;
+}
+.cross-up-enter, .cross-up-leave-to  {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
 /* cross2：水平移动 - 右往左 */
 .cross2-enter-active, .cross2-leave-active {
     transition: all .6s ease;

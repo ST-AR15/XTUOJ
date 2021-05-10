@@ -25,7 +25,7 @@
                                     </a-tag>
                                 </p>
                                 <p v-text="`时间限制:${ question.timeLimit }ms 内存限制:${ question.memoryLimit }MB`"></p>
-                                <mavon-editor v-model="question.questionDetail" :subfield="false" :toolbarsFlag="false" defaultOpen="preview"></mavon-editor>
+                                <mavon-editor style="margin-bottom: 20px" v-model="question.questionDetail" :subfield="false" :toolbarsFlag="false" defaultOpen="preview"></mavon-editor>
                             </section>
                         </a-spin>
                     </a-tab-pane>

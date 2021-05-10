@@ -108,8 +108,8 @@ export default {
             announcements: [
                 {
                     time: "2021-03-14",
-                    title: '最新添加题目1007！',
-                    description: "试着做一做<a href='/#/problems/1007'>1007题</a>吧~",
+                    title: '测试专用题目1013',
+                    description: "直接跳转到<a href='/#/problems/1013'>1013题</a>!",
                 },
                 {
                     time: "2021-03-14",

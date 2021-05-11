@@ -46,6 +46,22 @@
         >
             <contestform okText="修改" :form="informationModal.form" @querySubmitForm="querySubmitForm" />
         </a-modal>
+        <!-- 比赛名单的modal -->
+        <a-modal
+            :title="'比赛' + namelistModal.ID + '名单'"
+            :visible="namelistModal.visible"
+            @cancel="namelistModal.visible = false"
+            @ok="namelistModal.visible = false"
+        >
+            <a-table
+                :data-source="namelistModal.data"
+                rowKey="contestID"
+                :columns="namelistModal.columns"
+                :pagination="false"
+                bordered
+            >
+            </a-table>
+        </a-modal>
     </div>
 </template>
 
@@ -121,6 +137,29 @@ export default {
                     timePicker: Symbol(1),
                     password: "",
                 },
+            },
+            namelistModal: { // 名单信息对话框
+                visible: false,
+                ID: 0,
+                data: [],
+                columns: [
+                    {
+                        title: "比赛UID",
+                        dataIndex: "contestUid"
+                    },
+                    {
+                        title: "UID",
+                        dataIndex: "ID"
+                    },
+                    {
+                        title: "学号",
+                        dataIndex: "studentID"
+                    },
+                    {
+                        title: "姓名",
+                        dataIndex: "name"
+                    },
+                ]
             }
         }
     },
@@ -162,7 +201,23 @@ export default {
             this.informationModal.form.time = [moment(info.start), moment(info.end)];
         },
         queryNamelist(info) {  // 管理名单
-            console.log(info.ID);
+            // 初始化modal
+            this.namelistModal.visible = true;
+            this.namelistModal.ID = info.ID;
+            this.namelistModal.data = [];
+            const url = `/api/match/${ info.ID }/user`;
+            this.$axios.get(url).then(rep => {
+                const data = rep.data.data;
+                for(let i in data) {
+                    const item = {
+                        ID: data[i].Uid,
+                        contestUid: data[i].ContestUid,
+                        studentID: data[i].StudentID,
+                        name: data[i].Name,
+                    }
+                    this.$set(this.namelistModal.data, i, item);
+                }
+            })
         },
         queryRejudge(CID, PID) {  // 题目重判
             const url = `/api/rejudge/contest/${ CID }/problem/${ PID }`;

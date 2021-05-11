@@ -1596,6 +1596,10 @@ export default {
         }
     },
     mounted() {
+        const url = `/api/match/${ this.$route.params.CID }`;
+        this.$axios.get(url).then(rep => {
+            console.log(rep);
+        })
         this.init();
     },
     watch: {

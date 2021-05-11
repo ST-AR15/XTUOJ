@@ -125,7 +125,7 @@ const routes = [
     // rank
     {
         name: 'rank',
-        path: '/rank',
+        path: '/rank/:CID',
         component: rank,
     },
     // balloon

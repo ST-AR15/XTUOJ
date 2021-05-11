@@ -15,7 +15,8 @@
                     {{ $route.query.type == 'my'? '我创建的比赛': '比赛列表' }}
                     <a-icon class="refreshIcon" type="redo" @click="refresh" />
                     <span v-if="!$store.state.uid" style="margin-left: 30px; color: #9A9A9A">找不到比赛？试试登录</span>
-                    <a-button v-if="$store.state.uid" type="primary" style="margin-left: 30px" @click="handleContests" v-text="$route.query.type == 'my'? '查看全部比赛': '查看我创建的比赛'"></a-button>
+                    <a-button v-if="$store.state.uid" type="primary" style="margin-left: 30px" @click="queryCreate">创建比赛</a-button>
+                    <a-button v-if="$store.state.uid" type="primary" style="margin-left: 20px" @click="handleContests" v-text="$route.query.type == 'my'? '查看全部比赛': '查看我创建的比赛'"></a-button>
                 </h2>
             </template>
             <!-- 时间 -->
@@ -45,12 +46,24 @@
                 </a-space>
             </span>
         </a-table>
+        <a-modal
+            :width="1000"
+            :visible="createModal.visible"
+            title="创建比赛"
+            :footer="null"
+            @cancel="createModal.visible = false"
+        >
+            <contestform okText="创建"  @querySubmitForm="querySubmitForm" />
+        </a-modal>
     </div>
 </template>
 
 <script>
-// import { binaryToArray } from '@/utils/tools.js'
+import contestform from '@/views/components/ContestForm.vue'
 export default {
+    components: {
+        contestform
+    },
     props: {
         buttons: Array
     },
@@ -107,6 +120,9 @@ export default {
                 //     end: "2021-05-02 16:33:45",
                 // },
             ],
+            createModal: {
+                visible: false,
+            }
         }
     },
     methods: {
@@ -207,6 +223,34 @@ export default {
                 this.loading = false;
             })
         },
+        queryCreate() { // 创建比赛modal
+            this.createModal.visible = true;
+        },
+        querySubmitForm(info) { // 创建比赛请求
+            const url = "/api/contest"
+            let language = 0;
+            for(let i in info.language) {
+                language += this.$language.num[this.$language.name.findIndex(o => o == info.language[i])];
+            }
+            const params = {
+                Tittle: info.name,
+                Defunct: info.defunct,
+                ContestType: info.contestType,
+                Contestant: info.contestant,
+                Language: language,
+                JudgeWay: info.judge,
+                Contest: info.contest,
+                StartTime: info.time[0].format('YYYY-MM-DD HH:mm'),
+                EndTime: info.time[1].format('YYYY-MM-DD HH:mm'),
+            }
+            this.$axios.post(url, params).then(rep => {
+                if(parseInt(rep.status/100) == 2) {
+                    this.$message.success('创建成功!');
+                    this.createModal.visible = false;
+                    this.refresh();
+                }
+            })
+        }
     },
     mounted: function() {
         let page = this.$route.query.page? this.$route.query.page: 1;

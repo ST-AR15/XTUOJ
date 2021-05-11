@@ -114,7 +114,7 @@ export default {
 
 <style>
 .admin {
-    min-width: 1000px;
+    min-width: 1500px;
     min-height: 100vh;
     position: relative;
 }
@@ -122,6 +122,7 @@ export default {
     height: 66px;
     line-height: 66px;
     box-shadow: inset 0 -2px #DDDDDD;
+    background-color: #FFFFFF;
 }
 .admin-header > button {
     height: 31px;
@@ -135,7 +136,7 @@ export default {
     position: relative;
     display: flex;
     justify-content: space-between;
-    background-color: #F9F9F9;
+    background-color: #F2F4F9;
 }
 .admin-sider {
     width: 200px;

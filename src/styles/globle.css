@@ -4,9 +4,6 @@
     padding: 0;
     font-size: 15px;
 }
-html {
-    background-color: #F2F4F9;
-}
 /* 固定标签样式 */
 th,td {
     text-align: center !important;

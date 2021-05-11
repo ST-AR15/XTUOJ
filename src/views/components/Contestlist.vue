@@ -14,7 +14,7 @@
                 <h2 style="font-size: 22px">
                     {{ $route.query.type == 'my'? '我创建的比赛': '比赛列表' }}
                     <a-icon class="refreshIcon" type="redo" @click="refresh" />
-                    <span v-if="!$store.state.uid" style="margin-left: 30px; color: #9A9A9A">找不到比赛？试试登录</span>
+                    <span v-if="!$store.state.uid" style="margin-left: 30px; color: #9A9A9A">找不到比赛？试试<a-button style="padding: 0" @click="loginVisible = true" type="link">登录</a-button></span>
                     <a-button v-if="$store.state.uid" type="primary" style="margin-left: 30px" @click="queryCreate">创建比赛</a-button>
                     <a-button v-if="$store.state.uid" type="primary" style="margin-left: 20px" @click="handleContests" v-text="$route.query.type == 'my'? '查看全部比赛': '查看我创建的比赛'"></a-button>
                 </h2>
@@ -55,14 +55,17 @@
         >
             <contestform okText="创建"  @querySubmitForm="querySubmitForm" />
         </a-modal>
+        <login :visible="loginVisible" @ok="queryLogin" @close="loginVisible = false" />
     </div>
 </template>
 
 <script>
 import contestform from '@/views/components/ContestForm.vue'
+import login from '@/views/components/Login.vue'
 export default {
     components: {
-        contestform
+        contestform,
+        login
     },
     props: {
         buttons: Array
@@ -122,7 +125,8 @@ export default {
             ],
             createModal: {
                 visible: false,
-            }
+            },
+            loginVisible: false,
         }
     },
     methods: {
@@ -250,6 +254,9 @@ export default {
                     this.refresh();
                 }
             })
+        },
+        queryLogin() {  // 登录
+            this.loginVisible = false;
         }
     },
     mounted: function() {

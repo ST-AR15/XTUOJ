@@ -94,7 +94,7 @@ export default {
     },
     mounted() {
         // 检测登录状态，没登录就提示登录
-        if(!this.$store.state.token) {
+        if(!sessionStorage.getItem('uid')) {
             // 如果没有token值，就跳转
             this.$message.info('没有登录！即将跳转至首页');
             this.$router.replace("/#");

@@ -85,53 +85,27 @@ export default {
             let url = "/api/users/logout";
             this.$axios.get(url).then(rep => {
                 this.$message.success(rep.data.data);
-                this.$store.commit('setUid', null);
-                this.$store.commit('setToken', null);
             }).catch(err => {
                 this.$message.info(err);
-                this.$store.commit('setUid', null);
-                this.$store.commit('setToken', null);
             })
+            this.$store.commit('setUid', null);
+            this.$store.commit('setToken', null);
+            sessionStorage.removeItem('uid');
+            sessionStorage.removeItem('token');
         }
     },
     mounted() {
-        // 如果没有登录，自动登录
-        if(!this.$store.state.token && localStorage.getItem('account') && localStorage.getItem('password')) {
-            const url = "/api/users/login";
-            let info = {
-                StudentID: localStorage.getItem('account'),
-                password: localStorage.getItem('password'),
-            };
-            this.$axios.post(url, info).then(rep => {
-                const data = rep.data.data;
-                this.$store.commit('setUid', data.Uid);
-                this.$store.commit('setToken', data.token);
-                this.$message.success(`自动登录成功!欢迎您,${ this.$store.state.uid }`);
-            }).catch(e => {
-                this.$message.info('自动登录失败');
-                return e;
-            })    
-        }
-        try {
-            document.body.removeChild(document.getElementById('app-loader'));
-        } catch(e) { return e }
         // menu切换
-        if(this.$route.path.slice(1)) {
-            this.page[0] = this.$route.path.slice(1);
-        } else {
-            this.page[0] = "home";
-        }
-        this.$forceUpdate();
+        this.$set(this.page, 0, this.$route.name);
+        console.log(this.page);
+        console.log(this.$route.name);
     },
     watch: {
-        $route(to) {
+        $route() {
             // menu切换
-            if(to.path.slice(1)) {
-                this.page[0] = to.path.slice(1);
-            } else {
-                this.page[0] = "home";
-            }
-            this.$forceUpdate();
+            this.$set(this.page, 0, this.$route.name);
+            console.log(this.page);
+            console.log(this.$route.name);
         }
     }
 }

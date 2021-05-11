@@ -94,6 +94,8 @@ export default {
                     const data = rep.data.data;
                     this.$store.commit('setUid', data.Uid);
                     this.$store.commit('setToken', data.token);
+                    sessionStorage.setItem('uid', data.uid);
+                    sessionStorage.setItem('token', data.token);
                     this.$message.success(`登录成功!欢迎您,${ data.Uid }`);
                     localStorage.setItem('account', this.loginForm.account);
                     localStorage.setItem('password', this.loginForm.password);

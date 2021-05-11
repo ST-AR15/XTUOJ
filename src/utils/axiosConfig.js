@@ -1,15 +1,14 @@
 import axios from 'axios'
 // import Vue from 'vue'
-import store from '@/store'
 import { notification } from 'ant-design-vue'
 axios.defaults.timeout = 10000;
 axios.defaults.baseURL = "http://172.22.114.116:8887"
-axios.defaults.headers.common['Authorization'] = "Bearer" + store.state.token;
+axios.defaults.headers.common['Authorization'] = "Bearer" + sessionStorage.getItem('token');
 
 
 // 请求拦截器，请求发生前发生的事
 axios.interceptors.request.use((req) => {
-    req.headers["Authorization"] = "Bearer" + store.state.token; 
+    req.headers["Authorization"] = "Bearer" + sessionStorage.getItem('token');
     return req;
 },error => {
     notification.open({

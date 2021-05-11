@@ -64,7 +64,11 @@
 <script>
 export default {
     props: {
-        buttons: Array
+        buttons: Array,
+        baseUrl: {
+            type: String,
+            default: '/api/problem'
+        }
     },
     data() {
         return {
@@ -170,7 +174,7 @@ export default {
             // 开始加载
             this.loading = true;
             // url
-            let url = '/api/problem';
+            let url = this.baseUrl;
             // 开始请求
             this.$axios.get(url, {
                 params: {

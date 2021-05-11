@@ -1,6 +1,6 @@
 <template>
     <div class="admin-question-manage" id="admin-question-manage">
-        <questionlist ref="questionlist" :buttons="buttons" @queryDetail="queryDetail" @queryData="queryData" @queryDelete="queryDelete" @queryCompilation = "queryCompilation" @queryRejudge="queryRejudge" />
+        <questionlist ref="questionlist" baseUrl="/api/problem/admin" :buttons="buttons" @queryDetail="queryDetail" @queryData="queryData" @queryDelete="queryDelete" @queryCompilation = "queryCompilation" @queryRejudge="queryRejudge" />
         <!-- 问题详情 - modal对话框 -->
         <a-modal
             :visible="detailModal.visible"

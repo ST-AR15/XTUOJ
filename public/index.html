@@ -22,63 +22,91 @@
       }
     </style>
     <style>
-        #app-loader {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 200px;
-            height: 200px;
-            margin-left: -100px;
-            margin-top: -100px;
-            
+        #app-loader .text {
+            fill: none;
+            stroke-width: 5;
+            stroke-dasharray: 0 300;
+            stroke-dashoffset: 0;
         }
-        #loader-border {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 6px solid #EEEEEE;
-            box-sizing: border-box;
-            animation-name: loading;
-            animation-duration: .8s;
-            animation-iteration-count: infinite;
-            animation-timing-function: linear;
+
+        #app-loader .text:nth-child(3n + 1) {
+            stroke: #FFFFFF;
+            animation: stroke 10s ease-in-out forwards;
+
         }
-        #loader-text {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            text-align: center;
-            line-height: 200px;
-            user-select: none;
+
+        #app-loader .text:nth-child(3n + 2) {
+            stroke: #808080;
+            animation: stroke1 10s ease-in-out forwards;
+
         }
-        @keyframes loading {
-            0% {
-                transform: rotate(0);
-                border-left-color: rgb(74, 202, 202);
-            }
-            25% {
-                border-left-color: rgb(34, 168, 79);
-            }
-            50% {
-                border-left-color: rgb(40, 17, 146);
-            }
-            75% {
-                border-left-color: rgb(179, 28, 141);
-            }
+
+        #app-loader .text:nth-child(3n + 3) {
+            stroke: #696969;
+            animation: stroke2 10s ease-in-out forwards;
+
+        }
+
+
+        @keyframes stroke {
             100% {
-                transform: rotate(360deg);
-                border-left-color: rgb(201, 122, 48);
+                stroke-dashoffset: 1000;
+                stroke-dasharray: 80 160;
             }
+        }
+
+        @keyframes stroke1 {
+            100% {
+                stroke-dashoffset: 1080;
+                stroke-dasharray: 80 160;
+            }
+        }
+
+
+        @keyframes stroke2 {
+            100% {
+                stroke-dashoffset: 1160;
+                stroke-dasharray: 80 160;
+            }
+        }
+
+        /* Other styles */
+        html,
+        body {
+            border: 0;
+            padding: 0;
+            margin: 0;
+        }
+
+        #app-loader  {
+            height: 100vh;
+            background-size: .2em 100%;
+            font: 14.5em/1 Open Sans, Impact;
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        #app-loader svg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
         }
     </style>
   </head>
   <body>
     <div id="app-loader">
-        <div id="loader-border"></div>
-        <div id="loader-text">
-            加载中
-        </div>
+        <svg viewBox="0 0 1320 300">
+            <!-- Symbol -->
+            <symbol id="s-text">
+                <text text-anchor="middle" x="50%" y="50%" dy=".35em">
+                    XTU
+                </text>
+            </symbol>
+            <!-- Duplicate symbols -->
+            <use xlink:href="#s-text" class="text"></use>
+            <use xlink:href="#s-text" class="text"></use>
+            <use xlink:href="#s-text" class="text"></use>
+        </svg>
     </div>
     <div id="app"></div>
     <!-- <script src="lib/jquery/jquery.min.js"></script> -->

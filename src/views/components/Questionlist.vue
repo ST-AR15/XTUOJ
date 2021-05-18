@@ -1,5 +1,4 @@
 // 传入一个数组，数组的每一项是一个对象，每个对象里面一个text和一个method，text是按钮名字，method是方法。记得监听。
-// TODO 和contestlist一样翻页有BUG
 <template>
     <div class="questionlist" id="questionlist">
         <a-table

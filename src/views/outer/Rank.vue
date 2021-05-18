@@ -23,7 +23,8 @@
                 <span class="pending">Pending judgement</span>
             </a-space>
         </div>
-        <div class="filter" :style="{'width': (list.question + 14) * 55 + 'px'}">
+        <!-- 单人比赛不需要这个 -->
+        <div class="filter" v-if="contestant != 0" :style="{'width': contestant == 0? (list.question.length + 10) * 55 + 'px': (list.question.length + 14) * 55 + 'px'}">
             <a-select
                 mode="multiple"
                 placeholder="选择关注队伍"
@@ -44,24 +45,25 @@
                 </a-radio-button>
             </a-radio-group>
         </div>
-        <table class="list" v-show="page == 'ranklist'" :style="{ 'height': (list.score.length + list.star.length + 1 + 5 + 1) * 38 + 'px' ,'width': (list.question + 14) * 55 + 'px'}">
+        <a-divider />
+        <table class="list" v-show="page == 'ranklist'" :style="{ 'height': (list.score.length + list.star.length + 1 + 5 + 1) * 38 + 'px' ,'width': contestant == 0? (list.question.length + 10) * 55 + 'px': (list.question.length + 14) * 55 + 'px'}">
             <!-- 表头 -->
             <tr class="list-header">
                 <th>Place</th>
-                <th style="--i: 4">School</th>
-                <th style="--i: 6">Team</th>
+                <th style="--i: 4" v-if="contestant==1">School</th>
+                <th style="--i: 6" v-text="contestant==0? 'Name': 'Team'"></th>
                 <th>Solved</th>
                 <th>Time</th>
-                <th v-for="i in list.question" :key="(i + 9).toString(36)" :style="{ 'backgroundColor': `rgb(${i*10},${255 - i*10},${i*10})` }">
-                    {{ (i + 9).toString(36) }}
+                <th v-for="i in list.question" :key="i" :style="{ backgroundColor: i.color }">
+                    {{ i.pid }}
                 </th>
                 <th>Dirt</th>
             </tr>
             <!-- 关注 -->
             <tr class="list-inner star" v-for="(data, i) in list.star" :key="'star' + i" :style="{ 'transform': `translateY(${(i+1)*38}px)` }">
                 <td>*</td>
-                <td style="--i: 4">{{ data.school }}</td>
-                <td style="--i: 6">{{ data.team }}</td>
+                <td style="--i: 4" v-if="contestant==1">{{ data.school }}</td>
+                <td style="--i: 6">{{ data.name }}</td>
                 <td>{{ data.solved }}</td>
                 <td>{{ data.time }}</td>
                 <td v-for="(detail, j) in data.question" :key="j">
@@ -79,8 +81,8 @@
             <!-- 全部 -->
             <tr class="list-inner" v-for="(data, i) in list.score" :key="i" :class="data.level" :style="{ 'transform': `translateY(${(data.place+list.star.length)*38}px)` }">
                 <td>{{ data.rank }}</td>
-                <td style="--i: 4">{{ data.school }}</td>
-                <td style="--i: 6">{{ data.team }}</td>
+                <td style="--i: 4" v-if="contestant==1">{{ data.school }}</td>
+                <td style="--i: 6">{{ data.name }}</td>
                 <td>{{ data.solved }}</td>
                 <td>{{ data.time }}</td>
                 <td v-for="(detail, j) in data.question" :key="j">
@@ -97,29 +99,30 @@
             </tr>
             <!-- attempted -->
             <tr class="list-footer" :style="{ 'transform':  `translateY(${ (list.star.length + list.score.length + 1) * 38 }px)`}">
-                <td style="--i: 10" class="blank"></td>
+                <td :style="{'--i': contestant==0? 6:10 }" class="blank"></td>
                 <td style="--i: 3">Attempted</td>
-                <td v-for="(data, i) in list.questionInfo.attempted" :key="i">
-                    {{ data }}
+                <td v-for="data in list.question" :key="data.pid">
+                    {{ data.attempted }}
                 </td>
                 <td class="blank"></td>
             </tr>
             <!-- accepted -->
             <tr class="list-footer" odd :style="{ 'transform':  `translateY(${ (list.star.length + list.score.length + 2) * 38 }px)`}">
-                <td style="--i: 10" class="blank"></td>
+                <td :style="{'--i': contestant==0? 6:10 }" class="blank"></td>
                 <td style="--i: 3">Accepted</td>
-                <td style="line-height: 19px" v-for="(data, i) in list.question" :key="i">
-                    {{ data }}
+                <td style="line-height: 19px" v-for="data in list.question" :key="data.pid">
+                    {{ data.accepted }}
                     <br />
-                    {{ `(${((data/list.questionInfo.attempted[i])*100).toFixed(0)}%)` }}
+                    <!-- 防止除以0时出现NaN -->
+                    {{ `(${ data.accepted == 0? 0: ((data.accepted/data.attempted)*100).toFixed(0) }%)` }}
                 </td>
                 <td class="blank"></td>
             </tr>
             <!-- dirt -->
             <tr class="list-footer" :style="{ 'transform':  `translateY(${ (list.star.length + list.score.length + 3) * 38 }px)`}">
-                <td style="--i: 10" class="blank"></td>
+                <td :style="{'--i': contestant==0? 6:10 }" class="blank"></td>
                 <td style="--i: 3">Dirt</td>
-                <td style="line-height: 19px" v-for="i in list.question" :key="(i + 9).toString(36)">
+                <td style="line-height: 19px" v-for="i in list.question.length" :key="(i + 9).toString(36)">
                     ?
                     <br />
                     (?%)
@@ -128,24 +131,24 @@
             </tr>
             <!-- fb -->
             <tr class="list-footer" odd :style="{ 'transform':  `translateY(${ (list.star.length + list.score.length + 4) * 38 }px)`}">
-                <td style="--i: 10" class="blank"></td>
+                <td :style="{'--i': contestant==0? 6:10 }" class="blank"></td>
                 <td style="--i: 3">First Solved</td>
-                <td v-for="(data, i) in list.questionInfo.fb" :key="i">
-                    {{ data }}
+                <td v-for="data in list.question" :key="data.pid">
+                    {{ data.fb }}
                 </td>
                 <td class="blank"></td>
             </tr>
             <!-- lb -->
             <tr class="list-footer" :style="{ 'transform':  `translateY(${ (list.star.length + list.score.length + 5) * 38 }px)`}">
-                <td style="--i: 10" class="blank"></td>
+                <td :style="{'--i': contestant==0? 6:10 }" class="blank"></td>
                 <td style="--i: 3">Last Solved</td>
-                <td v-for="(data, i) in list.questionInfo.lb" :key="i">
-                    {{ data }}
+                <td v-for="data in list.question" :key="data.pid">
+                    {{ data.lb }}
                 </td>
                 <td class="blank"></td>
             </tr>
         </table>
-        <div class="balloon" :style="{ 'width': (list.question + 14) * 55 + 'px' }" v-show="page == 'balloon'">
+        <div class="balloon" :style="{ 'width': contestant == 0? (list.question.length + 10) * 55 + 'px': (list.question.length + 14) * 55 + 'px' }" v-show="page == 'balloon'">
             <a-table
                 :data-source="balloon"
                 :columns="columns"
@@ -173,6 +176,7 @@ export default {
         return {
             page: 'ranklist',    // 当前页面
             title: "第1届湘潭大学程序设计竞赛正式赛",  // 比赛名字
+            contestant: 0,  // 0是个人赛,1是团队赛
             time: {},  // 时间刻度
             stamp: {   // 比赛开始和比赛结束的时间
                 start: 1619136000000,
@@ -181,1055 +185,71 @@ export default {
             timeStep: 1000, // 进度条的最低刻度,为1秒
             progress: 1614067200000, // 进度条(当前时间)
             list: {
-                question: 13,   // 题目数量
+                question: [
+                    {
+                        pid: 1,
+                        color: 'rgb(122,233,34)',
+                        attempted: 0,
+                        accepted: 0,
+                        fb: null,
+                        lb: null,
+                    },
+                    {
+                        pid: 2,
+                        color: 'rgb(122,233,34)',
+                        attempted: 0,
+                        accepted: 0,
+                        fb: null,
+                        lb: null,
+                    },
+                    {
+                        pid: 3,
+                        color: 'rgb(122,233,34)',
+                        attempted: 0,
+                        accepted: 0,
+                        fb: null,
+                        lb: null,
+                    },
+                    {
+                        pid: 4,
+                        color: 'rgb(122,233,34)',
+                        attempted: 0,
+                        accepted: 0,
+                        fb: null,
+                        lb: null,
+                    },
+                ],   // 题目c_pid
                 score: [
-                    {
-                        place: 1,
-                        rank: 1,
-                        school: "湘潭大学",  // 学校名
-                        schoolID: 1,
-                        team: "七海千秋",    // 队伍名
-                        solved: 6,          // 解决题目数量
-                        time:500,           // 罚时
-                        level: 'honorable',    // 等级
-                        question: [
-                            {
-                                statu: "first-blood",
-                                times: 1,
-                                time: 17,
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved", // 解题状态
-                                times: 1,        // 提交次数
-                                time: 87,        // 解出来的分钟数
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 62,
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 155,
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 14,
-                            },
-                            {
-                                statu: "solved",
-                                times: 2,
-                                time: 39,
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 127,
-                            }
-                        ],
-                        dirt: "14%",
-                    },
-                    {
-                        place: 8,
-                        rank: 6,
-                        school: "湘潭大学",  // 学校名
-                        schoolID: 1,
-                        team: "日向创",    // 队伍名
-                        solved: 6,          // 解决题目数量
-                        time:500,           // 罚时
-                        level: 'gold',    // 等级
-                        question: [
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved", // 解题状态
-                                times: 1,        // 提交次数
-                                time: 87,        // 解出来的分钟数
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 62,
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "first-blood",
-                                times: 1,
-                                time: 15,
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 14,
-                            },
-                            {
-                                statu: "solved",
-                                times: 2,
-                                time: 39,
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 127,
-                            }
-                        ],
-                        dirt: "14%",
-                    },
-                    {
-                        place: 3,
-                        rank: 4,
-                        school: "湘潭大学",  // 学校名
-                        schoolID: 1,
-                        team: "狛枝凪斗",    // 队伍名
-                        solved: 6,          // 解决题目数量
-                        time:500,           // 罚时
-                        level: 'sliver',    // 等级
-                        question: [
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "first-blood", // 解题状态
-                                times: 1,        // 提交次数
-                                time: 87,        // 解出来的分钟数
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved", // 解题状态
-                                times: 1,        // 提交次数
-                                time: 87,        // 解出来的分钟数
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 62,
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 155,
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 14,
-                            },
-                            {
-                                statu: "solved",
-                                times: 2,
-                                time: 39,
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 127,
-                            }
-                        ],
-                        dirt: "14%",
-                    },
-                    {
-                        place: 4,
-                        rank: 8,
-                        school: "湘潭大学",  // 学校名
-                        schoolID: 1,
-                        team: "十神白夜",    // 队伍名
-                        solved: 6,          // 解决题目数量
-                        time:500,           // 罚时
-                        level: 'bronze',    // 等级
-                        question: [
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "first-blood", // 解题状态
-                                times: 1,        // 提交次数
-                                time: 87,        // 解出来的分钟数
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved", // 解题状态
-                                times: 1,        // 提交次数
-                                time: 87,        // 解出来的分钟数
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 62,
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 155,
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 14,
-                            },
-                            {
-                                statu: "solved",
-                                times: 2,
-                                time: 39,
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 127,
-                            }
-                        ],
-                        dirt: "14%",
-                    },
-                    {
-                        place: 7,
-                        rank: 12,
-                        school: "湘潭大学",  // 学校名
-                        schoolID: 1,
-                        team: "小泉真昼",    // 队伍名
-                        solved: 6,          // 解决题目数量
-                        time:500,           // 罚时
-                        level: 'bronze',    // 等级
-                        question: [
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "first-blood", // 解题状态
-                                times: 1,        // 提交次数
-                                time: 27,        // 解出来的分钟数
-                            },
-                            {
-                                statu: "solved", // 解题状态
-                                times: 1,        // 提交次数
-                                time: 87,        // 解出来的分钟数
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 62,
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 155,
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 14,
-                            },
-                            {
-                                statu: "solved",
-                                times: 2,
-                                time: 39,
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 127,
-                            }
-                        ],
-                        dirt: "14%",
-                    },
-                    {
-                        place: 6,
-                        rank: 4,
-                        school: "湘潭大学",  // 学校名
-                        schoolID: 1,
-                        team: "西园寺日寄子",    // 队伍名
-                        solved: 6,          // 解决题目数量
-                        time:500,           // 罚时
-                        level: 'bronze',    // 等级
-                        question: [
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "first-blood", // 解题状态
-                                times: 1,        // 提交次数
-                                time: 12,        // 解出来的分钟数
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 62,
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 155,
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 14,
-                            },
-                            {
-                                statu: "solved",
-                                times: 2,
-                                time: 39,
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 127,
-                            }
-                        ],
-                        dirt: "14%",
-                    },
-                    {
-                        place: 5,
-                        rank: 1,
-                        school: "湘潭大学",  // 学校名
-                        schoolID: 1,
-                        team: "二大猫丸",    // 队伍名
-                        solved: 6,          // 解决题目数量
-                        time:500,           // 罚时
-                        level: 'bronze',    // 等级
-                        question: [
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved", // 解题状态
-                                times: 1,        // 提交次数
-                                time: 87,        // 解出来的分钟数
-                            },
-                            {
-                                statu: "first-blood",
-                                times: 1,
-                                time: 2,
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 155,
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 14,
-                            },
-                            {
-                                statu: "solved",
-                                times: 2,
-                                time: 39,
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 127,
-                            }
-                        ],
-                        dirt: "14%",
-                    },
-                    {
-                        place: 2,
-                        rank: 1,
-                        school: "湘潭大学",  // 学校名
-                        schoolID: 1,
-                        team: "终里赤音",    // 队伍名
-                        solved: 6,          // 解决题目数量
-                        time:500,           // 罚时
-                        level: 'bronze',    // 等级
-                        question: [
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved", // 解题状态
-                                times: 1,        // 提交次数
-                                time: 87,        // 解出来的分钟数
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 62,
-                            },
-                            {
-                                statu: "first-blood", // 解题状态
-                                times: 1,        // 提交次数
-                                time: 1,        // 解出来的分钟数
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 155,
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 27,
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 14,
-                            },
-                            {
-                                statu: "solved",
-                                times: 2,
-                                time: 39,
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 127,
-                            }
-                        ],
-                        dirt: "14%",
-                    },
-                    {
-                        place: 9,
-                        rank: 1,
-                        school: "湘潭大学",  // 学校名
-                        schoolID: 1,
-                        team: "九头龙冬彦",    // 队伍名
-                        solved: 6,          // 解决题目数量
-                        time:500,           // 罚时
-                        level: 'bronze',    // 等级
-                        question: [
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved", // 解题状态
-                                times: 1,        // 提交次数
-                                time: 87,        // 解出来的分钟数
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 62,
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 155,
-                            },
-                            {
-                                statu: "first-blood", // 解题状态
-                                times: 1,        // 提交次数
-                                time: 12,        // 解出来的分钟数
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 14,
-                            },
-                            {
-                                statu: "solved",
-                                times: 2,
-                                time: 39,
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 127,
-                            }
-                        ],
-                        dirt: "14%",
-                    },
-                    {
-                        place: 10,
-                        rank: 1,
-                        school: "湘潭大学兴湘学院",
-                        schoolID: 2,
-                        team: "边谷山佩子",    // 队伍名
-                        solved: 6,          // 解决题目数量
-                        time:500,           // 罚时
-                        level: 'bronze',    // 等级
-                        question: [
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved", // 解题状态
-                                times: 1,        // 提交次数
-                                time: 87,        // 解出来的分钟数
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 62,
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 155,
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "first-blood",
-                                times: 1,
-                                time: 6,
-                            },
-                            {
-                                statu: "solved",
-                                times: 2,
-                                time: 39,
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 127,
-                            }
-                        ],
-                        dirt: "14%",
-                    },
-                    {
-                        place: 14,
-                        rank: 1,
-                        school: "湘潭大学兴湘学院",
-                        schoolID: 2,
-                        team: "田中眼蛇梦",    // 队伍名
-                        solved: 6,          // 解决题目数量
-                        time:500,           // 罚时
-                        level: 'bronze',    // 等级
-                        question: [
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved", // 解题状态
-                                times: 1,        // 提交次数
-                                time: 87,        // 解出来的分钟数
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 62,
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 155,
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 14,
-                            },
-                            {
-                                statu: "first-blood",
-                                times: 2,
-                                time: 11,
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 127,
-                            }
-                        ],
-                        dirt: "14%",
-                    },
-                    {
-                        place: 12,
-                        rank: 1,
-                        school: "湘潭大学兴湘学院",
-                        schoolID: 2,
-                        team: "索尼娅内瓦曼",    // 队伍名
-                        solved: 6,          // 解决题目数量
-                        time:500,           // 罚时
-                        level: 'bronze',    // 等级
-                        question: [
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved", // 解题状态
-                                times: 1,        // 提交次数
-                                time: 87,        // 解出来的分钟数
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 62,
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 155,
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 14,
-                            },
-                            {
-                                statu: "solved",
-                                times: 2,
-                                time: 39,
-                            },
-                            {
-                                statu: "first-blood",
-                                times: 1,
-                                time: 11,
-                            }
-                        ],
-                        dirt: "14%",
-                    },
-                    {
-                        place: 13,
-                        rank: 1,
-                        school: "湘潭大学兴湘学院",
-                        schoolID: 2,
-                        team: "左右田和一",    // 队伍名
-                        solved: 6,          // 解决题目数量
-                        time:500,           // 罚时
-                        level: 'bronze',    // 等级
-                        question: [
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved", // 解题状态
-                                times: 1,        // 提交次数
-                                time: 87,        // 解出来的分钟数
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 62,
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 155,
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 14,
-                            },
-                            {
-                                statu: "solved",
-                                times: 2,
-                                time: 39,
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 127,
-                            }
-                        ],
-                        dirt: "14%",
-                    },
-                    {
-                        place: 11,
-                        rank: 2,
-                        school: "湘潭大学兴湘学院",
-                        schoolID: 2,
-                        team: "澪田唯吹",    // 队伍名
-                        solved: 6,          // 解决题目数量
-                        time:500,           // 罚时
-                        level: 'bronze',    // 等级
-                        question: [
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved", // 解题状态
-                                times: 1,        // 提交次数
-                                time: 87,        // 解出来的分钟数
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 62,
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 155,
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 14,
-                            },
-                            {
-                                statu: "solved",
-                                times: 2,
-                                time: 39,
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 127,
-                            }
-                        ],
-                        dirt: "14%",
-                    },
-                    {
-                        place: 15,
-                        rank: 3,
-                        school: "湘潭大学兴湘学院",
-                        schoolID: 2,
-                        team: "罪木蜜柑",    // 队伍名
-                        solved: 6,          // 解决题目数量
-                        time:500,           // 罚时
-                        level: 'bronze',    // 等级
-                        question: [
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved", // 解题状态
-                                times: 1,        // 提交次数
-                                time: 87,        // 解出来的分钟数
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 62,
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 155,
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 14,
-                            },
-                            {
-                                statu: "solved",
-                                times: 2,
-                                time: 39,
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 127,
-                            }
-                        ],
-                        dirt: "14%",
-                    },
-                    {
-                        place: 16,
-                        rank: 3,
-                        school: "湘潭大学兴湘学院",
-                        schoolID: 2,
-                        team: "黑白美",    // 队伍名
-                        solved: 6,          // 解决题目数量
-                        time:500,           // 罚时
-                        level: 'bronze',    // 等级
-                        question: [
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved", // 解题状态
-                                times: 1,        // 提交次数
-                                time: 87,        // 解出来的分钟数
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 62,
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 155,
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "none"
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 14,
-                            },
-                            {
-                                statu: "solved",
-                                times: 2,
-                                time: 39,
-                            },
-                            {
-                                statu: "solved",
-                                times: 1,
-                                time: 127,
-                            }
-                        ],
-                        dirt: "14%",
-                    },
+                    // {
+                    //     place: 1,
+                    //     rank: 1,
+                    //     school: "湘潭大学",  // 学校名
+                    //     schoolID: 1,
+                    //     name: "七海千秋",    // 队伍名
+                    //     solved: 6,          // 解决题目数量
+                    //     time:500,           // 罚时
+                    //     level: 'honorable',    // 等级
+                    //     question: [
+                    //         {
+                    //             statu: "first-blood",
+                    //             times: 1,
+                    //             time: 17,
+                    //         },
+                    //         {
+                    //             statu: "none"
+                    //         },
+                    //         {
+                    //             statu: "none"
+                    //         },
+                    //         {
+                    //             statu: "none"
+                    //         },
+                    //     ],
+                    //     dirt: "14%",
+                    // },
                 ],
                 star: [], // 关注的队伍
-                questionInfo: {
-                    attempted: [12,23,34,45,56,12,23,34,45,56,111,222,333],
-                    accepted: [1,2,3,4,5,6,7,8,9,10,11,12,13],
-                    dirt: [],
-                    fb: [12,23,34,45,56,12,23,34,45,56,111,222,333],
-                    lb: [12,23,34,45,526,12,23,34,45,56,111,222,333],
-                },
+                // TODO 这个变量废除，因为他不好记载每次变化的全部数据，还是每次调完时间直接重新算一次算了？
                 placeChange: [
                     {
                         t: 1619136000000,
@@ -1252,6 +272,7 @@ export default {
                         change: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],
                     },
                 ],
+                record: [], // 提交记录
             },
             school: [
                 {
@@ -1593,13 +614,265 @@ export default {
             if(JSON.stringify(this.$route.query) !== JSON.stringify(filterEmptyValue(query))) {
                 this.$router.replace({ query: filterEmptyValue(query) });
             }
+        },
+        // 根据list.record计算list.placeChange和list.score
+        handleRecord() {
+            for(let i in this.list.record) {
+                // 获取是第几题
+                const _n = this.list.question.findIndex(o => o.pid == this.list.record.c_pid);
+                // 获取是第几个人
+                const _m = this.list.score.findIndex(o => o.nameID == this.list.record.Uid);
+                // 正在判题
+                if(this.list.record[i].result == -2) {
+                    this.list.score[_m].question[_n].statu = "pending"
+                }
+                // TODO 需要数据进行测试
+                // 判定中
+                if(this.$resultText[this.list.record.result] == "Judging") {
+                    // 状态变成判定
+                    this.list.score[_m].question[_n].statu = "pending";
+                } else if(this.$resultText[this.list.result] != "ACCEPT") {
+                    // 除了判定中和通过的其他任何情况
+                    // 状态变成错误，times++，不是编译错误则罚时+1200
+                    this.list.score[_m].question[_n].statu = "attempted";
+                    this.list.score[_m].question[_n].times++;
+                    if(this.$resultText[this.list.result] != "COMPILE_ERROR") {
+                        this.list.score[_m].question[_n].time += 1200;
+                    }
+                } else {
+                    // 这就是正确提交的可能性了
+                    // 首先看是不是一血
+                    if(!this.list.question[_n].fb) {
+                        // 如果没有一血信息，这次提交就被视为一血
+                        // 先在question里记录fb信息
+                        this.list.question[_n].fb = this.list.record[i].Uid;
+                        // 然后给这个人fb标志
+                        this.list.score[_m].question[_n].statu = "first-blood";
+                    } else {
+                        // 不是一血就是解决
+                        this.list.score[_m].question[_n].statu = "solved";
+                    }
+                    // 然后只要是解决了，times++
+                    this.list.score[_m].question[_n].times++;
+                    // 计算罚时并计入总罚时
+                    this.list.score[_m].question[_n].time += ((this.list.record[i].time - this.stamp.start)/1000);
+                    this.list.score[_m].time += this.list.score[_m].question[_n].time;
+                    // 计算积分
+                    this.list.score[_m].point = this.list.score[_m].point + 100000 - this.list.score[_m].time;
+                    // 与place比这个人高的进行对比
+                    for(let j = this.list.score[_m].place; ;j-- ) {
+                        // 如果已经是第一名，就直接跳出
+                        if(j == 1) {
+                            break ;
+                        }
+                        // 否则就开始比较
+                        const _index = this.list.score.findIndex(o => o.place == j-1);
+                        if(this.list.score[_m].point == this.list.score[_index].point) {
+                            // 如果两人现在积分一样，那就把自己的排名变成对方的可以停下来了
+                            this.list.score[_m].rank = this.list.score[_index].rank;
+                            break ;
+                        } else if(this.list.score[_m].point > this.list.score[_index].point) {
+                            // 如果比前一个人分高，则自身名次和位置都增加，对面名次和位置都降低
+                            this.list.score[_m].place++;
+                            this.list.score[_m].rank++;
+                            this.list.score[_index].place--;
+                            this.list.score[_index].rank--;
+                        } else {
+                            // 如果比对方低，也是直接跳出
+                            break ;
+                        }
+                    }
+                }
+            }
         }
     },
     mounted() {
-        const url = `/api/match/${ this.$route.params.CID }`;
-        this.$axios.get(url).then(rep => {
-            console.log(rep);
+        // 先获取赛事的有关信息
+        const contestUrl = `/api/match/${ this.$route.params.CID }/info`;
+        this.$axios.get(contestUrl).then(rep => {
+            const data = rep.data.data[0];
+            // 获取比赛的标题/开始时间/结束时间
+            this.title = data.Tittle;
+            this.stamp.start = new Date(data.StartTime).getTime();
+            this.stamp.end = new Date(data.StartTime).getTime();
+            // 个人赛或团队赛
+            this.contestant = data.Contestant;  // 0为个人,1为团队
         })
+        //  TODO 获取这次比赛有哪些题目
+        // const pidUrl = `/api/contest/${ this.$route.params.CID }/problem`;
+        // this.$axios.get(pidUrl).then(rep => {
+        //     const data = rep.data.data;
+        //     for(let i in data) {
+        //         this.$set(this.list.question, i, data[i].c_pid);
+        //     }
+        // })
+        // 获取比赛的参赛选手,初始化score
+        const namelistUrl = `/api/match/${ this.$route.params.CID }/user`;
+        this.$axios.get(namelistUrl).then(rep => {
+            console.log(rep);
+            // const data = rep.data.data;  //TODO 后续换真实data
+            const data = [
+                {
+                    "ContestUid": 15,
+                    "Cid": 3,
+                    "Uid": 151,
+                    "Name": "王三1",
+                    "StudentID": 201700000004,
+                    "email": null
+                },
+                {
+                    "ContestUid": 52,
+                    "Cid": 3,
+                    "Uid": 152,
+                    "Name": "王三12",
+                    "StudentID": 2017000000041,
+                    "email": null
+                },
+                {
+                    "ContestUid": 53,
+                    "Cid": 3,
+                    "Uid": 153,
+                    "Name": "王三123",
+                    "StudentID": 2017000000042,
+                    "email": null
+                },
+                {
+                    "ContestUid": 54,
+                    "Cid": 3,
+                    "Uid": 154,
+                    "Name": "王三1234",
+                    "StudentID": 2017000000043,
+                    "email": null
+                },
+                {
+                    "ContestUid": 55,
+                    "Cid": 3,
+                    "Uid": 155,
+                    "Name": "王三12345",
+                    "StudentID": 2017000000044,
+                    "email": null
+                },
+            ];
+            // 每个人的问题
+            let question = [];
+            let i = this.list.question.length
+            while(i--) {
+                question.push({
+                    statu: "none",
+                    times: 0,
+                    time: 0,
+                    punish: 0,
+                })
+            }
+            for(let i in data) {  // TODO 这里还只是个人的
+                const item = {
+                    place: parseInt(i) + 1,
+                    rank: 1,
+                    // school
+                    // schoolID
+                    name: data[i].Name,
+                    nameID: data[i].ContestUid,
+                    solved: 0,
+                    time: 0,
+                    level: 'bronze',
+                    point: 0,
+                    question: question
+                }
+                this.$set(this.list.score, i, item);
+            }
+        })
+        // 然后获取这次比赛的所有提交记录
+        const recordUrl = `/api/match/${ this.$route.params.CID }`;
+        this.$axios.get(recordUrl).then(rep => {
+            const data = rep.data.data;
+            this.list.record = data;
+            this.list.record = [
+                {
+                    "Cid": 3,
+                    "c_pid": 2,
+                    "Uid": 15,
+                    "result": -1,
+                    "Language": "G++",
+                    "time": 1619136000000,
+                    // "updated_at": "2021-05-06 23:02:40"
+                },
+                {
+                    "Cid": 3,
+                    "c_pid": 4,
+                    "Uid": 15,
+                    "result": 6,
+                    "Language": "G++",
+                    "time": 1619136001000,
+                    // "updated_at": "2021-05-06 22:46:31"
+                },
+                {
+                    "Cid": 3,
+                    "c_pid": 5,
+                    "Uid": 15,
+                    "result": 0,
+                    "Language": "G++",
+                    "time": 1619136001000,
+                    // "updated_at": "2021-05-06 22:46:31"
+                },
+                {
+                    "Cid": 3,
+                    "c_pid": 6,
+                    "Uid": 15,
+                    "result": 0,
+                    "Language": "G++",
+                    "time": 1619136001000,
+                    // "updated_at": "2021-05-06 22:46:31"
+                },
+                {
+                    "Cid": 3,
+                    "c_pid": 7,
+                    "Uid": 15,
+                    "result": 0,
+                    "Language": "G++",
+                    "time": 1619136001000,
+                    // "updated_at": "2021-05-06 22:46:31"
+                },
+                {
+                    "Cid": 3,
+                    "c_pid": 8,
+                    "Uid": 15,
+                    "result": 0,
+                    "Language": "G++",
+                    "time": 1619136001000,
+                    // "updated_at": "2021-05-06 22:46:31"
+                },
+                {
+                    "Cid": 3,
+                    "c_pid": 9,
+                    "Uid": 15,
+                    "result": 0,
+                    "Language": "G++",
+                    "time": 1619136001000,
+                    // "updated_at": "2021-05-06 22:46:31"
+                },
+                {
+                    "Cid": 3,
+                    "c_pid": 7,
+                    "Uid": 15,
+                    "result": 0,
+                    "Language": "G++",
+                    "time": 1619136001000,
+                    // "updated_at": "2021-05-06 22:46:31"
+                },
+                {
+                    "Cid": 3,
+                    "c_pid": 8,
+                    "Uid": 15,
+                    "result": 0,
+                    "Language": "G++",
+                    "time": 1619136001000,
+                    // "updated_at": "2021-05-06 22:46:31"
+                },
+            ]; // TODO 后续删掉这个
+            // 根据record更新排名
+            this.handleRecord();
+        })
+        
         this.init();
     },
     watch: {

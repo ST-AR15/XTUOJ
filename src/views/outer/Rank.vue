@@ -4,7 +4,7 @@
         <div class="time">
             <div class="time-bar">
                 <div class="time-end" v-text="Date.now()<stamp.end? timeFormatter(stamp.end, true): '已结束'"></div>
-                <a-slider @change="handleTime()" :marks="time" :min="stamp.start" :max="stamp.end" v-model="progress" :step="timeStep" :tip-formatter="formatter"></a-slider>
+                <a-slider @change="handleRecord()" :marks="time" :min="stamp.start" :max="stamp.end" v-model="progress" :step="timeStep" :tip-formatter="formatter"></a-slider>
             </div>
             <div class="time-detail">
                 <span v-text="'总时长：' + msToTime(stamp.end-stamp.start)"></span>
@@ -24,7 +24,7 @@
             </a-space>
         </div>
         <!-- 单人比赛不需要这个 -->
-        <div class="filter" v-if="contestant != 0" :style="{'width': contestant == 0? (list.question.length + 10) * 55 + 'px': (list.question.length + 14) * 55 + 'px'}">
+        <div class="filter" v-if="contestant != 0" :style="{'width': contestant == 0? (list.question.length + 10) * 65 + 'px': (list.question.length + 14) * 65 + 'px'}">
             <a-select
                 mode="multiple"
                 placeholder="选择关注队伍"
@@ -46,7 +46,7 @@
             </a-radio-group>
         </div>
         <a-divider />
-        <table class="list" v-show="page == 'ranklist'" :style="{ 'height': (list.score.length + list.star.length + 1 + 5 + 1) * 38 + 'px' ,'width': contestant == 0? (list.question.length + 10) * 55 + 'px': (list.question.length + 14) * 55 + 'px'}">
+        <table class="list" v-show="page == 'ranklist'" :style="{ 'height': (list.score.length + list.star.length + 1 + 5 + 1) * 38 + 'px' ,'width': contestant == 0? (list.question.length + 10) * 65 + 'px': (list.question.length + 14) * 65 + 'px'}">
             <!-- 表头 -->
             <tr class="list-header">
                 <th>Place</th>
@@ -54,7 +54,7 @@
                 <th style="--i: 6" v-text="contestant==0? 'Name': 'Team'"></th>
                 <th>Solved</th>
                 <th>Time</th>
-                <th v-for="i in list.question" :key="i" :style="{ backgroundColor: i.color }">
+                <th v-for="i in list.question" :key="i.pid" :style="{ backgroundColor: i.color }">
                     {{ i.pid }}
                 </th>
                 <th>Dirt</th>
@@ -84,14 +84,14 @@
                 <td style="--i: 4" v-if="contestant==1">{{ data.school }}</td>
                 <td style="--i: 6">{{ data.name }}</td>
                 <td>{{ data.solved }}</td>
-                <td>{{ data.time }}</td>
+                <td>{{ (data.time/60).toFixed(0) }}</td>
                 <td v-for="(detail, j) in data.question" :key="j">
-                    <div :class="detail.statu" :style="{ 'lineHeight': `${detail.statu == 'none'? '38px': '19px'}` }">
+                    <div :class="detail.statu" :style="{ 'lineHeight': `${detail.statu == 'none'? '38px': '19px'}`, 'transition': 'background-color .4s' }">
                         <span v-if="detail.statu == 'none'">·</span>
                         <span v-else>
                             +
                             <br />
-                            {{ detail.times }}/{{ detail.time }}
+                            {{ detail.times }}/{{ (detail.time/60).toFixed(0) }}
                         </span>
                     </div>
                 </td>
@@ -134,7 +134,7 @@
                 <td :style="{'--i': contestant==0? 6:10 }" class="blank"></td>
                 <td style="--i: 3">First Solved</td>
                 <td v-for="data in list.question" :key="data.pid">
-                    {{ data.fb }}
+                    {{ data.fb? data.fb: '-' }}
                 </td>
                 <td class="blank"></td>
             </tr>
@@ -143,12 +143,12 @@
                 <td :style="{'--i': contestant==0? 6:10 }" class="blank"></td>
                 <td style="--i: 3">Last Solved</td>
                 <td v-for="data in list.question" :key="data.pid">
-                    {{ data.lb }}
+                    {{ data.lb? data.lb: '-' }}
                 </td>
                 <td class="blank"></td>
             </tr>
         </table>
-        <div class="balloon" :style="{ 'width': contestant == 0? (list.question.length + 10) * 55 + 'px': (list.question.length + 14) * 55 + 'px' }" v-show="page == 'balloon'">
+        <div class="balloon" :style="{ 'width': contestant == 0? (list.question.length + 10) * 65 + 'px': (list.question.length + 14) * 65 + 'px' }" v-show="page == 'balloon'">
             <a-table
                 :data-source="balloon"
                 :columns="columns"
@@ -156,13 +156,13 @@
             >
                 <!-- solved -->
                 <span slot="solved" slot-scope="text">
-                    <svg :style="{ 'height': '1em', 'vertical-align': '-0.225em', 'color': 'rgb(255,00,00)'}" aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 416 512"><path fill="currentColor" d="M96 416h224c0 17.7-14.3 32-32 32h-16c-17.7 0-32 14.3-32 32v20c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-20c0-17.7-14.3-32-32-32h-16c-17.7 0-32-14.3-32-32zm320-208c0 74.2-39 139.2-97.5 176h-221C39 347.2 0 282.2 0 208 0 93.1 93.1 0 208 0s208 93.1 208 208zm-180.1 43.9c18.3 0 33.1-14.8 33.1-33.1 0-14.4-9.3-26.3-22.1-30.9 9.6 26.8-15.6 51.3-41.9 41.9 4.6 12.8 16.5 22.1 30.9 22.1zm49.1 46.9c0-14.4-9.3-26.3-22.1-30.9 9.6 26.8-15.6 51.3-41.9 41.9 4.6 12.8 16.5 22.1 30.9 22.1 18.3 0 33.1-14.9 33.1-33.1zm64-64c0-14.4-9.3-26.3-22.1-30.9 9.6 26.8-15.6 51.3-41.9 41.9 4.6 12.8 16.5 22.1 30.9 22.1 18.3 0 33.1-14.9 33.1-33.1z"></path></svg>
+                    <svg :style="{ 'height': '1em', 'vertical-align': '-0.225em', 'color': 'rgb(265,00,00)'}" aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 416 512"><path fill="currentColor" d="M96 416h224c0 17.7-14.3 32-32 32h-16c-17.7 0-32 14.3-32 32v20c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-20c0-17.7-14.3-32-32-32h-16c-17.7 0-32-14.3-32-32zm320-208c0 74.2-39 139.2-97.5 176h-221C39 347.2 0 282.2 0 208 0 93.1 93.1 0 208 0s208 93.1 208 208zm-180.1 43.9c18.3 0 33.1-14.8 33.1-33.1 0-14.4-9.3-26.3-22.1-30.9 9.6 26.8-15.6 51.3-41.9 41.9 4.6 12.8 16.5 22.1 30.9 22.1zm49.1 46.9c0-14.4-9.3-26.3-22.1-30.9 9.6 26.8-15.6 51.3-41.9 41.9 4.6 12.8 16.5 22.1 30.9 22.1 18.3 0 33.1-14.9 33.1-33.1zm64-64c0-14.4-9.3-26.3-22.1-30.9 9.6 26.8-15.6 51.3-41.9 41.9 4.6 12.8 16.5 22.1 30.9 22.1 18.3 0 33.1-14.9 33.1-33.1z"></path></svg>
                     &nbsp;
                     <span v-text="text"></span>
                 </span>
                 <!-- total -->
                 <span slot="total" slot-scope="text">
-                    <svg v-for="i in text" :key="i" :style="{ 'height': '1em', 'vertical-align': '-0.225em', 'color': 'rgb(255,00,00)'}" aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 416 512"><path fill="currentColor" d="M96 416h224c0 17.7-14.3 32-32 32h-16c-17.7 0-32 14.3-32 32v20c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-20c0-17.7-14.3-32-32-32h-16c-17.7 0-32-14.3-32-32zm320-208c0 74.2-39 139.2-97.5 176h-221C39 347.2 0 282.2 0 208 0 93.1 93.1 0 208 0s208 93.1 208 208zm-180.1 43.9c18.3 0 33.1-14.8 33.1-33.1 0-14.4-9.3-26.3-22.1-30.9 9.6 26.8-15.6 51.3-41.9 41.9 4.6 12.8 16.5 22.1 30.9 22.1zm49.1 46.9c0-14.4-9.3-26.3-22.1-30.9 9.6 26.8-15.6 51.3-41.9 41.9 4.6 12.8 16.5 22.1 30.9 22.1 18.3 0 33.1-14.9 33.1-33.1zm64-64c0-14.4-9.3-26.3-22.1-30.9 9.6 26.8-15.6 51.3-41.9 41.9 4.6 12.8 16.5 22.1 30.9 22.1 18.3 0 33.1-14.9 33.1-33.1z"></path></svg>
+                    <svg v-for="i in text" :key="i" :style="{ 'height': '1em', 'vertical-align': '-0.225em', 'color': 'rgb(265,00,00)'}" aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 416 512"><path fill="currentColor" d="M96 416h224c0 17.7-14.3 32-32 32h-16c-17.7 0-32 14.3-32 32v20c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-20c0-17.7-14.3-32-32-32h-16c-17.7 0-32-14.3-32-32zm320-208c0 74.2-39 139.2-97.5 176h-221C39 347.2 0 282.2 0 208 0 93.1 93.1 0 208 0s208 93.1 208 208zm-180.1 43.9c18.3 0 33.1-14.8 33.1-33.1 0-14.4-9.3-26.3-22.1-30.9 9.6 26.8-15.6 51.3-41.9 41.9 4.6 12.8 16.5 22.1 30.9 22.1zm49.1 46.9c0-14.4-9.3-26.3-22.1-30.9 9.6 26.8-15.6 51.3-41.9 41.9 4.6 12.8 16.5 22.1 30.9 22.1 18.3 0 33.1-14.9 33.1-33.1zm64-64c0-14.4-9.3-26.3-22.1-30.9 9.6 26.8-15.6 51.3-41.9 41.9 4.6 12.8 16.5 22.1 30.9 22.1 18.3 0 33.1-14.9 33.1-33.1z"></path></svg>
                 </span>
             </a-table>
         </div>
@@ -218,60 +218,11 @@ export default {
                         fb: null,
                         lb: null,
                     },
-                ],   // 题目c_pid
-                score: [
-                    // {
-                    //     place: 1,
-                    //     rank: 1,
-                    //     school: "湘潭大学",  // 学校名
-                    //     schoolID: 1,
-                    //     name: "七海千秋",    // 队伍名
-                    //     solved: 6,          // 解决题目数量
-                    //     time:500,           // 罚时
-                    //     level: 'honorable',    // 等级
-                    //     question: [
-                    //         {
-                    //             statu: "first-blood",
-                    //             times: 1,
-                    //             time: 17,
-                    //         },
-                    //         {
-                    //             statu: "none"
-                    //         },
-                    //         {
-                    //             statu: "none"
-                    //         },
-                    //         {
-                    //             statu: "none"
-                    //         },
-                    //     ],
-                    //     dirt: "14%",
-                    // },
                 ],
+                questionDefalut: [],
+                score: [],
+                scoreDefault: [],
                 star: [], // 关注的队伍
-                // TODO 这个变量废除，因为他不好记载每次变化的全部数据，还是每次调完时间直接重新算一次算了？
-                placeChange: [
-                    {
-                        t: 1619136000000,
-                        change: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],
-                    },
-                    {
-                        t: 1619136600000,
-                        change: [2,4,6,8,10,12,14,1,3,5,7,9,11,13,15,16],
-                    },
-                    {
-                        t: 1619137200000,
-                        change: [1,3,5,7,9,11,13,15,2,4,6,8,10,12,14,16],
-                    },
-                    {
-                        t: 1619137800000,
-                        change: [2,4,6,8,10,12,14,1,3,5,7,9,11,13,15,16],
-                    },
-                    {
-                        t: 1619138400000,
-                        change: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],
-                    },
-                ],
                 record: [], // 提交记录
             },
             school: [
@@ -487,6 +438,8 @@ export default {
             }
             this.starSchool = star;
             this.handleStar(star);
+            // 计算成绩
+            this.handleRecord();
         },
         formatter() {
             return timeFormatter(this.progress);
@@ -500,16 +453,6 @@ export default {
         msFormatter(ms) {   // 为了保证progress能成为1000的倍数
             return Math.floor(ms/1000)*1000;
         },
-        // test() {
-        //     for(let i in this.list.score) {
-        //         if(this.list.score[i].place == this.list.score.length) {
-        //             this.list.score[i].place = 1;
-        //         } else {
-        //             this.list.score[i].place++;
-        //         }
-        //     }
-        //     // 按rank排序
-        // },
         handleStar(value) {
             this.list.star = [];  // 先清空原来的star
             // 获取新的star
@@ -567,27 +510,6 @@ export default {
             this.list.star = this.list.star.sort(compare);
             this.handleQuery();
         },
-        handleTime() {
-            const change = this.list.placeChange;
-            // 动态修改排名
-            for(let i in change) {
-                if(change[i].t > this.progress) {
-                    // 如果检测到比它大，就用前一个
-                    for(let j in this.list.score) {
-                        this.list.score[j].place = change[i-1].change[j];
-                    }
-                    break ;
-                }
-                if(i == change.length-1) {
-                    // 最后一个
-                    for(let j in this.list.score) {
-                        this.list.score[j].place = change[i].change[j];
-                    }
-                    break ;
-                }
-            }
-            this.handleQuery();
-        },
         handleQuery() {
             // push query
             let query = {};
@@ -617,21 +539,30 @@ export default {
         },
         // 根据list.record计算list.placeChange和list.score
         handleRecord() {
+            // 清空原成绩
+            this.list.score = JSON.parse(JSON.stringify(this.list.scoreDefault));
+            // 清空question
+            this.list.question = JSON.parse(JSON.stringify(this.list.questionDefalut));
+            // 根据时间获取现在需要截取的时间
+            let record = [];
             for(let i in this.list.record) {
-                // 获取是第几题
-                const _n = this.list.question.findIndex(o => o.pid == this.list.record.c_pid);
-                // 获取是第几个人
-                const _m = this.list.score.findIndex(o => o.nameID == this.list.record.Uid);
-                // 正在判题
-                if(this.list.record[i].result == -2) {
-                    this.list.score[_m].question[_n].statu = "pending"
+                // 只要现在时间前面的那一段
+                if(this.list.record[i].time.getTime() > this.progress) {
+                    break;
+                } else {
+                    record.push(this.list.record[i]);
                 }
-                // TODO 需要数据进行测试
+            }
+            for(let i in record) {
+                // 获取是第几题
+                const _n = this.list.question.findIndex(o => o.pid == record[i].pid);
+                // 获取是第几个人
+                const _m = this.list.score.findIndex(o => o.nameID == record[i].uid);
                 // 判定中
-                if(this.$resultText[this.list.record.result] == "Judging") {
+                if(this.$resultText[record[i].result] == "Judging") {
                     // 状态变成判定
                     this.list.score[_m].question[_n].statu = "pending";
-                } else if(this.$resultText[this.list.result] != "ACCEPT") {
+                } else if(this.$resultText[record[i].result] != "ACCEPT") {
                     // 除了判定中和通过的其他任何情况
                     // 状态变成错误，times++，不是编译错误则罚时+1200
                     this.list.score[_m].question[_n].statu = "attempted";
@@ -639,66 +570,102 @@ export default {
                     if(this.$resultText[this.list.result] != "COMPILE_ERROR") {
                         this.list.score[_m].question[_n].time += 1200;
                     }
+                    // 提交次数增加一次
+                    this.list.question[_n].attempted++;
                 } else {
                     // 这就是正确提交的可能性了
                     // 首先看是不是一血
                     if(!this.list.question[_n].fb) {
                         // 如果没有一血信息，这次提交就被视为一血
                         // 先在question里记录fb信息
-                        this.list.question[_n].fb = this.list.record[i].Uid;
+                        this.list.question[_n].fb = record[i].uid;
                         // 然后给这个人fb标志
                         this.list.score[_m].question[_n].statu = "first-blood";
                     } else {
                         // 不是一血就是解决
                         this.list.score[_m].question[_n].statu = "solved";
                     }
+                    // 记录后续使用的原数据
+                    const _place = this.list.score[_m].place;
+                    const _point = this.list.score[_m].point;
+                    // 不管是不是一血，解决了就是Accepted和Attempte都+1，而且是lb
+                    this.list.question[_n].attempted++;
+                    this.list.question[_n].accepted++;
+                    this.list.question[_n].lb =  record[i].uid;
                     // 然后只要是解决了，times++
                     this.list.score[_m].question[_n].times++;
                     // 计算罚时并计入总罚时
-                    this.list.score[_m].question[_n].time += ((this.list.record[i].time - this.stamp.start)/1000);
+                    this.list.score[_m].question[_n].time += ((record[i].time.getTime() - this.stamp.start)/1000);
                     this.list.score[_m].time += this.list.score[_m].question[_n].time;
+                    // 解出题目
+                    this.list.score[_m].solved += 1;
                     // 计算积分
                     this.list.score[_m].point = this.list.score[_m].point + 100000 - this.list.score[_m].time;
-                    // 与place比这个人高的进行对比
-                    for(let j = this.list.score[_m].place; ;j-- ) {
-                        // 如果已经是第一名，就直接跳出
-                        if(j == 1) {
-                            break ;
-                        }
-                        // 否则就开始比较
-                        const _index = this.list.score.findIndex(o => o.place == j-1);
-                        if(this.list.score[_m].point == this.list.score[_index].point) {
-                            // 如果两人现在积分一样，那就把自己的排名变成对方的可以停下来了
-                            this.list.score[_m].rank = this.list.score[_index].rank;
-                            break ;
-                        } else if(this.list.score[_m].point > this.list.score[_index].point) {
-                            // 如果比前一个人分高，则自身名次和位置都增加，对面名次和位置都降低
-                            this.list.score[_m].place++;
-                            this.list.score[_m].rank++;
-                            this.list.score[_index].place--;
-                            this.list.score[_index].rank--;
+                    // 和所有人比积分
+                    // 原来比他高现在比他低的都下降rank和place，他加
+                    // 原来和他一样的，都下降rank，如果之前在前面就下降place
+                    for(let j in this.list.score) {
+                        if(j == _m) {
+                            // 如果这个人是自己就跳过
+                            continue ;
                         } else {
-                            // 如果比对方低，也是直接跳出
-                            break ;
+                            if(this.list.score[j].point > _point && this.list.score[j].point < this.list.score[_m].point) {
+                                // 比原来高比现在低
+                                this.list.score[j].rank++;
+                                this.list.score[j].place++;
+                                this.list.score[_m].rank--;
+                                this.list.score[_m].place--;
+                            } else if(this.list.score[j].point == _point) {
+                                this.list.score[j].rank++;
+                                if(this.list.score[j].place < _place) {
+                                    this.list.score[j].place++;
+                                }
+                            }
                         }
                     }
+                    // for(let j = this.list.score[_m].place; ;j-- ) {
+                    //     // 如果已经是第一名，就直接跳出
+                    //     if(j == 1) {
+                    //         break ;
+                    //     }
+                    //     // 否则就开始比较
+                    //     const _index = this.list.score.findIndex(o => o.place == j-1);
+                    //     if(this.list.score[_m].point == this.list.score[_index].point) {
+                    //         // 如果两人现在积分一样，那就把自己的排名变成对方的可以停下来了
+                    //         this.list.score[_m].rank = this.list.score[_index].rank;
+                    //         break ;
+                    //     } else if(this.list.score[_m].point > this.list.score[_index].point) {
+                    //         // 如果比前一个人分高，则自身名次和位置都增加，对面名次和位置都降低
+                    //         this.list.score[_m].place--;
+                    //         this.list.score[_m].rank--;
+                    //         this.list.score[_index].place++;
+                    //         this.list.score[_index].rank++;
+                    //     } else {
+                    //         // 如果比对方低，也是直接跳出
+                    //         break ;
+                    //     }
+                    // }
                 }
             }
         }
     },
     mounted() {
         // 先获取赛事的有关信息
-        const contestUrl = `/api/match/${ this.$route.params.CID }/info`;
-        this.$axios.get(contestUrl).then(rep => {
-            const data = rep.data.data[0];
-            // 获取比赛的标题/开始时间/结束时间
-            this.title = data.Tittle;
-            this.stamp.start = new Date(data.StartTime).getTime();
-            this.stamp.end = new Date(data.StartTime).getTime();
-            // 个人赛或团队赛
-            this.contestant = data.Contestant;  // 0为个人,1为团队
-        })
-        //  TODO 获取这次比赛有哪些题目
+        // const contestUrl = `/api/match/${ this.$route.params.CID }/info`;
+        // this.$axios.get(contestUrl).then(rep => {
+        //     const data = rep.data.data[0];
+        //     // 获取比赛的标题/开始时间/结束时间
+        //     this.title = data.Tittle;
+        //     this.stamp.start = new Date(data.StartTime).getTime();
+        //     this.stamp.end = new Date(data.StartTime).getTime();
+        //     // 个人赛或团队赛
+        //     this.contestant = data.Contestant;  // 0为个人,1为团队
+        // })
+        this.title = "测试标题";
+        this.stamp.start = 1621317600000;
+        this.stamp.end = 1621328400000;
+        this.contestant = 0;  // 0为个人,1为团队
+        // 获取这次比赛有哪些题目
         // const pidUrl = `/api/contest/${ this.$route.params.CID }/problem`;
         // this.$axios.get(pidUrl).then(rep => {
         //     const data = rep.data.data;
@@ -706,50 +673,85 @@ export default {
         //         this.$set(this.list.question, i, data[i].c_pid);
         //     }
         // })
+        this.list.question = [
+                    {
+                        pid: 1,
+                        color: 'rgb(122,233,34)',
+                        attempted: 0,
+                        accepted: 0,
+                        fb: null,
+                        lb: null,
+                    },
+                    {
+                        pid: 2,
+                        color: 'rgb(122,233,34)',
+                        attempted: 0,
+                        accepted: 0,
+                        fb: null,
+                        lb: null,
+                    },
+                    {
+                        pid: 3,
+                        color: 'rgb(122,233,34)',
+                        attempted: 0,
+                        accepted: 0,
+                        fb: null,
+                        lb: null,
+                    },
+                    {
+                        pid: 4,
+                        color: 'rgb(122,233,34)',
+                        attempted: 0,
+                        accepted: 0,
+                        fb: null,
+                        lb: null,
+                    },];
+                    // 初始化question
+                    this.list.questionDefalut = this.list.question;
         // 获取比赛的参赛选手,初始化score
-        const namelistUrl = `/api/match/${ this.$route.params.CID }/user`;
-        this.$axios.get(namelistUrl).then(rep => {
-            console.log(rep);
-            // const data = rep.data.data;  //TODO 后续换真实data
+        // const namelistUrl = `/api/match/${ this.$route.params.CID }/user`;
+        // this.$axios.get(namelistUrl).then(rep => {
+        //     console.log(rep);
+        //     const data = rep.data.data;
             const data = [
                 {
-                    "ContestUid": 15,
-                    "Cid": 3,
-                    "Uid": 151,
-                    "Name": "王三1",
-                    "StudentID": 201700000004,
+                    "ContestUid": 1,
+                    "Cid": 1,
+                    "Uid": 20171,
+                    "Name": "李昶浩",
+                    "StudentID": 20171,
                     "email": null
                 },
                 {
-                    "ContestUid": 52,
-                    "Cid": 3,
-                    "Uid": 152,
-                    "Name": "王三12",
-                    "StudentID": 2017000000041,
+                    "ContestUid": 2,
+                    "Cid": 1,
+                    "Uid": 20172,
+                    "Name": "鹿乃",
+                    "StudentID": 20172,
                     "email": null
                 },
                 {
-                    "ContestUid": 53,
-                    "Cid": 3,
-                    "Uid": 153,
-                    "Name": "王三123",
-                    "StudentID": 2017000000042,
+                    "ContestUid": 3,
+                    "Cid": 1,
+                    "Uid": 20173,
+                    "Name": "花谱",
+                    "StudentID": 20173,
                     "email": null
                 },
                 {
-                    "ContestUid": 54,
-                    "Cid": 3,
-                    "Uid": 154,
-                    "Name": "王三1234",
-                    "StudentID": 2017000000043,
+                    "ContestUid": 4,
+                    "Cid": 1,
+                    "Uid": 20174,
+                    "Name": "肖晨南",
+                    "StudentID": 20174,
                     "email": null
                 },
                 {
-                    "ContestUid": 55,
-                    "Cid": 3,
-                    "Uid": 155,
-                    "Name": "王三12345",
-                    "StudentID": 2017000000044,
+                    "ContestUid": 5,
+                    "Cid": 1,
+                    "Uid": 20175,
+                    "Name": "黄浩泉",
+                    "StudentID": 20175,
                     "email": null
                 },
             ];
@@ -761,15 +763,33 @@ export default {
                     statu: "none",
                     times: 0,
                     time: 0,
-                    punish: 0,
                 })
             }
-            for(let i in data) {  // TODO 这里还只是个人的
-                const item = {
+            if(this.contestant == 0) {
+                // 如果是个人赛
+                for(let i in data) {
+                    const item = {
+                        place: parseInt(i) + 1,
+                        rank: 1,
+                        // school
+                        // schoolID
+                        name: data[i].Name,
+                        nameID: data[i].ContestUid,
+                        solved: 0,
+                        time: 0,
+                        level: 'bronze',
+                        point: 0,
+                        question: JSON.parse(JSON.stringify(question)),
+                    }
+                    this.$set(this.list.score, i, item);
+                }
+            } else {
+                // 团队赛多个school和schoolID
+                 const item = {
                     place: parseInt(i) + 1,
                     rank: 1,
-                    // school
-                    // schoolID
+                    school: data.school,
+                    schoolID: data.schoolID, // TODO school和schoolID都是没测试的数据
                     name: data[i].Name,
                     nameID: data[i].ContestUid,
                     solved: 0,
@@ -780,99 +800,98 @@ export default {
                 }
                 this.$set(this.list.score, i, item);
             }
-        })
+            // 设置默认值
+            this.list.scoreDefault = JSON.parse(JSON.stringify(this.list.score));
+            
+        // })
         // 然后获取这次比赛的所有提交记录
-        const recordUrl = `/api/match/${ this.$route.params.CID }`;
-        this.$axios.get(recordUrl).then(rep => {
-            const data = rep.data.data;
-            this.list.record = data;
-            this.list.record = [
+        // const recordUrl = `/api/match/${ this.$route.params.CID }`;
+        // this.$axios.get(recordUrl).then(rep => {
+        //     const data = rep.data.data;
+        //     this.list.record = data;
+            const submitData =  [
                 {
-                    "Cid": 3,
-                    "c_pid": 2,
-                    "Uid": 15,
-                    "result": -1,
-                    "Language": "G++",
-                    "time": 1619136000000,
-                    // "updated_at": "2021-05-06 23:02:40"
-                },
-                {
-                    "Cid": 3,
-                    "c_pid": 4,
-                    "Uid": 15,
+                    "Cid": 1,
+                    "c_pid": 1,
+                    "Uid": 1,
                     "result": 6,
                     "Language": "G++",
-                    "time": 1619136001000,
-                    // "updated_at": "2021-05-06 22:46:31"
+                    "updated_at": "2021-05-18 14:02:40"
                 },
                 {
-                    "Cid": 3,
-                    "c_pid": 5,
-                    "Uid": 15,
-                    "result": 0,
+                    "Cid": 1,
+                    "c_pid": 1,
+                    "Uid": 1,
+                    "result": 8,
                     "Language": "G++",
-                    "time": 1619136001000,
-                    // "updated_at": "2021-05-06 22:46:31"
+                    "updated_at": "2021-05-18 14:12:40"
                 },
                 {
-                    "Cid": 3,
-                    "c_pid": 6,
-                    "Uid": 15,
-                    "result": 0,
+                    "Cid": 1,
+                    "c_pid": 1,
+                    "Uid": 1,
+                    "result": 8,
                     "Language": "G++",
-                    "time": 1619136001000,
-                    // "updated_at": "2021-05-06 22:46:31"
+                    "updated_at": "2021-05-18 14:22:40"
                 },
                 {
-                    "Cid": 3,
-                    "c_pid": 7,
-                    "Uid": 15,
-                    "result": 0,
+                    "Cid": 1,
+                    "c_pid": 1,
+                    "Uid": 1,
+                    "result": -1,
                     "Language": "G++",
-                    "time": 1619136001000,
-                    // "updated_at": "2021-05-06 22:46:31"
+                    "updated_at": "2021-05-18 14:32:40"
                 },
                 {
-                    "Cid": 3,
-                    "c_pid": 8,
-                    "Uid": 15,
-                    "result": 0,
+                    "Cid": 1,
+                    "c_pid": 2,
+                    "Uid": 1,
+                    "result": 1,
                     "Language": "G++",
-                    "time": 1619136001000,
-                    // "updated_at": "2021-05-06 22:46:31"
+                    "updated_at": "2021-05-18 14:42:40"
                 },
                 {
-                    "Cid": 3,
-                    "c_pid": 9,
-                    "Uid": 15,
-                    "result": 0,
+                    "Cid": 1,
+                    "c_pid": 2,
+                    "Uid": 1,
+                    "result": -1,
                     "Language": "G++",
-                    "time": 1619136001000,
-                    // "updated_at": "2021-05-06 22:46:31"
+                    "updated_at": "2021-05-18 15:10:40"
                 },
                 {
-                    "Cid": 3,
-                    "c_pid": 7,
-                    "Uid": 15,
-                    "result": 0,
+                    "Cid": 1,
+                    "c_pid": 2,
+                    "Uid": 2,
+                    "result": -1,
                     "Language": "G++",
-                    "time": 1619136001000,
-                    // "updated_at": "2021-05-06 22:46:31"
+                    "updated_at": "2021-05-18 15:10:40"
                 },
                 {
-                    "Cid": 3,
-                    "c_pid": 8,
-                    "Uid": 15,
-                    "result": 0,
+                    "Cid": 1,
+                    "c_pid": 3,
+                    "Uid": 2,
+                    "result": -1,
                     "Language": "G++",
-                    "time": 1619136001000,
-                    // "updated_at": "2021-05-06 22:46:31"
+                    "updated_at": "2021-05-18 15:10:40"
                 },
-            ]; // TODO 后续删掉这个
-            // 根据record更新排名
-            this.handleRecord();
-        })
-        
+                {
+                    "Cid": 1,
+                    "c_pid": 4,
+                    "Uid": 2,
+                    "result": -1,
+                    "Language": "G++",
+                    "updated_at": "2021-05-18 15:10:40"
+                },
+            ];
+            for(let i in submitData) {
+                this.list.record.push({
+                    pid: submitData[i].c_pid,
+                    uid: submitData[i].Uid,
+                    result: submitData[i].result,
+                    time: new Date(submitData[i].updated_at),
+                })
+            }
+        // })
         this.init();
     },
     watch: {
@@ -905,7 +924,7 @@ export default {
     .time-end {
         position: absolute;
         right: 0;
-        transform: translate(55%, -20px);
+        transform: translate(65%, -20px);
     }
     .tip {
         height: 24px;
@@ -962,7 +981,7 @@ export default {
     }
     .list td,.list th {
         --i: 1;
-        width: calc(var(--i) * 55px);
+        width: calc(var(--i) * 65px);
         height: 100%;
         border: 1px solid #FFFFFF;
         position: relative;

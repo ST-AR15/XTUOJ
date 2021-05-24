@@ -593,9 +593,8 @@ export default {
             });
         },
         dragBar(e) {  // 拖拽
-            this.leftW = e.clientX;
+            this.leftW = e.screenX;
             this.rightW = Math.max(window.innerWidth, 1000) - 20 - this.leftW;
-            
         },
         queryComment() {  // 加载评论
             // 如果加载过了，就不加载

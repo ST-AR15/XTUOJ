@@ -864,7 +864,7 @@ export default {
                     "Uid": 2,
                     "result": -1,
                     "Language": "G++",
-                    "updated_at": "2021-05-18 15:10:40"
+                    "updated_at": "2021-05-18 15:20:40"
                 },
                 {
                     "Cid": 1,
@@ -872,7 +872,7 @@ export default {
                     "Uid": 2,
                     "result": -1,
                     "Language": "G++",
-                    "updated_at": "2021-05-18 15:10:40"
+                    "updated_at": "2021-05-18 15:30:40"
                 },
                 {
                     "Cid": 1,
@@ -880,7 +880,7 @@ export default {
                     "Uid": 2,
                     "result": -1,
                     "Language": "G++",
-                    "updated_at": "2021-05-18 15:10:40"
+                    "updated_at": "2021-05-18 15:40:40"
                 },
             ];
             for(let i in submitData) {

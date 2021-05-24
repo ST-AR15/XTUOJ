@@ -156,6 +156,7 @@ export default {
     margin: 0 auto;
     border: 1px solid rgb(64,169,255);
     border-radius: 12px;
-    backdrop-filter: blur(3px);
+    /* backdrop-filter: blur(3px); */
+    background: rgba(136, 136, 136, 0.8);
 }
 </style>

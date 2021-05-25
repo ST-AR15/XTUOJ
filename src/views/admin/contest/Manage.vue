@@ -304,8 +304,8 @@ export default {
             let params = JSON.stringify({data: this.questionModal.add});
             console.log(params);
             this.$axios.post(url, { ProblemId:params }).then(rep => {
-                // TODO 无法使用
-                console.log(rep);
+                this.$message.success(rep.statusText);
+                this.questionModal.isVisible = false;
             }) 
         },
         queryQuestionTitle(i) {  // 获取题目名字

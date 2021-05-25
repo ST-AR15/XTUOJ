@@ -32,7 +32,9 @@
     max-height: 80vh;
     overflow: auto;
 }
-
+.ant-dropdown-menu-item {
+    text-align: center;
+}
 /* 自定义的，type为green的a-button */
 .ant-btn-green {
     background-color: #58C462;

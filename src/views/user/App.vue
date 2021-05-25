@@ -6,9 +6,8 @@
                 <!-- TODO -->
                 <a-button class="navButton" v-if="!$store.state.token" @click="loginVisible = true">登录</a-button>
                 <a-dropdown class="navButton" v-else>
-                    <a-button>欢迎</a-button>
+                    <a-button @click="queryPerson">个人中心</a-button>
                     <a-menu slot="overlay">
-                        <a-menu-item @click="queryPerson">个人中心</a-menu-item>
                         <a-menu-item @click="logout">退出登录</a-menu-item>
                     </a-menu>
                 </a-dropdown>

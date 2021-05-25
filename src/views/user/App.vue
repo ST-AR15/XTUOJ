@@ -84,14 +84,19 @@ export default {
         logout() {
             let url = "/api/users/logout";
             this.$axios.get(url).then(rep => {
+                this.$store.commit('setUid', null);
+                this.$store.commit('setToken', null);
+                sessionStorage.removeItem('uid');
+                sessionStorage.removeItem('token');
                 this.$message.success(rep.data.data);
             }).catch(err => {
+                this.$store.commit('setUid', null);
+                this.$store.commit('setToken', null);
+                sessionStorage.removeItem('uid');
+                sessionStorage.removeItem('token');
                 this.$message.info(err);
             })
-            this.$store.commit('setUid', null);
-            this.$store.commit('setToken', null);
-            sessionStorage.removeItem('uid');
-            sessionStorage.removeItem('token');
+            
         }
     },
     mounted() {

@@ -6,7 +6,7 @@
         <a-modal
             :title="'比赛' + questionModal.ID + ' - 题目管理'"
             :visible="questionModal.isVisible"
-            @cancel="questionModal.isVisible = false"
+            @cancel="handleQuestionCancel"
             @ok="queryQuestionAdd"
         >
             <a-spin v-if="questionModal.isLoading" :spinning="true"></a-spin>
@@ -307,6 +307,17 @@ export default {
                 this.$message.success(rep.statusText);
                 this.questionModal.isVisible = false;
             }) 
+        },
+        handleQuestionCancel() {  // 关闭题目管理的modal
+            this.questionModal.isVisible = false;
+            this.questionModal.data = [
+                    {
+                        key: 2,
+                        ID: "",
+                        name: "",
+                        isValid: false,
+                    }
+                ];
         },
         queryQuestionTitle(i) {  // 获取题目名字
             // 限定四位数

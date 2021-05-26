@@ -1,9 +1,5 @@
 <template>
     <div class="question" id="question">
-        <div class="question-header">
-            <a-icon style="margin-right: 10px" @click="back" type="arrow-left" />
-            <span class="bold" style="font-size: 20px; color: rgba(0,0,0,0.85); cursor: pointer" @click="back">返回</span>
-        </div>
         <div class="question-container">
             <div class="question-left" :style="{ width: leftW + 'px' }">
                 <a-tabs v-model="tabkey" @change="handleTab">
@@ -171,7 +167,12 @@
                         <!-- </a-spin> -->
                     </a-tab-pane>
                 </a-tabs>
-                <div class="buttons">
+                <div class="buttons" style="justify-content: space-between">
+                    <a-space>
+                        <a-button @click="back" type="primary" icon="left">返回</a-button>
+                        <!-- TODO 这个不一定需要但又不一定不需要 -->
+                        <!-- <a-button type="primary" icon="unordered-list">题目列表</a-button> -->
+                    </a-space>
                     <a-space>
                         <a-input-number placeholder="请输入题号" v-model="aimID" @pressEnter="handleRoute(aimID)"></a-input-number>
                         <a-button type="primary" @click="handleRoute(aimID)">跳转</a-button>
@@ -229,7 +230,7 @@
 </template>
 
 <script>
-import { copy } from '@/utils/tools.js'
+import { copy, detectZoom } from '@/utils/tools.js'
 import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 import { codemirror } from 'vue-codemirror'
@@ -593,7 +594,8 @@ export default {
             });
         },
         dragBar(e) {  // 拖拽
-            this.leftW = e.screenX;
+            const _size = detectZoom();
+            this.leftW = e.screenX/_size*100;
             this.rightW = Math.max(window.innerWidth, 1000) - 20 - this.leftW;
         },
         queryComment() {  // 加载评论
@@ -774,7 +776,7 @@ export default {
 }
 .question-container {
     width: 100%;
-    height: calc(100% - 64px);
+    height: 100%;
     overflow: hidden;
     display: flex;
 }
@@ -804,6 +806,7 @@ export default {
     cursor: col-resize;
     background-color: blanchedalmond;
     transition: all .6s;
+    flex-shrink: 0;
 }
 .question-bar:hover {
     background-color: burlywood;

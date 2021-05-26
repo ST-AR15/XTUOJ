@@ -9,25 +9,36 @@
         <transition name="cross">
             <!-- 题目列表 -->
             <div v-show="pageNow == 'questions'" class="contest-questions contents-item" id="contest-questions">
-                <a-table
-                    :columns="questionsColumns"
-                    :data-source="questions"
-                    :pagination="false"
-                    rowKey="ID"
-                    :loading="questionLoader"
-                >
-                    <!-- 表头 -->
-                    <template slot="title">
-                        <h2 style="font-size: 22px">
-                            <a-icon type="arrow-left" @click="handleBack" />
-                            返回
-                        </h2>
-                    </template>
-                    <!-- 交互 -->
-                    <span slot="button" slot-scope="record">
-                        <a-button type="primary" @click="queryQuestion(record.ID)">查看</a-button>
-                    </span>
-                </a-table>
+                <a-tabs v-model="tabkey" tab-position="left" default-active-key="problems" @change="handelTabs">
+                    <a-tab-pane key="problems" tab="Problems">
+                        <a-table
+                            :columns="questionsColumns"
+                            :data-source="questions"
+                            :pagination="false"
+                            rowKey="ID"
+                            :loading="questionLoader"
+                            :showHeader="false"
+                        >
+                            <!-- 交互 -->
+                            <span slot="button" slot-scope="record">
+                                <a-button type="primary" @click="queryQuestion(record.ID)">查看</a-button>
+                            </span>
+                        </a-table>
+                    </a-tab-pane>
+                    <a-tab-pane key="standing" tab="Standing" force-render>
+                        standing
+                    </a-tab-pane>
+                    <a-tab-pane key="status" tab="Online Status">
+                        Online Status
+                    </a-tab-pane>
+                    <a-tab-pane key="statistics" tab="Statistics">
+                        statistics
+                    </a-tab-pane>
+                    <a-tab-pane key="back" tab="返回">
+                        statistics
+                    </a-tab-pane>
+                </a-tabs>
+                
             </div>
         </transition>
     </div>
@@ -73,9 +84,16 @@ export default {
                 },
             ],
             questionLoader: false,
+            tabkey: 'problems',
         }
     },
     methods: {
+        handelTabs(tab) {
+            if(tab == 'back') {
+                this.tabkey = "problems"
+                this.handleBack();
+            }
+        },
         handleBack() {  // 比赛题目详情回到比赛列表
             this.$router.push(`/contests`);  // 修改route
         },

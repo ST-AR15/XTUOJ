@@ -105,6 +105,7 @@
                             rowKey="JID"
                             style="min-width: 600px"
                             :pagination="submitPagination"
+                            :loading="submitLoading"
                             @change="handleSubmitPage"
                         >
                             <!-- solution -->
@@ -156,7 +157,7 @@
                             <div v-for="(item, i) in submitSolution.test" :key="i">
                                 <a-divider />
                                 <p class="bold">
-                                    <span v-text="`#${ i + 1 }, time: ${ item.time }ms, cpu_time: ${ item.cpuTime }ms, real_time: ${ item.realTime }ms, memory: ${ item.memory }B, verdict: `"></span>
+                                    <span v-text="`#${ i + 1 }, time:${ item.time } ms, cpu_time:${ item.cpuTime } ms, real_time:${ item.realTime } ms, memory:${ item.memory } B, verdict:`"></span>
                                     <span :class="item.verdict == 'ACCEPT'? 'problem-accept': 'problem-wa'" v-text="`${ item.verdict }`"  style='opacity: 0.7'></span>
                                 </p>
                                 <p v-if="item.input">Input</p>
@@ -299,6 +300,7 @@ export default {
                 current: 1,
             },                        // 提交的分页器
             submitData: [],           // 提交区的数据
+            submitLoading: false,
             submitSolution: {
                 visible: false,
                 JID: 0,
@@ -406,7 +408,8 @@ export default {
             return false;
         },
         handleSubmitPage(pagination) {  // 提交情况的翻页
-            console.log(pagination);
+            this.submitPagination.current = pagination.current;
+            this.querySubmitInformation();
         },
         querySubmit() {  // 提交代码
             // 开始加载
@@ -494,6 +497,7 @@ export default {
             } else {  // 普通模式加载
                 url = `/api/problem/${ this.ID }/submit`;
             }
+            this.submitLoading = true;
             this.$axios.get(url, {
                 params: {
                     page: this.submitPagination.current
@@ -512,14 +516,17 @@ export default {
                         language: data[i].Language,
                         submitTime: data[i].updated_at,
                     }
-                    this.submitData[parseInt(this.submitPagination.pageSize*(this.submitPagination.current-1)) + parseInt(i)] = submitItem;
+                    this.$set(this.submitData, parseInt(this.submitPagination.pageSize*(this.submitPagination.current-1)) + parseInt(i), submitItem);
                 }
+                this.submitLoading = false;
                 // 如果有内容，而且有题目需要加载
-                // 有内容
+                // 有内容 
+                // TODO 按这个逻辑，如果判题中的内容发生了页码变化就无法正确轮询
+                // TODO 要不然直接传一个是否有判题中？
                 if(this.submitData.length != 0) {
                     // 有题目要加载且还没计时器
                     // 找到第一个需要加载的题目的页码
-                    let index = this.submitData.findIndex(o => o.result == 0 || o.result == -2);
+                    let index = this.submitData.findIndex(o => o && (o.result == 0 || o.result == -2));
                     if(index >= 0 && !this.submitTimer) {
                         // 设置计时器去查没有加载完的题目
                         this.submitTimer = setInterval(function() {

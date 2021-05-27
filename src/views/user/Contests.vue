@@ -9,7 +9,7 @@
         <transition name="cross">
             <!-- 题目列表 -->
             <div v-show="pageNow == 'questions'" class="contest-questions contents-item" id="contest-questions">
-                <a-tabs v-model="tabkey" tab-position="left" default-active-key="problems" @change="handelTabs">
+                <a-tabs v-model="tabkey" default-active-key="problems" @change="handelTabs">
                     <a-tab-pane key="problems" tab="Problems">
                         <a-table
                             :columns="questionsColumns"
@@ -164,5 +164,6 @@ export default {
     }
     .contents-item {
         width: 100%;
+        background-color: #FFFFFF;
     }
 </style>

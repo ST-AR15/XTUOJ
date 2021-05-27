@@ -488,8 +488,10 @@ export default {
                 this.submitSolution.loading = false;
             })
         },
-        querySubmitInformation() {  // 加载提交情况
+        querySubmitInformation(isLoad = true) {  // 加载提交情况
             let that = this;
+            // 轮询时间
+            const _queryTime = 1000;
             // 根据情况使用不同API
             let url = "";
             if(this.$route.name == "question_contest") {   // 比赛模式加载
@@ -497,7 +499,9 @@ export default {
             } else {  // 普通模式加载
                 url = `/api/problem/${ this.ID }/submit`;
             }
-            this.submitLoading = true;
+            if(isLoad) {
+                this.submitLoading = true;
+            }
             this.$axios.get(url, {
                 params: {
                     page: this.submitPagination.current
@@ -507,6 +511,7 @@ export default {
                 this.submitPagination.pageSize = rep.data.data.per_page;
                 this.submitPagination.total = rep.data.data.total;
                 const data = rep.data.data.data;
+                let isReload = false;
                 for(let i in data) {
                     const submitItem = {
                         JID: data[i].Jid,
@@ -516,50 +521,22 @@ export default {
                         language: data[i].Language,
                         submitTime: data[i].updated_at,
                     }
+                    // 判断是否需要轮询
+                    if(data[i].result == 0 || data[i].result == -2) {
+                        isReload = true;
+                    }
                     this.$set(this.submitData, parseInt(this.submitPagination.pageSize*(this.submitPagination.current-1)) + parseInt(i), submitItem);
                 }
                 this.submitLoading = false;
-                // 如果有内容，而且有题目需要加载
-                // 有内容 
-                // TODO 按这个逻辑，如果判题中的内容发生了页码变化就无法正确轮询
-                // TODO 要不然直接传一个是否有判题中？
-                if(this.submitData.length != 0) {
-                    // 有题目要加载且还没计时器
-                    // 找到第一个需要加载的题目的页码
-                    let index = this.submitData.findIndex(o => o && (o.result == 0 || o.result == -2));
-                    if(index >= 0 && !this.submitTimer) {
-                        // 设置计时器去查没有加载完的题目
-                        this.submitTimer = setInterval(function() {
-                            // 根据index计算page
-                            const page = parseInt(index / that.submitPagination.pageSize) + 1;
-                            that.$axios.get(url, {
-                                params: {
-                                    page: page
-                                }
-                            }).then(rep => {
-                                // 页面设置
-                                that.submitPagination.total = rep.data.data.total;
-                                // 获取新数据
-                                const data = rep.data.data.data;
-                                for(let i in data) {
-                                    const submitItem = {
-                                        JID: data[i].Jid,
-                                        result: data[i].result,
-                                        runTime: data[i].RunTime,
-                                        runMemory: data[i].RunMemory,
-                                        language: data[i].Language,
-                                        submitTime: data[i].updated_at,
-                                    }
-                                    that.$set(that.submitData, parseInt((page - 1) * that.submitPagination.pageSize) + parseInt(i), submitItem)
-                                }
-                                // 判断是否还有判断中的题目,没有就删除计时器
-                                if(that.submitData.findIndex(o => o.result == 0 || o.result == -2) < 0) {
-                                    clearInterval(that.submitTimer);
-                                    that.submitTimer = "";
-                                }
-                            })
-                        }, 1000)
-                    }
+                if(!isReload && this.submitTimer) {
+                    // 如果正在轮询且不需要继续轮询
+                    clearInterval(that.submitTimer);
+                    that.submitTimer = "";
+                }else if(isReload && !this.submitTimer) {
+                    // 如果需要轮询而且现在没有轮询
+                    this.submitTimer = setInterval(function() {
+                        that.querySubmitInformation(false);
+                    }, _queryTime)
                 }
             })
         },

@@ -105,18 +105,19 @@
                             rowKey="JID"
                             style="min-width: 600px"
                             :pagination="submitPagination"
+                            @change="handleSubmitPage"
                         >
                             <!-- solution -->
                             <!-- 只有普通的question才能看 -->
                             <span 
                                 slot="solution"
-                                slot-scope="solution"
+                                slot-scope="solution, record"
                                 :style="{ 
                                     cursor: $route.name == 'question'? 'pointer':'default',
                                     color: $route.name == 'question'? '#40A9FF':''
                                 }"
                             >
-                                <span @click="querySolution(solution)" v-text="solution"></span>
+                                <span @click="querySolution(solution, record.language)" v-text="solution"></span>
                             </span>
                             <!-- 结果 -->
                             <span slot="result" slot-scope="result">
@@ -132,6 +133,7 @@
                             class="status-solution"
                             @cancel = "submitSolution.visible = false"
                         >
+                            <a-spin :spinning="submitSolution.loading">
                             <p class="modal-title">
                                 <span>solution: {{ submitSolution.JID}}, </span>
                                 <span v-if="this.$route.name == 'question_contest'">contest: {{ this.$route.params.CID }}, </span>
@@ -153,7 +155,10 @@
                             <p class="bold" style="margin: 5px 0;">→Judgement Protocol</p>
                             <div v-for="(item, i) in submitSolution.test" :key="i">
                                 <a-divider />
-                                <p class="bold" v-text="`#${ i + 1 }, time: ${ item.time }ms, memory: ${ item.memory }KB, verdict: ${ item.verdict }`"></p>
+                                <p class="bold">
+                                    <span v-text="`#${ i + 1 }, time: ${ item.time }ms, cpu_time: ${ item.cpuTime }ms, real_time: ${ item.realTime }ms, memory: ${ item.memory }B, verdict: `"></span>
+                                    <span :class="item.verdict == 'ACCEPT'? 'problem-accept': 'problem-wa'" v-text="`${ item.verdict }`"  style='opacity: 0.7'></span>
+                                </p>
                                 <p v-if="item.input">Input</p>
                                 <pre v-if="item.input" v-text="item.input"></pre>
                                 <p v-if="item.output">Output</p>
@@ -163,6 +168,7 @@
                                 <p v-if="item.checkLog">CheckLog</p>
                                 <pre v-if="item.checkLog" v-text="item.checkLog"></pre>
                             </div>
+                            </a-spin>
                         </a-modal>
                         <!-- </a-spin> -->
                     </a-tab-pane>
@@ -279,6 +285,7 @@ export default {
                 {
                     title: "使用语言",
                     dataIndex: "language",
+                    scopedSlots: { customRender: 'language' },
                 },
                 {
                     title: "提交时间",
@@ -298,30 +305,10 @@ export default {
                 compileError: "0",
                 systemError: "0",
                 compileErrorInfo: "",
-                info: "solution info",
-                code: "code detail",
-                test: [
-                    // {
-                    //     time: 93,
-                    //     memory: 0,
-                    //     exit: 1,
-                    //     checker: 0,
-                    //     verdict: "RUNTIME_ERROR",
-                    //     input: "1",
-                    //     output: "1",
-                    //     answer: "1",
-                    //     checkLog: "ok 1 numbers",
-                    // },
-                    // {
-                    //     time: 93,
-                    //     memory: 0,
-                    //     exit: 1,
-                    //     checker: 0,
-                    //     verdict: "RUNTIME_ERROR",
-                    //     input: "1",
-                    //     checkLog: "Exit code is 1",
-                    // }
-                ]
+                info: "",
+                code: "",
+                loading: false,
+                test: []
             },
             submitTimer: "",          // 提交情况的计时器
             commentReplyNum: [0,0],   // 当前打开的是哪个输入框，第一个数字代表一级评论，第二个数字代表二级
@@ -418,6 +405,9 @@ export default {
             // 返回false表示不调用默认的上传接口
             return false;
         },
+        handleSubmitPage(pagination) {  // 提交情况的翻页
+            console.log(pagination);
+        },
         querySubmit() {  // 提交代码
             // 开始加载
             this.codeLoading = true;
@@ -446,17 +436,27 @@ export default {
             })
             
         },
-        querySolution(JID) {
+        querySolution(JID, language) {
             // 展示弹框
             this.submitSolution.visible = true;
             this.submitSolution.JID = JID;
+            this.submitSolution.loading = true;
             // 清空弹框原来的内容
             this.submitSolution.test = [];
+            this.submitSolution.code = "";
+            this.submitSolution.info = "";
+            this.submitSolution.compileErrorInfo = "";
+            this.submitSolution.compileError = "0";
+            this.submitSolution.systemError = "0";
+            // 语言
+            this.solutionCmOptions.mode = this.$cmModeText[language];
+            console.log(this.solutionCmOptions.mode);
             // URL
             let url = `/api/problem/${ this.$route.params.ID }/submit/${ JID }`;
             this.$axios.get(url).then(rep => {
                 const data = rep.data.data;
                 const runTimeInfo = JSON.parse(Base64.decode(data.RunTimeInfo));
+                console.log(runTimeInfo);
                 // 代码
                 this.submitSolution.code = data.Code;
                 this.submitSolution.compileError = runTimeInfo.compile_error;
@@ -466,6 +466,8 @@ export default {
                 for(let i in runTimeInfo.output) {
                     const testItem = {
                         time: runTimeInfo.time[i],
+                        cpuTime: runTimeInfo.cpu_time[i],
+                        realTime: runTimeInfo.real_time[i],
                         memory: runTimeInfo.memory[i],
                         // exit,checker
                         verdict: this.$resultText[runTimeInfo.result[i]],
@@ -477,6 +479,10 @@ export default {
                     }
                     this.submitSolution.test.push(testItem);
                 }
+                this.submitSolution.loading = false;
+            }).catch(e => {
+                this.$message.error(e);
+                this.submitSolution.loading = false;
             })
         },
         querySubmitInformation() {  // 加载提交情况

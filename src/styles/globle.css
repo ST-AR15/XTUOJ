@@ -29,15 +29,15 @@ h1 {
 /* 部分颜色 */
 .problem-accept {
     transition: color .4s;
-    color: #13C965;
+    color: rgba(22, 201, 101, 1);
 }
 .problem-wa {
     transition: color .4s;
-    color: #FF0000;
+    color: rgba(255, 0, 0, 1);
 }
 .problem-others {
     transition: color .4s;
-    color: #0000FF;
+    color: rgba(0, 0, 255, 1)
 }
 /* 部分特殊化 */
 .bold {

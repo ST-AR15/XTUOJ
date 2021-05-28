@@ -108,8 +108,6 @@ export default {
         $route() {
             // menu切换
             this.$set(this.page, 0, this.$route.name);
-            console.log(this.page);
-            console.log(this.$route.name);
         }
     }
 }

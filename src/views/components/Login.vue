@@ -103,8 +103,9 @@ export default {
                     this.$emit('ok');
                     this.loginLoader = false;
                 }).catch( e => {
-                    this.$message.error(`发生错误${ e }`);
+                    // this.$message.error(`发生错误${ e }`);
                     this.loginLoader = false;
+                    return e;
                 })
             } else {  // 注册
                 const url = "/api/users/register";

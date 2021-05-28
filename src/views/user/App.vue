@@ -93,7 +93,7 @@ export default {
                 this.$store.commit('setToken', null);
                 sessionStorage.removeItem('uid');
                 sessionStorage.removeItem('token');
-                this.$message.info(err);
+                return err;
             })
             
         }

@@ -201,8 +201,9 @@ export default {
                 this.loading = false;
             }).catch(error => {
                 // 如果检测到错误，也停止加载
-                this.$message.error(`加载问题列表时发生错误${ error }`);
+                // this.$message.error(`加载问题列表时发生错误${ error }`);
                 this.loading = false;
+                return error;
             })
         },
     },

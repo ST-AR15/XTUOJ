@@ -223,8 +223,10 @@ export default {
                 this.loading = false;
             }).catch(error => {
                 // 如果检测到错误，也停止加载
-                this.$message.error('加载比赛列表时发生意外错误' + error);
+                // this.$message.error('加载比赛列表时发生意外错误' + error);
+                this.$message.error('加载失败');
                 this.loading = false;
+                return error;
             })
         },
         queryCreate() { // 创建比赛modal

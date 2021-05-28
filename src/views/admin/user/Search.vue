@@ -43,6 +43,7 @@ export default {
             let url = "/api/users/" + this.id;
             this.$axios.get(url).then(rep => {
                 let data = rep.data.data;
+                //  TODO 这里查出来没人也是200，所以不能删这个catch，这个后续应该改一下
                 // 赋值
                 try {
                     [this.name, this.age, this.studentID, this.profession, this.role, this.email, this.createTime, this.updateTime] = 

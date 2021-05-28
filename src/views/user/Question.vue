@@ -400,7 +400,7 @@ export default {
                 this.codeLoading = false;
             }).catch(e => {
                 this.codeLoading = false;
-                this.$message.error(`发生错误${ e }`);
+                this.$message.error("代码提交失败");
                 return e;
             })
             

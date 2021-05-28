@@ -406,44 +406,49 @@ export default {
             
         },
         querySolution(JID, language) {
-            // 清空弹框原来的内容
-            this.submitSolution.test = [];
-            this.submitSolution.code = "";
-            this.submitSolution.compileErrorInfo = "";
-            this.submitSolution.compileError = false;
-            this.submitSolution.systemError = false;
-            // 展示弹框
-            this.submitSolution.visible = true;
-            this.submitSolution.introduce = `solution: ${ JID },${ this.$route.name == 'question_contest'? 'contest: ' + this.$route.params.CID + ', ' : '' }problem: ${ this.$route.params.ID }`;
-            this.submitSolution.loading = true;
-            // 语言
-            this.submitSolution.language = language;
-            // URL
-            let url = `/api/problem/${ this.$route.params.ID }/submit/${ JID }`;
-            this.$axios.get(url).then(rep => {
-                const data = rep.data.data;
-                const runTimeInfo = JSON.parse(Base64.decode(data.RunTimeInfo));
-                // 代码
-                this.submitSolution.code = data.Code;
-                this.submitSolution.compileError = runTimeInfo.compile_error == "0" ? false: true;
-                this.submitSolution.compileErrorInfo = runTimeInfo.compile_error_info;
-                this.submitSolution.systemError = runTimeInfo.system_error == "0" ? false: true;
-                // test,以result为基准
-                for(let i in runTimeInfo.output) {
-                    const testItem = {
-                        time: runTimeInfo.time[i],
-                        memory: runTimeInfo.memory[i],
-                        verdict: this.$resultText[runTimeInfo.result[i]],
-                        // TODO 不要使用这个replaceAll方法
-                        output: Base64.decode(runTimeInfo.output[i]).replaceAll('\\n','\n'),
+            if(this.$route.name == 'question') {
+                // 清空弹框原来的内容
+                this.submitSolution.test = [];
+                this.submitSolution.code = "";
+                this.submitSolution.compileErrorInfo = "";
+                this.submitSolution.compileError = false;
+                this.submitSolution.systemError = false;
+                // 展示弹框
+                this.submitSolution.visible = true;
+                this.submitSolution.introduce = `solution: ${ JID },${ this.$route.name == 'question_contest'? 'contest: ' + this.$route.params.CID + ', ' : '' }problem: ${ this.$route.params.ID }`;
+                this.submitSolution.loading = true;
+                // 语言
+                this.submitSolution.language = language;
+                // URL
+                let url = `/api/problem/${ this.$route.params.ID }/submit/${ JID }`;
+                this.$axios.get(url).then(rep => {
+                    const data = rep.data.data;
+                    const runTimeInfo = JSON.parse(Base64.decode(data.RunTimeInfo));
+                    // 代码
+                    this.submitSolution.code = data.Code;
+                    this.submitSolution.compileError = runTimeInfo.compile_error == "0" ? false: true;
+                    this.submitSolution.compileErrorInfo = runTimeInfo.compile_error_info;
+                    this.submitSolution.systemError = runTimeInfo.system_error == "0" ? false: true;
+                    // test,以result为基准
+                    for(let i in runTimeInfo.output) {
+                        const testItem = {
+                            time: runTimeInfo.time[i],
+                            memory: runTimeInfo.memory[i],
+                            verdict: this.$resultText[runTimeInfo.result[i]],
+                            // TODO 不要使用这个replaceAll方法
+                            output: Base64.decode(runTimeInfo.output[i]).replaceAll('\\n','\n'),
+                        }
+                        this.submitSolution.test.push(testItem);
                     }
-                    this.submitSolution.test.push(testItem);
-                }
-                this.submitSolution.loading = false;
-            }).catch(e => {
-                console.log(e);
-                this.submitSolution.visible = false;
-            })
+                    this.submitSolution.loading = false;
+                }).catch(e => {
+                    console.log(e);
+                    this.submitSolution.visible = false;
+                })
+            } else {
+                this.$message.info('比赛中无法查看具体solution')
+            }
+            
         },
         querySubmitInformation(isLoad = true) {  // 加载提交情况
             let that = this;
@@ -465,6 +470,7 @@ export default {
                 }
             }).then(rep => {
                 // 设置页面信息
+                console.log(rep);
                 this.submitPagination.pageSize = rep.data.data.per_page;
                 this.submitPagination.total = rep.data.data.total;
                 const data = rep.data.data.data;
@@ -495,6 +501,9 @@ export default {
                         that.querySubmitInformation(false);
                     }, _queryTime)
                 }
+            }).catch(e => {
+                this.submitLoading = false;
+                return e;
             })
         },
         queryQuestion() {  // 加载问题

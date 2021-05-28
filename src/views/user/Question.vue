@@ -126,51 +126,22 @@
                                 <span v-text="$resultText[result]" :class="result == -1? 'problem-accept': result == 0 || result == -2? 'problem-others': 'problem-wa'"></span>
                             </span>
                         </a-table>
-                        <a-modal
-                            title = "solution"
+                        <solution
                             :visible = "submitSolution.visible"
-                            :footer = "null"
-                            width= "1100px"
-                            class="status-solution"
+                            width = "1100px"
+                            :loading = "submitSolution.loading"
+                            :introduce = "submitSolution.introduce"
+                            :code = "submitSolution.code"
+                            :compileError = "submitSolution.compileError"
+                            :systemError = "submitSolution.systemError"
+                            :compileErrorInfo = "submitSolution.compileErrorInfo"
+                            :language = "submitSolution.language"
+                            :time = "submitSolution.time"
+                            :memory = "submitSolution.memory"
+                            :test = "submitSolution.test"
                             @cancel = "submitSolution.visible = false"
                         >
-                            <a-spin :spinning="submitSolution.loading">
-                            <p class="modal-title">
-                                <span>solution: {{ submitSolution.JID}}, </span>
-                                <span v-if="this.$route.name == 'question_contest'">contest: {{ this.$route.params.CID }}, </span>
-                                <span>problem: {{ this.$route.params.ID }}, </span>
-                                <span class="problem-wa" v-if="submitSolution.compileError != 0">compile_error, </span>
-                                <span class="problem-wa" v-if="submitSolution.systemError != 0">system_error, </span>
-                                <span v-if="submitSolution.compileErrorInfo">compile_error_info: {{ submitSolution.compileErrorInfo }}, </span>
-                                <a-button type="link" @click="handleCopy">copy</a-button>
-                            </p>
-                            <hr />
-                            <codemirror
-                                ref="code"
-                                v-model="submitSolution.code"
-                                :options="solutionCmOptions"
-                                :readOnly="true"
-                                >
-                            </codemirror>
-                            <hr />
-                            <p class="bold" style="margin: 5px 0;">→Judgement Protocol</p>
-                            <div v-for="(item, i) in submitSolution.test" :key="i">
-                                <a-divider />
-                                <p class="bold">
-                                    <span v-text="`#${ i + 1 }, time:${ item.time } ms, cpu_time:${ item.cpuTime } ms, real_time:${ item.realTime } ms, memory:${ item.memory } B, verdict:`"></span>
-                                    <span :class="item.verdict == 'ACCEPT'? 'problem-accept': 'problem-wa'" v-text="`${ item.verdict }`"  style='opacity: 0.7'></span>
-                                </p>
-                                <p v-if="item.input">Input</p>
-                                <pre v-if="item.input" v-text="item.input"></pre>
-                                <p v-if="item.output">Output</p>
-                                <pre v-if="item.output" v-html="item.output"></pre>
-                                <p v-if="item.answer">Answer</p>
-                                <pre v-if="item.answer" v-text="item.answer"></pre>
-                                <p v-if="item.checkLog">CheckLog</p>
-                                <pre v-if="item.checkLog" v-text="item.checkLog"></pre>
-                            </div>
-                            </a-spin>
-                        </a-modal>
+                        </solution>
                         <!-- </a-spin> -->
                     </a-tab-pane>
                 </a-tabs>
@@ -246,10 +217,12 @@ import { Base64 } from 'js-base64'
 import { message } from 'ant-design-vue'
 require('codemirror/mode/clike/clike')
 require('codemirror/mode/python/python')
+import solution from '@/views/components/Solution.vue'
 export default {
     components: {
         mavonEditor,
-        codemirror
+        codemirror,
+        solution
     },
     // 从父组件获得题目ID，然后在接口里获得全部值
     data() {
@@ -303,11 +276,13 @@ export default {
             submitLoading: false,
             submitSolution: {
                 visible: false,
-                JID: 0,
-                compileError: "0",
-                systemError: "0",
+                introduce: "",
+                compileError: false,
+                systemError: false,
                 compileErrorInfo: "",
-                info: "",
+                language: "GCC",
+                time: 0,
+                memory: 0,
                 code: "",
                 loading: false,
                 test: []
@@ -329,15 +304,6 @@ export default {
                     }
                 },
                 
-            },
-            solutionCmOptions:{
-                value:'',
-                mode:"text/x-csrc",
-                // mode详细：https://codemirror.net/mode/clike/，clike换成python之类就能获得对应的内容
-                indentUnit: 4,
-                readOnly:true,
-                lineNumbers: true,
-                matchBrackets: true,
             },
             question: {
                 language: "GCC",
@@ -440,52 +406,43 @@ export default {
             
         },
         querySolution(JID, language) {
-            // 展示弹框
-            this.submitSolution.visible = true;
-            this.submitSolution.JID = JID;
-            this.submitSolution.loading = true;
             // 清空弹框原来的内容
             this.submitSolution.test = [];
             this.submitSolution.code = "";
-            this.submitSolution.info = "";
             this.submitSolution.compileErrorInfo = "";
-            this.submitSolution.compileError = "0";
-            this.submitSolution.systemError = "0";
+            this.submitSolution.compileError = false;
+            this.submitSolution.systemError = false;
+            // 展示弹框
+            this.submitSolution.visible = true;
+            this.submitSolution.introduce = JID;
+            this.submitSolution.loading = true;
             // 语言
-            this.solutionCmOptions.mode = this.$cmModeText[language];
-            console.log(this.solutionCmOptions.mode);
+            this.submitSolution.language = language;
             // URL
             let url = `/api/problem/${ this.$route.params.ID }/submit/${ JID }`;
             this.$axios.get(url).then(rep => {
                 const data = rep.data.data;
                 const runTimeInfo = JSON.parse(Base64.decode(data.RunTimeInfo));
-                console.log(runTimeInfo);
                 // 代码
                 this.submitSolution.code = data.Code;
-                this.submitSolution.compileError = runTimeInfo.compile_error;
+                this.submitSolution.compileError = runTimeInfo.compile_error == "0" ? false: true;
                 this.submitSolution.compileErrorInfo = runTimeInfo.compile_error_info;
-                this.submitSolution.systemError = runTimeInfo.system_error;
+                this.submitSolution.systemError = runTimeInfo.system_error == "0" ? false: true;
                 // test,以result为基准
                 for(let i in runTimeInfo.output) {
                     const testItem = {
                         time: runTimeInfo.time[i],
-                        cpuTime: runTimeInfo.cpu_time[i],
-                        realTime: runTimeInfo.real_time[i],
                         memory: runTimeInfo.memory[i],
-                        // exit,checker
                         verdict: this.$resultText[runTimeInfo.result[i]],
-                        // input
-                        // input: runTimeInfo.input[i],
                         // TODO 不要使用这个replaceAll方法
                         output: Base64.decode(runTimeInfo.output[i]).replaceAll('\\n','\n'),
-                        // answer,checklog
                     }
                     this.submitSolution.test.push(testItem);
                 }
                 this.submitSolution.loading = false;
             }).catch(e => {
-                this.$message.error(e);
-                this.submitSolution.loading = false;
+                console.log(e);
+                this.submitSolution.visible = false;
             })
         },
         querySubmitInformation(isLoad = true) {  // 加载提交情况

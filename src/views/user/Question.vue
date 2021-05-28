@@ -530,10 +530,10 @@ export default {
             }).catch(e => {
                 // 如果是直接输入地址过来的，就回到首页，否则回退
                 if(this.jump == 0) {
-                    this.$message.error('加载失败！已回到首页，请检查题号');
+                    // this.$message.error('加载失败！已回到首页，请检查题号');
                     this.$router.push({ name: "home" });
                 } else {
-                    this.$message.error('加载失败！已跳转回上一道题，请检查题号');
+                    // this.$message.error('加载失败！已跳转回上一道题，请检查题号');
                     this.$router.go(-1);
                     this.jump-= 2; // 过去的一次和go(-1)的一次要被减掉
                 }

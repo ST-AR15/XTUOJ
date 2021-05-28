@@ -1,6 +1,6 @@
 import axios from 'axios'
 // import Vue from 'vue'
-import { notification } from 'ant-design-vue'
+import { message } from 'ant-design-vue'
 axios.defaults.timeout = 10000;
 axios.defaults.baseURL = "http://172.22.114.116:8887"
 axios.defaults.headers.common['Authorization'] = "Bearer" + sessionStorage.getItem('token');
@@ -11,11 +11,8 @@ axios.interceptors.request.use((req) => {
     req.headers["Authorization"] = "Bearer" + sessionStorage.getItem('token');
     return req;
 },error => {
-    notification.open({
-        message: error.message,
-        description: '出现请求错误，请检查自己的网络连接或联系管理员。\r\n' + 'url: ' + error.config.url,
-        duration: 0,
-    });
+    console.log(error.response);
+    message.error('请求错误，' + (error.response.data.data || error.response.data.message || error.response.statusText));
     return Promise.reject(error);
 })
 // 响应拦截器，拦截获得的响应
@@ -23,15 +20,7 @@ axios.interceptors.response.use((res) => {
     
     return res;
 },error => {
-    notification.open({
-        message: error.message,
-        description: `响应错误，请检查自己的网络连接或联系管理员。url:${ error.config.url }；\r\nres:${ error.response.data.data }`,
-        duration: 0,
-    });
-    // console.log(error);
     console.log(error.response);
-    // console.log(error.config);
-    // console.log(error.data);
-    // console.log(Promise.reject(error));
+    message.error('响应错误，' + (error.response.data.data || error.response.data.message || error.response.statusText));
     return Promise.reject(error)
 })

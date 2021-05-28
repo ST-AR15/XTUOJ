@@ -10,6 +10,12 @@
             <!-- 题目列表 -->
             <div v-show="pageNow == 'questions'" class="contest-questions contents-item" id="contest-questions">
                 <a-tabs v-model="tabkey" default-active-key="problems" @change="handelTabs">
+                    <a-tab-pane key="back">
+                        <span slot="tab">
+                            <a-icon type="left" style="color: red" />
+                            <span style="color: red">返回</span>
+                        </span>
+                    </a-tab-pane>
                     <a-tab-pane key="problems" tab="Problems">
                         <a-table
                             :columns="questionsColumns"
@@ -32,9 +38,6 @@
                         Online Status
                     </a-tab-pane>
                     <a-tab-pane key="statistics" tab="Statistics">
-                        statistics
-                    </a-tab-pane>
-                    <a-tab-pane key="back" tab="返回">
                         statistics
                     </a-tab-pane>
                 </a-tabs>

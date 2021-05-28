@@ -3,6 +3,12 @@
         <div class="question-container">
             <div class="question-left" :style="{ width: leftW + 'px' }">
                 <a-tabs v-model="tabkey" @change="handleTab">
+                    <a-tab-pane key="back">
+                        <span slot="tab">
+                            <a-icon type="left" style="color: red" />
+                            <span style="color: red">返回</span>
+                        </span>
+                    </a-tab-pane>
                     <a-tab-pane class="question-left-container" key="question" tab="问题">
                         <a-spin :spinning="loading">
                             <section class="question-section-question">
@@ -145,12 +151,7 @@
                         <!-- </a-spin> -->
                     </a-tab-pane>
                 </a-tabs>
-                <div class="buttons" style="justify-content: space-between">
-                    <a-space>
-                        <a-button @click="back" type="primary" icon="left">返回</a-button>
-                        <!-- TODO 这个不一定需要但又不一定不需要 -->
-                        <!-- <a-button type="primary" icon="unordered-list">题目列表</a-button> -->
-                    </a-space>
+                <div class="buttons">
                     <a-space>
                         <a-input-number placeholder="请输入题号" v-model="aimID" @pressEnter="handleRoute(aimID)"></a-input-number>
                         <a-button type="primary" @click="handleRoute(aimID)">跳转</a-button>
@@ -665,6 +666,8 @@ export default {
                 this.queryComment();
             } else if(aim == 'submit') {
                 this.querySubmitInformation();
+            } else if(aim == 'back') {
+                this.back();
             }
         }
     },

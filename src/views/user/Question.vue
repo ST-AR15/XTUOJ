@@ -146,8 +146,7 @@
                             :memory = "submitSolution.memory"
                             :test = "submitSolution.test"
                             @cancel = "submitSolution.visible = false"
-                        >
-                        </solution>
+                        />
                         <!-- </a-spin> -->
                     </a-tab-pane>
                 </a-tabs>

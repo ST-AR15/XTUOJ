@@ -25,6 +25,12 @@
                             :loading="questionLoader"
                             :showHeader="false"
                         >
+                            <span slot="title">
+                                <a-spin :spinning="contestDetail.loading">
+                                    <h2 style="font-size: 1.8rem">{{ contestDetail.title }}</h2>
+                                    <h3 style="font-size: 0.8rem">{{ contestDetail.content }}</h3>
+                                </a-spin>
+                            </span>
                             <!-- 交互 -->
                             <span slot="button" slot-scope="record">
                                 <a-button type="primary" @click="queryQuestion(record.ID)">查看</a-button>
@@ -40,6 +46,19 @@
                     <a-tab-pane key="statistics" tab="Statistics">
                         statistics
                     </a-tab-pane>
+                    <a-tab-pane key="detail" tab="detail">
+                        <a-spin :spinning="contestDetail.loading">    
+                            <div style="padding-left: 15px">
+                                <p>比赛名： {{ contestDetail.title }}</p>
+                                <p>比赛ID： {{ contestDetail.ID }}</p>
+                                <p>比赛介绍： {{ contestDetail.content }}</p>
+                                <p>比赛类型： {{ contestDetail.contestType == 0? '公开': contestDetail.contestType == 1? '注册': '私人' }} - {{ contestDetail.contestant == 0? '个人赛': '团队赛' }}</p>
+                                <p>判题方式： {{ contestDetail.judge }}</p>
+                                <p>可用编译器： {{ contestDetail.language }}</p>
+                                <p>比赛时间： {{ contestDetail.start }} ~ {{ contestDetail.end }}</p>
+                            </div>
+                        </a-spin>
+                    </a-tab-pane>
                 </a-tabs>
                 
             </div>
@@ -48,6 +67,7 @@
 </template>
  
 <script>
+import { binaryToArray } from '@/utils/tools.js'
 import contestlist from '@/views/components/Contestlist.vue'
 import status from '@/views/components/Status.vue'
 export default {
@@ -64,6 +84,18 @@ export default {
                     method: "queryStart",
                 }
             ],
+            contestDetail: {
+                title: "",
+                ID: 0,
+                content: "",
+                contestType: 0,
+                contestant: 0,
+                judge: "",
+                language: [],
+                start: "",
+                end: "",
+                loading: false,
+            },
             questionsColumns: [ // 问题列表的表格的表头
                 {
                     title: "ID",
@@ -103,7 +135,6 @@ export default {
             this.$router.push(`/contests`);  // 修改route
         },
         queryStart(info) {  // 跳转至比赛题目列表
-            // TODO 好像没登录的账号也能查到比赛，但是看不到题目
             this.$router.push(`/contests/${ info.ID }`);  // 修改route
         },
         queryQuestionList() {  // 获取比赛题目
@@ -128,6 +159,36 @@ export default {
                 return err;
             })
         },
+        queryInfo() {
+            // 初始化
+            this.contestDetail = {
+                title: "",
+                ID: 0,
+                content: "",
+                contestType: 0,
+                contestant: 0,
+                judge: "",
+                language: [],
+                start: "",
+                end: "",
+                loading: false,
+            },
+            this.contestDetail.loading = true;
+            const url =  `/api/match/${ this.$route.params.CID }/info`
+            this.$axios.get(url).then(rep => {
+                const data = rep.data.data[0];
+                this.contestDetail.title = data.Tittle;
+                this.contestDetail.ID = data.Cid;
+                this.contestDetail.content = "这个比赛的介绍";  //TODO
+                this.contestDetail.contestType = data.ContestType;
+                this.contestDetail.contestant = data.Contestant;
+                this.contestDetail.judge = data.JudgeWay;
+                this.contestDetail.language = binaryToArray(this.$language.name, Number(data.Language.toString(2)));
+                this.contestDetail.start = data.StartTime;
+                this.contestDetail.end = data.EndTime;
+                this.contestDetail.loading = false;
+            })
+        },
         queryQuestion(ID) { // 打开题目
             this.$router.push(`/problems/${ this.$route.params.CID }/${ ID }`);
         },
@@ -141,16 +202,22 @@ export default {
             this.pageNow = "questions";
             // 加载题目
             this.queryQuestionList({ ID: this.$route.params.CID });
+            // 获取比赛信息
+           this.queryInfo();
         } else {
             this.pageNow = "contests";
         }
     },
     watch: {
-        $route() {
-            if(this.$route.name == "contests_detail") {  // 如果route上是比赛页
+        $route(to, from) {
+            if(to.name == "contests_detail") {  // 如果route上是比赛页
                 this.pageNow = "questions";
                 // 加载题目
                 this.queryQuestionList({ ID: this.$route.params.CID });
+                // 如果是初次进来，就获取比赛信息
+                if(to.name != from.name) {
+                    this.queryInfo();
+                }
             } else {
                 this.pageNow = "contests";
             }

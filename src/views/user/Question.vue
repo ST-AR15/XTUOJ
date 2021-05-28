@@ -414,7 +414,7 @@ export default {
             this.submitSolution.systemError = false;
             // 展示弹框
             this.submitSolution.visible = true;
-            this.submitSolution.introduce = JID;
+            this.submitSolution.introduce = `solution: ${ JID },${ this.$route.name == 'question_contest'? 'contest: ' + this.$route.params.CID + ', ' : '' }problem: ${ this.$route.params.ID }`;
             this.submitSolution.loading = true;
             // 语言
             this.submitSolution.language = language;

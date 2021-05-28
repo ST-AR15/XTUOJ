@@ -21,7 +21,7 @@
                 <!-- 代码展示 -->
                 <codemirror
                     ref="solutionCode"
-                    v-model="code"
+                    :value="code"
                     :options="cmOptions"
                 >
                 </codemirror>

@@ -11,8 +11,13 @@ axios.interceptors.request.use((req) => {
     req.headers["Authorization"] = "Bearer" + sessionStorage.getItem('token');
     return req;
 },error => {
-    console.log(error.response);
-    message.error('请求错误，' + (error.response.data.data || error.response.data.message || error.response.statusText));
+    if(error.response) {
+        message.error('请求错误，' + (error.response.data.data || error.response.data.message || error.response.statusText));
+    } else if(error) {
+        message.error(error.message);
+    } else {
+        message.error('error');
+    }
     return Promise.reject(error);
 })
 // 响应拦截器，拦截获得的响应
@@ -20,7 +25,12 @@ axios.interceptors.response.use((res) => {
     
     return res;
 },error => {
-    console.log(error.response);
-    message.error('响应错误，' + (error.response.data.data || error.response.data.message || error.response.statusText));
+    if(error.response) {
+        message.error('响应错误，' + (error.response.data.data || error.response.data.message || error.response.statusText));
+    } else if(error) {
+        message.error(error.message);
+    } else {
+        message.error('error');
+    }
     return Promise.reject(error)
 })

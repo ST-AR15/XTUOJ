@@ -35,7 +35,7 @@
                         standing
                     </a-tab-pane>
                     <a-tab-pane key="status" tab="Online Status">
-                        Online Status
+                        <status :url="'/api/match/' + $route.params.CID + '/submit'" :isSolution="false" />
                     </a-tab-pane>
                     <a-tab-pane key="statistics" tab="Statistics">
                         statistics
@@ -49,9 +49,11 @@
  
 <script>
 import contestlist from '@/views/components/Contestlist.vue'
+import status from '@/views/components/Status.vue'
 export default {
     components: {
-        contestlist
+        contestlist,
+        status
     },
     data() {
         return {

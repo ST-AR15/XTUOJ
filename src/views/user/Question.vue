@@ -208,7 +208,7 @@
 </template>
 
 <script>
-import { copy, detectZoom } from '@/utils/tools.js'
+import { copy, detectZoom, binaryToArray } from '@/utils/tools.js'
 import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 import { codemirror } from 'vue-codemirror'
@@ -511,8 +511,11 @@ export default {
             this.question.questionDetail = ""; // 暂时删除内容
             this.tabkey = 'question'; // 切换到问题内容
             let url;
+            let languageUrl;
             if(this.$route.name == "question_contest") {   // 比赛模式加载
                 url = `/api/contest/${ this.$route.params.CID }/problem/${ this.ID }`;
+                // 如果是比赛，还要限制编译器
+                languageUrl = `/api/match/${ this.$route.params.CID }/info`
             } else {  // 普通模式加载
                 url = '/api/problem/' + this.ID;
             }
@@ -548,6 +551,11 @@ export default {
                 }
                 return e;
             });
+            if(languageUrl) {
+                this.$axios.get(languageUrl).then(rep => {
+                    this.question.language_allowed = binaryToArray(this.$language.name, Number(rep.data.data[0].Language.toString(2)));
+                })
+            }
         },
         dragBar(e) {  // 拖拽
             const _size = detectZoom();

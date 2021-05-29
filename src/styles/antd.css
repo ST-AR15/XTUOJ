@@ -56,3 +56,8 @@
 .ant-tabs-nav-scroll {
     padding-left:10px;
 }
+
+/* slider */
+.ant-slider-mark-text {
+    white-space: nowrap;
+}

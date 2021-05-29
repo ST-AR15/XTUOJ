@@ -228,6 +228,7 @@ export default {
                 scoreDefault: [],
                 star: [], // 关注的队伍
                 record: [], // 提交记录
+                total: 0, // 最后一个提交的时间
             },
             school: [],
             starSchool: [],
@@ -417,6 +418,37 @@ export default {
                     if(Date.now() > this.stamp.end) {
                         clearInterval(this.timer);
                     }
+                    // 如果没有CID也移除计时器
+                    if(!this.$route.params.CID) {
+                        clearInterval(this.timer);
+                    } else {
+                        // 大约每10s差量轮询请求
+                        if( Math.ceil((Date.now() - this.list.record[this.list.record.length-1].time.getTime())/1000) % 10 == 0 ) {
+                            const recordUrl = `/api/match/${ this.$route.params.CID }`;
+                            const params = {
+                                StartTime: this.list.record[this.list.record.length-1].time.getTime()/1000,
+                            }
+                            this.$axios.get(recordUrl, {
+                                params: params
+                            }).then(rep => {
+                                if(rep.data.data.length != 0) {
+                                    const submitData = rep.data.data;
+                                    for(let i in submitData) {
+                                        const item = {
+                                            pid: submitData[i].c_pid,
+                                            uid: submitData[i].Uid,
+                                            result: submitData[i].result,
+                                            time: new Date(submitData[i].created_at),
+                                        }
+                                        this.list.record.push(item);
+                                    }
+                                    this.handleRecord();
+                                }
+                            })
+                        }
+                    }
+                    
+                    
                 }, 1000);
             }
             // star
@@ -490,10 +522,6 @@ export default {
         },
         // 根据list.record计算list.placeChange和list.score
         handleRecord() {
-            // 清空原成绩
-            this.list.score = JSON.parse(JSON.stringify(this.list.scoreDefault));
-            // 清空question
-            this.list.question = JSON.parse(JSON.stringify(this.list.questionDefalut));
             // 根据时间获取现在需要截取的时间
             let record = [];
             for(let i in this.list.record) {
@@ -504,12 +532,34 @@ export default {
                     record.push(this.list.record[i]);
                 }
             }
+            if(record.length == this.list.total) {
+                // 如果数量没有发生变化，就直接跳出
+                return ;
+            } else if(record.length > this.list.total) {
+                // 如果需要判断的比之前判断的多，就差量判断
+                // 获取数组多出来的那一坨
+                record = record.slice(this.list.total);
+                // 修改total
+                this.list.total += record.length;
+            } else {
+                // 否则重算
+                // 清空原成绩
+                this.list.score = JSON.parse(JSON.stringify(this.list.scoreDefault));
+                // 清空question
+                this.list.question = JSON.parse(JSON.stringify(this.list.questionDefalut));
+                // 修改total
+                this.list.total = record.length;
+            }
+            // 循环计算
             for(let i in record) {
                 // 获取是第几题
                 const _n = this.list.question.findIndex(o => o.pid == record[i].pid);
                 // 获取是第几个人
                 const _m = this.list.score.findIndex(o => o.nameID == record[i].uid);
                 // 跳过已通过
+                if(_n == -1 || _m == -1) {
+                    continue;
+                }
                 if(this.list.score[_m].question[_n].statu == 'solved' || this.list.score[_m].question[_n].statu == 'first-blood') {
                     continue;
                 }
@@ -531,8 +581,8 @@ export default {
                     // 这就是正确提交的可能性了
                     // 首先看是不是一血
                     // console.log(_n, _m, 'success');
-                    if(!this.list.question[_n].fb) {
-                        // 如果没有一血信息，这次提交就被视为一血
+                    if(!this.list.question[_n].fb || this.list.question[_n].fb == record[i].uid) {
+                        // 如果没有一血信息或者这道题他自己就是一血，这次提交就被视为一血
                         // 先在question里记录fb信息
                         this.list.question[_n].fb = record[i].uid;
                         // 然后给这个人fb标志
@@ -552,9 +602,6 @@ export default {
                     this.list.score[_m].question[_n].times++;
                     // 计算罚时并计入总罚时
                     this.list.score[_m].question[_n].time += ((record[i].time.getTime() - this.stamp.start)/1000);
-                    console.log('qwq', record[i].time.getTime());
-                    console.log('mmm', this.stamp.start);
-                    console.log('time', this.list.score[_m].question[_n].time);
                     this.list.score[_m].time += this.list.score[_m].question[_n].time;
                     // 解出题目
                     this.list.score[_m].solved += 1;
@@ -563,7 +610,6 @@ export default {
                     // 和所有人比积分
                     // 原来比他高现在比他低的都下降rank和place，他加
                     // 原来和他一样的，都下降rank，如果之前在前面就下降place
-                    console.log(_place);
                     for(let j in this.list.score) {
                         if(j == _m) {
                             // 如果这个人是自己就跳过
@@ -587,10 +633,12 @@ export default {
                     }
                 }
             }
+            
         }
     },
     mounted() {
         // 开始加载
+        this.list.total = 0;
         this.loading = true;
         // 1.先获取赛事的有关信息
         const contestUrl = `/api/match/${ this.$route.params.CID }/info`;
@@ -617,9 +665,9 @@ export default {
                         fb: null,
                         lb: null,
                     }
-                    this.$set(this.list.question, i, item);
+                    this.list.question.push(item);
                 }
-                this.list.questionDefalut = this.list.question;
+                this.list.questionDefalut = JSON.parse(JSON.stringify(this.list.question));
                 // 3.获取比赛的参赛选手,初始化score 
                 const namelistUrl = `/api/match/${ this.$route.params.CID }/user`;
                 this.$axios.get(namelistUrl).then(rep => {
@@ -682,7 +730,7 @@ export default {
                                 pid: submitData[i].c_pid,
                                 uid: submitData[i].Uid,
                                 result: submitData[i].result,
-                                time: new Date(submitData[i].updated_at),
+                                time: new Date(submitData[i].created_at),
                             }
                             this.$set(this.list.record, i, item);
                         }

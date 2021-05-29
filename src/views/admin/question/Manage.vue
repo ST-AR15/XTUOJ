@@ -86,7 +86,7 @@ export default {
                 visible: false,
                 data: {
                     ID: NaN,
-                    title: "",
+                    name: "",
                     source: "",
                     content: "",
                     timeLimit: NaN,
@@ -251,9 +251,9 @@ export default {
             let url = "/api/problem/" + info.ID;
             this.$axios.get(url).then(rep => {
                 // 把获取到的信息赋值给detailModal
-                const data = rep.data.data;
+                const data = rep.data.data[0];
                 this.detailModal.data.ID = data.Pid;
-                this.detailModal.data.title = data.Tittle;
+                this.detailModal.data.name = data.Tittle;
                 this.detailModal.data.source = data.Source==null? "admin":data.Source;
                 this.detailModal.data.contents = data.Content;
                 this.detailModal.data.timeLimit = data.TimeLimit;
@@ -262,7 +262,7 @@ export default {
                 this.detailModal.data.QType = "normal"
             })
             this.detailModal.ID = info.ID;
-            this.detailModal.title = info.title;
+            this.detailModal.title = info.tittle;
             this.detailModal.visible = true;
         },
         queryData(info) {  //获取题目数据和修改

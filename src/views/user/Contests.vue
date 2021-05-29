@@ -41,7 +41,7 @@
                         standing
                     </a-tab-pane>
                     <a-tab-pane key="status" tab="Online Status">
-                        <status :url="'/api/match/' + $route.params.CID + '/submit'" :isSolution="false" />
+                        <status v-if="statusVisible" :url="'/api/match/' + $route.params.CID + '/submit'" :isSolution="false" />
                     </a-tab-pane>
                     <a-tab-pane key="statistics" tab="Statistics">
                         statistics
@@ -122,6 +122,7 @@ export default {
             ],
             questionLoader: false,
             tabkey: 'problems',
+            statusVisible: false,
         }
     },
     methods: {
@@ -129,6 +130,11 @@ export default {
             if(tab == 'back') {
                 this.tabkey = "problems"
                 this.handleBack();
+            }
+            if(tab == 'status') {
+                this.statusVisible = true;
+            } else {
+                this.statusVisible = false;
             }
         },
         handleBack() {  // 比赛题目详情回到比赛列表

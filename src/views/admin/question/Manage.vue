@@ -297,15 +297,14 @@ export default {
             const info = {
                 Tittle: this.detailModal.data.title,
                 Source: this.detailModal.data.source,
-                Content: this.detailModal.data.content,
+                Content: this.detailModal.data.contents,
                 TimeLimit: this.detailModal.data.timeLimit,
                 MemoryLimit: this.detailModal.data.memoryLimit,
                 IsBan: this.detailModal.data.IsBan,
             }
             // TODO solved意义不明
-            this.$axios.put(url, { params: info }).then(rep => {
+            this.$axios.put(url, info).then(rep => {
                 this.$message.success(rep.statusText);
-                // TODO 这里提示修改成功，但实际上没修改
                 this.detailModal.visible = false;
             })
         },

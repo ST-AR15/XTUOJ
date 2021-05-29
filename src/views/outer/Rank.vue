@@ -606,7 +606,7 @@ export default {
                     // 解出题目
                     this.list.score[_m].solved += 1;
                     // 计算积分
-                    this.list.score[_m].point = this.list.score[_m].point + 100000 - this.list.score[_m].time;
+                    this.list.score[_m].point = 100000 * this.list.score[_m].solved - this.list.score[_m].time;
                     // 和所有人比积分
                     // 原来比他高现在比他低的都下降rank和place，他加
                     // 原来和他一样的，都下降rank，如果之前在前面就下降place

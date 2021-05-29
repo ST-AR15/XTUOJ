@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import { timeFormatter } from "@/utils/tools.js"
+import { timeFormatter, binaryToArray } from "@/utils/tools.js"
 import moment from 'moment'
 import 'moment/locale/zh-cn';
 import contestform from '@/views/components/ContestForm.vue'
@@ -190,15 +190,21 @@ export default {
             })
         },
         queryInformation(info) {  // 管理比赛信息
+            console.log(info);
+            console.log(this.informationModal);
+            // 获取编译器信息
+            const url = `/api/match/${ info.ID }/info`
+            this.$axios.get(url).then(rep => {
+                this.informationModal.form.language = binaryToArray(this.$language.name, Number(rep.data.data[0].Language.toString(2)));
+            })
             // 获取到当前比赛信息，然后传给form组件
             this.informationModal.isVisible = true;
             this.informationModal.ID = info.ID;
             this.informationModal.form.name = info.tittle;
-            // TODO 没有  是否屏蔽 和 比赛内容 的信息 可以在get的那个直接传
             this.informationModal.form.contestType = info.contestType == '公开'? 0: info.contestType == '注册'? 1: 2;
             this.informationModal.form.contestant = info.contestant == '个人赛'? 0: 1;
-            // TODO 语言类型和 获取比赛题目的时候好像也没有这个  另外还有判题方式
-            this.informationModal.form.time = [moment(info.start), moment(info.end)];
+            this.informationModal.form.time = [moment(info.start), moment(info.end)];  // TODO 这个时间没传
+            console.log(this.informationModal);
         },
         queryNamelist(info) {  // 管理名单
             // 初始化modal
@@ -325,7 +331,7 @@ export default {
                 this.questionModal.data[i].name = "< 查询中…… >";
                 let url = "/api/problem/" + this.questionModal.data[i].ID;
                 this.$axios.get(url).then(rep => {
-                    this.questionModal.data[i].name = rep.data.data.Tittle;
+                    this.questionModal.data[i].name = rep.data.data[0].Tittle;
                     this.questionModal.data[i].isValid = true;
                 }).catch(err => {
                     this.questionModal.data[i].name = "< 题目无效 >";

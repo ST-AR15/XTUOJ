@@ -520,12 +520,7 @@ export default {
                 url = '/api/problem/' + this.ID;
             }
             this.$axios.get(url).then(rep => {
-                let data;
-                if(this.$route.name == "question_contest") {   // 比赛模式
-                    data = rep.data.data[0];
-                } else {  // 普通模式加载
-                    data = rep.data.data;
-                }
+                const data = rep.data.data[0];
                 // Pid
                 this.question.title = data.Tittle;
                 // source

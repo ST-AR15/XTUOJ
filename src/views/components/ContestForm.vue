@@ -72,6 +72,7 @@
                     :show-time="{ format: 'HH:mm' }"
                     format="YYYY-MM-DD HH:mm"
                     :placeholder="['开始时间', '结束时间']"
+                    :defaultValue= "form.time"
                     @ok="handleTime"
                 />
             </a-form-model-item>

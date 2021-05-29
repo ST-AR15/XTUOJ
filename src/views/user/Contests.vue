@@ -38,7 +38,7 @@
                         </a-table>
                     </a-tab-pane>
                     <a-tab-pane key="standing" tab="Standing" force-render>
-                        standing
+                        <rank />
                     </a-tab-pane>
                     <a-tab-pane key="status" tab="Online Status">
                         <status v-if="statusVisible" :url="'/api/match/' + $route.params.CID + '/submit'" :isSolution="false" />
@@ -70,10 +70,12 @@
 import { binaryToArray } from '@/utils/tools.js'
 import contestlist from '@/views/components/Contestlist.vue'
 import status from '@/views/components/Status.vue'
+import rank from '@/views/outer/Rank.vue'
 export default {
     components: {
         contestlist,
-        status
+        status,
+        rank
     },
     data() {
         return {
@@ -209,7 +211,7 @@ export default {
             // 加载题目
             this.queryQuestionList({ ID: this.$route.params.CID });
             // 获取比赛信息
-           this.queryInfo();
+            this.queryInfo();
         } else {
             this.pageNow = "contests";
         }

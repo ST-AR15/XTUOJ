@@ -32,5 +32,10 @@ axios.interceptors.response.use((res) => {
     } else {
         message.error('error');
     }
+    if(error.response.status == 401) {
+        console.log('response', error.response);
+        console.log('config', error.response.config);
+        message.error(error.response.config.headers.Authorization);
+    }
     return Promise.reject(error)
 })

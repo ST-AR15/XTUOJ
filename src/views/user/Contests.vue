@@ -37,8 +37,8 @@
                             </span>
                         </a-table>
                     </a-tab-pane>
-                    <a-tab-pane key="standing" tab="Standing" force-render>
-                        <rank />
+                    <a-tab-pane key="standing" tab="Standing">
+                        <rank v-if="rankVisible"  />
                     </a-tab-pane>
                     <a-tab-pane key="status" tab="Online Status">
                         <status v-if="statusVisible" :url="'/api/match/' + $route.params.CID + '/submit'" :isSolution="false" />
@@ -125,6 +125,7 @@ export default {
             questionLoader: false,
             tabkey: 'problems',
             statusVisible: false,
+            rankVisible: false,
         }
     },
     methods: {
@@ -137,6 +138,11 @@ export default {
                 this.statusVisible = true;
             } else {
                 this.statusVisible = false;
+            }
+            if(tab == 'standing') {
+                this.rankVisible = true;
+            } else {
+                this.rankVisible = false;
             }
         },
         handleBack() {  // 比赛题目详情回到比赛列表

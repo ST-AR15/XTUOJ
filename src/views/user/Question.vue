@@ -14,7 +14,7 @@
                             <section class="question-section-question">
                                 <!-- 题目ID和title -->
                                 <h1>
-                                    ID {{ ID }}:{{ question.title }}
+                                    ID {{ IDDisplay }}:{{ question.title }}
                                 </h1>
                                 <!-- 题目标签 -->
                                 <p>
@@ -230,6 +230,7 @@ export default {
             jump: 0,                  // 跳转的次数，用于返回
             aimID: 1000,              // 与底部跳转绑定的数值
             ID: 1000,                 // 题目的ID
+            IDDisplay: "",            // 放在题目上面展示的ID
             comment: "",              // 编辑框内容
             commentReply: "",         // 回复框内容
             commentPost: 0,           // 回复对象的RID
@@ -700,17 +701,32 @@ export default {
         },
     },
     mounted() {
-        let that = this;
         // 设置宽度
-        that.rightW = Math.max(window.innerWidth, 1000) - 20 - that.leftW;
+        this.rightW = Math.max(window.innerWidth, 1000) - 20 - this.leftW;
         window.onresize = function() {
-            that.rightW = Math.max(window.innerWidth, 1000) - 20 - that.leftW;
+            this.rightW = Math.max(window.innerWidth, 1000) - 20 - this.leftW;
         }
         // 获取id
-        that.ID = this.$route.params.ID;
-        that.aimID = this.$route.params.ID;
+        this.ID = this.$route.params.ID;
+        if(this.$route.name == "question_contest") {
+            // 要判断是第几道题
+            // 加载题目列表
+            const url = `api/contest/${ this.$route.params.CID }/problem`;
+            this.$axios.get(url).then(rep => {
+                const data = rep.data.data;
+                this.IDDisplay = (data.findIndex(o => o.c_pid == this.$route.params.ID) + 10).toString(36).toUpperCase();
+            }).catch(err => {
+                // 发生错误也停止加载
+                this.IDDisplay = "< 未知ID >";
+                return err;
+            })
+        } else {  // 普通模式加载
+            // 正常情况ID就是ID
+            this.IDDisplay = this.ID;
+        }
+        this.aimID = this.$route.params.ID;
         // 刚打开页面时，加载一次问题
-        that.queryQuestion();
+        this.queryQuestion();
         // 检测是否有自动保存用的数组
         if(!localStorage.getItem('code')) {
             localStorage.setItem('code', '[]');

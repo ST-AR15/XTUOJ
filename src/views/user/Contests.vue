@@ -41,7 +41,7 @@
                         <rank v-if="rankVisible"  />
                     </a-tab-pane>
                     <a-tab-pane key="status" tab="Online Status">
-                        <status v-if="statusVisible" :url="'/api/match/' + $route.params.CID + '/submit'" :isSolution="false" />
+                        <status v-if="statusVisible" :url="'/api/match/' + $route.params.CID + '/submit'" :isSolution="false" :contestsID="Number($route.params.CID)" />
                     </a-tab-pane>
                     <a-tab-pane key="statistics" tab="Statistics">
                         statistics
@@ -101,7 +101,7 @@ export default {
             questionsColumns: [ // 问题列表的表格的表头
                 {
                     title: "ID",
-                    dataIndex: "ID"
+                    dataIndex: "place"
                 },
                 {
                     title: "题目名称",
@@ -112,16 +112,7 @@ export default {
                     scopedSlots: { customRender: 'button' },
                 }
             ],
-            questions: [
-                {
-                    ID: 1000,
-                    tittle: "打字机",
-                },
-                {
-                    ID: 1001,
-                    tittle: "打字机",
-                },
-            ],
+            questions: [],
             questionLoader: false,
             tabkey: 'problems',
             statusVisible: false,
@@ -149,6 +140,20 @@ export default {
             this.$router.push(`/contests`);  // 修改route
         },
         queryStart(info) {  // 跳转至比赛题目列表
+            // 清空原来的数据
+            this.contestDetail = {
+                title: "",
+                ID: 0,
+                content: "",
+                contestType: 0,
+                contestant: 0,
+                judge: "",
+                language: [],
+                start: "",
+                end: "",
+                loading: false,
+            };
+            this.questions = [];
             this.$router.push(`/contests/${ info.ID }`);  // 修改route
         },
         queryQuestionList() {  // 获取比赛题目
@@ -161,6 +166,7 @@ export default {
                 for(let i in data) {
                     const question = {
                         ID: data[i].c_pid,
+                        place: (Number(i)+10).toString(36).toUpperCase(),
                         tittle: data[i].Tittle,
                     }
                     this.questions.push(question);

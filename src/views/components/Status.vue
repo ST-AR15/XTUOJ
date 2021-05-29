@@ -19,6 +19,14 @@
             >
                 <span @click="querySolution(solutionID)" v-text="solutionID"></span>
             </span>
+            <!-- 问题ID -->
+            <span 
+                slot="problemID"
+                slot-scope="problemID"
+            >
+                <span v-if="contestsID == -1" v-text="problemID"></span>
+                <span v-else v-text="(questions.findIndex(o => o == problemID) + 10).toString(36).toUpperCase()"></span>
+            </span>
             <!-- 运行状态 -->
             <span
                 slot="status"
@@ -60,6 +68,10 @@ export default {
             type: Boolean,
             default: true,
         },
+        contestsID: {
+            type: Number,
+            default: -1,
+        }
     },
     data() {
         return {
@@ -79,6 +91,7 @@ export default {
                 {
                     title: "问题ID",
                     dataIndex: "problemID",
+                    scopedSlots: { customRender: 'problemID' },
                 },
                 {
                     title: "用户ID",
@@ -127,6 +140,7 @@ export default {
                 test: []
             },
             status: [],
+            questions: [],
         }
     },
     methods: {
@@ -179,6 +193,18 @@ export default {
         }
     },
     mounted: function() {
+        this.questions = [];
+        if(this.contestsID != -1) {
+            // 获取题目信息
+            const url = `api/contest/${ this.$route.params.CID }/problem`;
+            this.$axios.get(url).then(rep => {
+                const data = rep.data.data;
+                for(let i in data) {
+                    this.$set(this.questions, i, data[i].c_pid);
+                }
+            })
+            
+        }
         // 获取第一页的数据
         this.queryPage(1);
     }

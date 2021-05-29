@@ -23,6 +23,7 @@
             :title="'请为刚创建的比赛' + addModal.ID + '添加题目！'"
             :visible="addModal.isVisible"
             @cancel="addModal.isVisible = false"
+            @ok="queryQuestion"
         >
             <!-- TODO 后续完成这里的添加题目 -->
             <transition-group name="cross">
@@ -35,7 +36,7 @@
                             transform:i==addModal.data.length-1?'':'rotate(45deg)',
                             transition: 'all .6s'
                         }" @click="handleQuestion(i)" type="plus-circle" :title="i==addModal.data.length-1?'新增':'删除'" />
-                        <a-input style="width:100px;margin:0 5px" v-model="data.ID" @change="queryQuestionTitle(i)" placeholder="题目ID"></a-input>
+                        <a-input style="width:100px;margin:0 5px" v-model="data.ID" @change="queryTitle(i)" placeholder="题目ID"></a-input>
                         <a-input :value="data.name" placeholder="< 题目名称 >" :disabled="true" v-bind:style="{ 'color': data.isValid? '#52c41a':'#FF0000' }"></a-input>
                     </a-space>
                 </div>
@@ -88,21 +89,20 @@ export default {
                 EndTime: info.time[1].format('YYYY-MM-DD HH:mm'),
             }
             this.$axios.post(url, params).then(rep => {
-                if(parseInt(rep.status/100) == 2) {
-                    this.$message.info('创建成功');
-                    this.addModal.isVisible = true; // 弹出添加题目的页面
-                    //TODO 比赛创建成功最好给我返回这个题目的ID，我能直接让它添加题目
-                    this.$refs.contestform.resetForm();
-                }
+                this.$message.info('创建成功，请添加题目（后续仍可在管理页添加）');
+                const cid = rep.data.data[0].Cid;    
+                this.addModal.isVisible = true; // 弹出添加题目的页面
+                this.addModal.ID = cid; // 弹出添加题目的页面
+                this.$refs.contestform.resetForm();
             })
         },
         handleQuestion(i) {  //删除或者添加某个问题
-            if(i == this.form.questions.length-1) {  //如果是最后的问题，那就是添加
+            if(i == this.addModal.data.length-1) {  //如果是最后的问题，那就是添加
                 // 只有isValid为true才允许添加
-                if(this.form.questions[i].isValid) {
-                    this.form.questions.push({
+                if(this.addModal.data[i].isValid) {
+                    this.addModal.data.push({
                         key: Symbol(i),
-                        ID: parseInt(this.form.questions[i].ID) + 1,
+                        ID: parseInt(this.addModal.data[i].ID) + 1,
                         name: "",
                         isValid: false,
                     });
@@ -111,31 +111,43 @@ export default {
                     this.$message.warn('这道题是无效的！');
                 }
             } else {
-                this.form.questions.splice(i,1);
+                this.addModal.data.splice(i,1);
             }
         },
         queryTitle(i) {
             // 获取题目名字
             // 限定四位数
-            if(this.form.questions[i].ID/1000 >= 1 && this.form.questions[i].ID/1000 < 10) {
-                this.form.questions[i].name = "< 查询中…… >";
-                let url = "/api/problem/" + this.form.questions[i].ID;
+            if(this.addModal.data[i].ID/1000 >= 1 && this.addModal.data[i].ID/1000 < 10) {
+                this.addModal.data[i].name = "< 查询中…… >";
+                let url = "/api/problem/" + this.addModal.data[i].ID;
                 this.$axios.get(url).then(rep => {
-                    this.form.questions[i].name = rep.data.data.Tittle;
-                    this.form.questions[i].isValid = true;
+                    this.addModal.data[i].name = rep.data.data[0].Tittle;
+                    this.addModal.data[i].isValid = true;
                 }).catch(err => {
-                    this.form.questions[i].name = "< 题目无效 >";
-                    this.form.questions[i].isValid = false;
+                    this.addModal.data[i].name = "< 题目无效 >";
+                    this.addModal.data[i].isValid = false;
                     throw err;
                 })
             } else {
                 // 如果不是四位，就清空内容
-                this.form.questions[i].name = "";
-                this.form.questions[i].isValid = false;
+                this.addModal.data[i].name = "";
+                this.addModal.data[i].isValid = false;
             }
-            
-            
         },
+        queryQuestion() {
+            let arr = JSON.parse(JSON.stringify(this.addModal.data));
+            arr.pop();
+            let data = [];
+            for(let i in arr) {
+                data.push(arr[i].ID);
+            }
+            const url = `/api/contest/${ this.addModal.ID }/problem`;
+            let params = JSON.stringify({data: data});
+            this.$axios.post(url, { ProblemId:params }).then(rep => {
+                this.$message.success(rep.statusText);
+                this.addModal.isVisible = false;
+            }) 
+        }
         
     }
 }

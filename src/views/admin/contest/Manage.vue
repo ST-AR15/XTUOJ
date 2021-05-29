@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import { timeFormatter, binaryToArray } from "@/utils/tools.js"
+import { binaryToArray } from "@/utils/tools.js"
 import moment from 'moment'
 import 'moment/locale/zh-cn';
 import contestform from '@/views/components/ContestForm.vue'
@@ -178,8 +178,8 @@ export default {
                 Language: language,
                 JudgeWay: info.judge,
                 Contest: info.contest,
-                StartTime: timeFormatter(info.time[0]._i, true),
-                EndTime: timeFormatter(info.time[1]._i, true),
+                StartTime: info.time[0].format("YYYY-MM-DD HH:mm:ss"),
+                EndTime: info.time[1].format("YYYY-MM-DD HH:mm:ss"),
             }
             this.$axios.put(url, params).then(rep => {
                 if(parseInt(rep.status/100) == 2) {
@@ -190,8 +190,6 @@ export default {
             })
         },
         queryInformation(info) {  // 管理比赛信息
-            console.log(info);
-            console.log(this.informationModal);
             // 获取编译器信息
             const url = `/api/match/${ info.ID }/info`
             this.$axios.get(url).then(rep => {
@@ -204,7 +202,6 @@ export default {
             this.informationModal.form.contestType = info.contestType == '公开'? 0: info.contestType == '注册'? 1: 2;
             this.informationModal.form.contestant = info.contestant == '个人赛'? 0: 1;
             this.informationModal.form.time = [moment(info.start), moment(info.end)];  // TODO 这个时间没传
-            console.log(this.informationModal);
         },
         queryNamelist(info) {  // 管理名单
             // 初始化modal
@@ -308,7 +305,6 @@ export default {
         queryQuestionAdd() { // 上传添加题目
             const url = `/api/contest/${ this.questionModal.ID }/problem`;
             let params = JSON.stringify({data: this.questionModal.add});
-            console.log(params);
             this.$axios.post(url, { ProblemId:params }).then(rep => {
                 this.$message.success(rep.statusText);
                 this.questionModal.isVisible = false;

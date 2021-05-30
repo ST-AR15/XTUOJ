@@ -92,16 +92,21 @@ export default {
                 };
                 this.$axios.post(url,info).then(rep => {
                     const data = rep.data.data;
-                    this.$store.commit('setUid', data.Uid);
-                    this.$store.commit('setToken', data.token);
-                    sessionStorage.setItem('uid', data.uid);
-                    sessionStorage.setItem('token', data.token);
-                    this.$message.success(`登录成功!欢迎您,${ data.Uid }`);
-                    localStorage.setItem('account', this.loginForm.account);
-                    localStorage.setItem('password', this.loginForm.password);
-                    this.$emit('close');
-                    this.$emit('ok');
-                    this.loginLoader = false;
+                    if(!data.token) {
+                        this.$message.error(data);
+                        this.loginLoader = false;
+                    } else {
+                        this.$store.commit('setUid', data.Uid);
+                        this.$store.commit('setToken', data.token);
+                        sessionStorage.setItem('uid', data.uid);
+                        sessionStorage.setItem('token', data.token);
+                        this.$message.success(`登录成功!欢迎您,${ data.Uid }`);
+                        localStorage.setItem('account', this.loginForm.account);
+                        localStorage.setItem('password', this.loginForm.password);
+                        this.$emit('close');
+                        this.$emit('ok');
+                        this.loginLoader = false;
+                    }
                 }).catch( e => {
                     // this.$message.error(`发生错误${ e }`);
                     this.loginLoader = false;

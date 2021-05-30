@@ -1,6 +1,8 @@
 import axios from 'axios'
+import router from '@/router'
 // import Vue from 'vue'
 import { message } from 'ant-design-vue'
+import store from '.././store'
 axios.defaults.timeout = 10000;
 axios.defaults.baseURL = "http://172.22.114.116:8887"
 axios.defaults.headers.common['Authorization'] = "Bearer" + sessionStorage.getItem('token');
@@ -25,17 +27,43 @@ axios.interceptors.response.use((res) => {
     
     return res;
 },error => {
+    console.log(error);
     if(error.response) {
-        message.error('响应错误，' + (error.response.data.data || error.response.data.message || error.response.statusText));
+        if(error.response.status == 401) {
+            if(localStorage.getItem('account') && localStorage.getItem('password')) {
+                router.go(-1);
+                message.info('未登录或登录超时，已返回上一页面。正在自动重新登录');
+                const url = "/api/users/login";
+                let info = {
+                    StudentID: localStorage.getItem('account'),
+                    password: localStorage.getItem('password'),
+                };
+                axios.post(url, info).then(rep => {
+                    const data = rep.data.data;
+                    if(!data.token) {
+                        this.$message.error(data);
+                    } else {
+                        store.commit('setUid', data.Uid);
+                        store.commit('setToken', data.token);
+                        sessionStorage.setItem('uid', data.Uid);
+                        sessionStorage.setItem('token', data.token);
+                        message.success(`自动登录成功!欢迎您,${ sessionStorage.getItem('uid') }`);
+                    }
+                }).catch(e => {
+                    message.info('自动登录失败');
+                    return e;
+                })
+            } else {
+                message.info('请登录！');
+            }
+            console.log('response', error.response);
+        } else {
+            message.error('响应错误，' + (error.response.data.data || error.response.data.message || error.response.statusText));
+        }
     } else if(error) {
         message.error(error.message);
     } else {
         message.error('error');
-    }
-    if(error.response.status == 401) {
-        console.log('response', error.response);
-        console.log('config', error.response.config);
-        message.error(error.response.config.headers.Authorization);
     }
     return Promise.reject(error)
 })

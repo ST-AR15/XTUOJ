@@ -40,11 +40,15 @@ export default {
             };
             this.$axios.post(url, info).then(rep => {
                 const data = rep.data.data;
-                this.$store.commit('setUid', data.Uid);
-                this.$store.commit('setToken', data.token);
-                sessionStorage.setItem('uid', data.Uid);
-                sessionStorage.setItem('token', data.token);
-                this.$message.success(`自动登录成功!欢迎您,${ sessionStorage.getItem('uid') }`);
+                if(!data.token) {
+                    this.$message.error(data);
+                } else {
+                    this.$store.commit('setUid', data.Uid);
+                    this.$store.commit('setToken', data.token);
+                    sessionStorage.setItem('uid', data.uid);
+                    sessionStorage.setItem('token', data.token);
+                    this.$message.success(`登录成功!欢迎您,${ data.Uid }`);
+                }
             }).catch(e => {
                 this.$message.info('自动登录失败');
                 return e;

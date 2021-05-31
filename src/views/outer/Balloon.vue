@@ -41,7 +41,7 @@ import { insertArray } from "@/utils/tools.js"
 export default {
     data() {
         return {
-            title: "第1届湘潭大学程序设计竞赛正式赛",
+            title: "",
             loading: false,
             ballon: [],
             columns: [
@@ -106,79 +106,85 @@ export default {
         that.loading = true;
         that.ballon = [];
         that.fbCheck = [];
-        const url = `/api/contest/${ that.$route.params.CID }/balloon`;
-        that.$axios.get(url).then(rep => {
-            const data = rep.data.data;
-            let balloonNeed = [];
-            let balloonSend = [];
-            for(let i in data) {
-                let fb;
-                if(!that.fbCheck.find(o => o == data[i].c_pid)) {
-                    // 没找到说明是一血
-                    fb = true;
-                    that.fbCheck.push(data[i].c_pid);
-                } else {
-                    fb = false;
-                }
-                const item = {
-                    color: data[i].Color,
-                    school: data[i].ClassNum,
-                    team: data[i].Name,
-                    seat: data[i].SeatNum,
-                    Jid: data[i].Jid,
-                    isSend: data[i].IsSend,
-                    isFB: fb,
-                }
-                if(data[i].IsSend == 1) {
-                    balloonSend.push(item);
-                } else {
-                    balloonNeed.push(item);
-                }
-            }
-            that.ballon = balloonNeed.concat(balloonSend);
-            that.loading = false;
-        })
-        this.timer = setInterval(function() {
+        // 获取比赛信息
+        const infoUrl = `/api/match/${ that.$route.params.CID }/info`;
+        that.$axios.get(infoUrl).then(rep => {
+            that.title = rep.data.data[0].Tittle;
             const url = `/api/contest/${ that.$route.params.CID }/balloon`;
             that.$axios.get(url).then(rep => {
                 const data = rep.data.data;
+                let balloonNeed = [];
+                let balloonSend = [];
                 for(let i in data) {
-                    let newArr = [];
-                    if(i < that.ballon.length) {
-                        // 如果是原有的，就只看有没有发
-                        that.ballon[that.ballon.findIndex(o => o.Jid == data[i].Jid)].isSend == data[i].IsSend;
+                    let fb;
+                    if(!that.fbCheck.find(o => o == data[i].c_pid)) {
+                        // 没找到说明是一血
+                        fb = true;
+                        that.fbCheck.push(data[i].c_pid);
                     } else {
-                        // 如果是后面的，就push进去
-                        let fb;
-                        if(!that.fbCheck.find(o => o == data[i].c_pid)) {
-                            // 没找到说明是一血
-                            fb = true;
-                            that.fbCheck.push(data[i].c_pid);
-                        } else {
-                            fb = false;
-                        }
-                        const item = {
-                            color: data[i].Color,
-                            school: data[i].ClassNum,
-                            team: data[i].Name,
-                            seat: data[i].SeatNum,
-                            Jid: data[i].Jid,
-                            isSend: data[i].IsSend,
-                            isFB: fb,
-                        }
-                        newArr.push(item);
-                        // 把newArr插入到原数组0开头的地方
-                        let index = that.ballon.findIndex(o => o.isSend == 1);
-                        // 如果没有一个为1，就是插在最后
-                        if(index < 0) {
-                            index = that.ballon.length;
-                        }
-                        that.ballon = insertArray(that.ballon, newArr, index);
+                        fb = false;
+                    }
+                    const item = {
+                        color: data[i].Color,
+                        school: data[i].ClassNum,
+                        team: data[i].Name,
+                        seat: data[i].SeatNum,
+                        Jid: data[i].Jid,
+                        isSend: data[i].IsSend,
+                        isFB: fb,
+                    }
+                    if(data[i].IsSend == 1) {
+                        balloonSend.push(item);
+                    } else {
+                        balloonNeed.push(item);
                     }
                 }
+                that.ballon = balloonNeed.concat(balloonSend);
+                that.loading = false;
             })
-        }, 10000);
-        
+            that.timer = setInterval(function() {
+                const url = `/api/contest/${ that.$route.params.CID }/balloon`;
+                that.$axios.get(url).then(rep => {
+                    const data = rep.data.data;
+                    for(let i in data) {
+                        let newArr = [];
+                        if(i < that.ballon.length) {
+                            // 如果是原有的，就只看有没有发
+                            that.ballon[that.ballon.findIndex(o => o.Jid == data[i].Jid)].isSend == data[i].IsSend;
+                        } else {
+                            // 如果是后面的，就push进去
+                            let fb;
+                            if(!that.fbCheck.find(o => o == data[i].c_pid)) {
+                                // 没找到说明是一血
+                                fb = true;
+                                that.fbCheck.push(data[i].c_pid);
+                            } else {
+                                fb = false;
+                            }
+                            const item = {
+                                color: data[i].Color,
+                                school: data[i].ClassNum,
+                                team: data[i].Name,
+                                seat: data[i].SeatNum,
+                                Jid: data[i].Jid,
+                                isSend: data[i].IsSend,
+                                isFB: fb,
+                            }
+                            newArr.push(item);
+                            // 把newArr插入到原数组0开头的地方
+                            let index = that.ballon.findIndex(o => o.isSend == 1);
+                            // 如果没有一个为1，就是插在最后
+                            if(index < 0) {
+                                index = that.ballon.length;
+                            }
+                            that.ballon = insertArray(that.ballon, newArr, index);
+                        }
+                    }
+                })
+            }, 10000);
+        }).catch(e => {
+            console.log(e);
+        })
     },
     beforeDestroy() {
         clearInterval(this.timer);

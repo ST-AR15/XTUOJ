@@ -25,6 +25,9 @@
     background-color:#FCFDFE;
     margin: 0 auto;
 }
+.table-left-page .ant-pagination {
+    float: left;
+}
 .ant-modal {
     top: 5vh
 }

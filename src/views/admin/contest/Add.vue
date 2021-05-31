@@ -38,6 +38,11 @@
                         }" @click="handleQuestion(i)" type="plus-circle" :title="i==addModal.data.length-1?'新增':'删除'" />
                         <a-input style="width:100px;margin:0 5px" v-model="data.ID" @change="queryTitle(i)" placeholder="题目ID"></a-input>
                         <a-input :value="data.name" placeholder="< 题目名称 >" :disabled="true" v-bind:style="{ 'color': data.isValid? '#52c41a':'#FF0000' }"></a-input>
+                        <a-select default-value="#000000" style="width: 120px" v-if="i != addModal.data.length-1">
+                            <a-select-option v-for="item in $balloonColor" :key="item.text" :value="item.color">
+                                <span :style="{'margin-left': '8px', 'background': item.color,'color':item.font,'padding': '3px','border': '1px solid #000000' }">{{ item.text }}</span>
+                            </a-select-option>
+                        </a-select>
                     </a-space>
                 </div>
             </transition-group>
@@ -56,7 +61,7 @@ export default {
         return {
             createMode: "new",  // new是新建比赛，clone是克隆比赛
             addModal: {
-                isVisible: false,
+                isVisible: true,
                 ID: 0,
                 data: [
                     {

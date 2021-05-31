@@ -43,3 +43,14 @@ h1 {
 .bold {
     font-weight: bold;
 }
+.print {
+    display: none;
+}
+@media print {
+    .print {
+        display: block;
+    }
+    .no-print {
+        display: none;
+    }
+}

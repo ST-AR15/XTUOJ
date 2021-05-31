@@ -1,6 +1,6 @@
 <template>
     <div class="balloon" id="balloon">
-        <a-spin :spinning="loading">
+        <a-spin class="no-print" :spinning="loading">
             <h1 v-text="title + ' - 气球管理'"></h1>
             <div class="ballon-table">
                 <a-table
@@ -16,7 +16,7 @@
                     <span slot="button" slot-scope="text, record">
                         <a-space>
                             <a-button type="primary" @click="querySend(record)" :disabled="record.isSend == 1">前往发放</a-button>
-                            <a-button type="primary">打印</a-button>
+                            <a-button type="primary" @click="queryPrint(record)">打印</a-button>
                         </a-space>
                         
                     </span>
@@ -33,10 +33,27 @@
                     发放到{{ '   ' + modal.seat + '   ' }}号座位</p>
             </a-modal>
         </a-spin>
+        <!-- <div style="display: flex; align-items: center" v-for="item in balloonColor" :key="item.text">
+            <span :style="{
+                'width': '20px',
+                'height': '20px',
+                'border': '1px solid #000000',
+                'background': item.color,
+                'color': item.fontColor,
+            }">
+                12
+            </span>
+            <span style="margin-left: 8px">{{ item.text }}</span>
+        </div> -->
+        <div class="print">
+            <p>打印人</p>
+            <div>打印内容</div>
+        </div>
     </div>
 </template>
 
 <script>
+// import { insertArray, fontColor } from "@/utils/tools.js"
 import { insertArray } from "@/utils/tools.js"
 export default {
     data() {
@@ -44,6 +61,7 @@ export default {
             title: "",
             loading: false,
             ballon: [],
+            // balloonColor: [],
             columns: [
                 {
                     title: "学校",
@@ -99,9 +117,22 @@ export default {
                 }
             })
 
+        },
+        queryPrint(info) {
+            console.log(info);
+            window.print();
         }
     },
     mounted: function() {
+        // this.balloonColor = [];
+        // for(let i in this.$balloonColor) {
+        //     const item = {
+        //         color: this.$balloonColor[i].color,
+        //         text: this.$balloonColor[i].text,
+        //         fontColor: fontColor(this.$balloonColor[i].color),
+        //     }
+        //     this.balloonColor.push(item);
+        // }
         let that = this;
         that.loading = true;
         that.ballon = [];

@@ -23,6 +23,88 @@ Vue.prototype.$cmModeText= {
     python3: 'text/x-python',
     java:'text/x-java'
 },
+Vue.prototype.$balloonColor = [
+    {
+        text: "红色",
+        color: "#FF0000",
+        font: "#FFFFFF",
+    },
+    {
+        text: "绿色",
+        color: "#00FF00",
+        font: "#000000",
+    },
+    {
+        text: "蓝色",
+        color: "#0000FF",
+        font: "#FFFFFF",
+    },
+    {
+        text: "黑色",
+        color: "#000000",
+        font: "#FFFFFF",
+    },
+    {
+        text: "灰色",
+        color: "#999999",
+        font: "#000000",
+    },
+    {
+        text: "白色",
+        color: "#FFFFFF",
+        font: "#000000",
+    },
+    {
+        text: "黄色",
+        color: "#FFFF00",
+        font: "#000000",
+    },
+    {
+        text: "紫色",
+        color: "#FF00FF",
+        font: "#FFFFFF",
+    },
+    {
+        text: "青色",
+        color: "#00FFFF",
+        font: "#000000",
+    },
+    {
+        text: "粉色",
+        color: "#FF80FF",
+        font: "#000000",
+    },
+    {
+        text: "橘黄色",
+        color: "#F0530E",
+        font: "#FFFFFF",
+    },
+    {
+        text: "深绿色",
+        color: "#00AA00",
+        font: "#FFFFFF",
+    },
+    {
+        text: "深紫色",
+        color: "#703BA7",
+        font: "#FFFFFF",
+    },
+    {
+        text: "墨绿色",
+        color: "#1F5851",
+        font: "#FFFFFF",
+    },
+    {
+        text: "杏色",
+        color: "#DFB39A",
+        font: "#000000",
+    },
+    {
+        text: "棕色",
+        color: "#C48252",
+        font: "#000000",
+    }
+]
 Vue.prototype.$judge = ["AcmMode", "OiMode", "HalfOiMode"];
 // result数字的含义,负数用了下划线
 Vue.prototype.$resultText = {

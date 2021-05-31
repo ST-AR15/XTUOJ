@@ -112,6 +112,7 @@
                             style="min-width: 600px"
                             :pagination="submitPagination"
                             :loading="submitLoading"
+                            class="table-left-page"
                             @change="handleSubmitPage"
                         >
                             <!-- solution -->

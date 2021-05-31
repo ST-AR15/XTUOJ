@@ -2,13 +2,13 @@
     <div class="contests user-container" id="contests">
         <!-- 竞赛列表 -->
         <transition name="cross">
-            <div v-show="pageNow == 'contests'" class="contest-list contents-item" id="contest-list">
+            <div v-if="pageNow == 'contests'" class="contest-list contents-item" id="contest-list">
                 <contestlist :buttons="contestButtons" @queryStart="queryStart" />
             </div>
         </transition>
         <transition name="cross">
             <!-- 题目列表 -->
-            <div v-show="pageNow == 'questions'" class="contest-questions contents-item" id="contest-questions">
+            <div v-if="pageNow == 'questions'" class="contest-questions contents-item" id="contest-questions">
                 <a-tabs v-model="tabkey" default-active-key="problems" @change="handelTabs">
                     <a-tab-pane key="back">
                         <span slot="tab">
@@ -37,14 +37,54 @@
                             </span>
                         </a-table>
                     </a-tab-pane>
-                    <a-tab-pane key="standing" tab="Standing">
-                        <rank v-if="rankVisible"  />
+                    <a-tab-pane key="standing" tab="Standing" :forceRender="true">
+                        <rank  />
                     </a-tab-pane>
                     <a-tab-pane key="status" tab="Online Status">
-                        <status v-if="statusVisible" :url="'/api/match/' + $route.params.CID + '/submit'" :isSolution="false" :contestsID="Number($route.params.CID)" />
+                        <status :url="'/api/match/' + $route.params.CID + '/submit'" :isSolution="false" :contestsID="Number($route.params.CID)" />
                     </a-tab-pane>
                     <a-tab-pane key="statistics" tab="Statistics">
-                        statistics
+                        <a-table
+                            :columns="statisticsColumn"
+                            :data-source="statistics"
+                            :pagination="false"
+                            :loading="statisticsLoading"
+                            bordered
+                        >
+                            <span slot="AC" slot-scope="AC">
+                                <span v-text="AC == 0? ' ': AC"></span>
+                            </span>
+                            <span slot="WA" slot-scope="WA">
+                                <span v-text="WA == 0? ' ': WA"></span>
+                            </span>
+                            <span slot="TLE" slot-scope="TLE">
+                                <span v-text="TLE == 0? ' ': TLE"></span>
+                            </span>
+                            <span slot="MLE" slot-scope="MLE">
+                                <span v-text="MLE == 0? ' ': MLE"></span>
+                            </span>
+                            <span slot="RE" slot-scope="RE">
+                                <span v-text="RE == 0? ' ': RE"></span>
+                            </span>
+                            <span slot="SE" slot-scope="SE">
+                                <span v-text="SE == 0? ' ': SE"></span>
+                            </span>
+                            <span slot="CE" slot-scope="CE">
+                                <span v-text="CE == 0? ' ': CE"></span>
+                            </span>
+                            <span slot="RU" slot-scope="RU">
+                                <span v-text="RU == 0? ' ': RU"></span>
+                            </span>
+                            <span slot="OLE" slot-scope="OLE">
+                                <span v-text="OLE == 0? ' ': OLE"></span>
+                            </span>
+                            <span slot="PE" slot-scope="PE">
+                                <span v-text="PE == 0? ' ': PE"></span>
+                            </span>
+                            <span slot="TE" slot-scope="TE">
+                                <span v-text="TE == 0? ' ': TE"></span>
+                            </span>
+                        </a-table>
                     </a-tab-pane>
                     <a-tab-pane key="detail" tab="detail">
                         <a-spin :spinning="contestDetail.loading">    
@@ -115,8 +155,70 @@ export default {
             questions: [],
             questionLoader: false,
             tabkey: 'problems',
-            statusVisible: false,
-            rankVisible: false,
+            statistics: [],
+            statisticsColumn: [
+                {
+                    title: "Problem",
+                    dataIndex: "place"
+                },
+                {
+                    title: "AC",
+                    dataIndex: "ACCEPT",
+                    scopedSlots: { customRender: 'AC' },
+                },
+                {
+                    title: "WA",
+                    dataIndex: "WRONG_ANSWER",
+                    scopedSlots: { customRender: 'WA' },
+                },
+                {
+                    title: "TLE",
+                    dataIndex: "TIME_LIMIT_EXCEEDED",
+                    scopedSlots: { customRender: 'TLE' },
+                },
+                {
+                    title: "MLE",
+                    dataIndex: "MEMORY_LIMIT_EXCEEDED",
+                    scopedSlots: { customRender: 'MLE' },
+                },
+                {
+                    title: "RE",
+                    dataIndex: "RUNTIME_ERROR",
+                    scopedSlots: { customRender: 'RE' },
+                },
+                {
+                    title: "SE",
+                    dataIndex: "SYSTEM_ERROR",
+                    scopedSlots: { customRender: 'SE' },
+                },
+                {
+                    title: "CE",
+                    dataIndex: "COMPILE_ERROR",
+                    scopedSlots: { customRender: 'CE' },
+                },
+                {
+                    title: "RU",
+                    dataIndex: "RUNNED",
+                    scopedSlots: { customRender: 'RU' },
+                },
+                {
+                    title: "OLE",
+                    dataIndex: "OUTPUT_LIMIT_EXCEEDED",
+                    scopedSlots: { customRender: 'OLE' },
+                },
+                {
+                    title: "PE",
+                    dataIndex: "PRESENTATION_ERROR",
+                    scopedSlots: { customRender: 'PE' },
+                },
+                {
+                    title: "TE",
+                    dataIndex: "Test_ERROR",
+                    scopedSlots: { customRender: 'TE' },
+                },
+                
+            ],
+            statisticsLoading: false,
         }
     },
     methods: {
@@ -124,16 +226,56 @@ export default {
             if(tab == 'back') {
                 this.tabkey = "problems"
                 this.handleBack();
-            }
-            if(tab == 'status') {
-                this.statusVisible = true;
-            } else {
-                this.statusVisible = false;
-            }
-            if(tab == 'standing') {
-                this.rankVisible = true;
-            } else {
-                this.rankVisible = false;
+            } else if(tab == 'statistics') {
+                this.statistics = [];
+                this.statisticsLoading = true;
+                // 初始化statistics
+                for(let i in this.questions) {
+                    const item = {
+                        ID: this.questions[i].ID,
+                        place: this.questions[i].place,
+                        ACCEPT: 0,
+                        WRONG_ANSWER: 0,
+                        TIME_LIMIT_EXCEEDED: 0,
+                        MEMORY_LIMIT_EXCEEDED: 0,
+                        RUNTIME_ERROR: 0,
+                        SYSTEM_ERROR: 0,
+                        COMPILE_ERROR: 0,
+                        RUNNED: 0,
+                        OUTPUT_LIMIT_EXCEEDED: 0,
+                        PRESENTATION_ERROR: 0,
+                        Test_ERROR: 0,
+                    }
+                    this.statistics.push(item);
+                }
+                // 获取比赛的参赛选手
+                let namelist = [];
+                const namelistUrl = `/api/match/${ this.$route.params.CID }/user`;
+                this.$axios.get(namelistUrl).then(rep => {
+                    const data = rep.data.data;
+                    for(let i in data) {
+                        if(data[i].ContestUid) {
+                            namelist.push(data[i].ContestUid)
+                        } else {
+                            namelist.push(data[i].Uid)
+                        }
+                    }
+                    // 获取所有提交信息
+                    const url = `/api/match/${ this.$route.params.CID }`;
+                    this.$axios.get(url).then(rep => {
+                        const data = rep.data.data;
+                        // this.list.record = data;
+                        for(let i in data) {
+                            // 要先筛选出确实是这场比赛的人
+                            if(namelist.find(o => o == data[i])) {
+                                const _problem =  this.statistics.findIndex(o => o.ID == data[i].c_pid);
+                                this.statistics[_problem][this.$resultText[data[i].result]]++;
+                            }
+                        }
+                        this.statisticsLoading = false;
+                    })
+                })
+                
             }
         },
         handleBack() {  // 比赛题目详情回到比赛列表
@@ -199,7 +341,7 @@ export default {
                 const data = rep.data.data[0];
                 this.contestDetail.title = data.Tittle;
                 this.contestDetail.ID = data.Cid;
-                this.contestDetail.content = "这个比赛的介绍";  //TODO
+                this.contestDetail.content = "";  //TODO
                 this.contestDetail.contestType = data.ContestType;
                 this.contestDetail.contestant = data.Contestant;
                 this.contestDetail.judge = data.JudgeWay;

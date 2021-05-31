@@ -147,3 +147,18 @@ export function insertArray(arrfirst,arrlast,index){    //将数组arrlast插入
     }
     return arr;
 }
+
+export function fontColor(bgColor) {
+    const _r = 0.299;
+    const _g = 0.587;
+    const _b = 0.114;
+    let r = (parseInt(bgColor.slice(1,3), 16)*_r);
+    let g = (parseInt(bgColor.slice(3,5), 16)*_g);
+    let b = (parseInt(bgColor.slice(5,7), 16)*_b);
+    let color = (r+g+b)/255;
+    if(color > 0.5) {
+        return '#000000'
+    } else {
+        return '#FFFFFF'
+    }
+}

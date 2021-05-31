@@ -131,7 +131,7 @@ const routes = [
     // balloon
     {
         name: 'balloon',
-        path: '/balloon',
+        path: '/balloon/:CID',
         component: balloon,
     },
     {

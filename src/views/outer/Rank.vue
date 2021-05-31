@@ -749,6 +749,10 @@ export default {
                 this.init();
             }
         }
+    },
+    beforeDestroy() {
+        clearInterval(this.timer);
+        this.timer = null;
     }
 }
 </script>

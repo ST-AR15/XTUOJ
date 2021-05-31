@@ -88,7 +88,7 @@ export function copy(text) {
  * 获取浏览器缩放比例
  */
 export function detectZoom() { 
-    var ratio = 0,
+    let ratio = 0,
         screen = window.screen,
         ua = navigator.userAgent.toLowerCase();
     if (window.devicePixelRatio !== undefined) {
@@ -121,3 +121,29 @@ export function detectZoom() {
     }
     return newArr;
 } 
+
+/**
+ * 数组中插入数组
+ * @param { Array } arrfirst 原数组
+ * @param { Array } arrlast 插入的数组
+ * @param { Number } index 插入的位置（从0开始）
+ * @returns Array
+ */
+export function insertArray(arrfirst,arrlast,index){    //将数组arrlast插入数组arrfirst中，index是想要插入的位置
+    if (index < 0){
+        index = 0;
+    }else if(index > arrfirst.length){
+        index = arrfirst.length;
+    }
+    let arr = [];
+    for (let i = 0; i < index; i++){
+        arr.push(arrfirst[i]);
+    }
+    for (let i = 0; i < arrlast.length; i++){
+        arr.push(arrlast[i]);
+    }
+    for (let i = index; i < arrfirst.length; i++){
+        arr.push(arrfirst[i]);
+    }
+    return arr;
+}

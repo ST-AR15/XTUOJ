@@ -32,6 +32,7 @@ axios.interceptors.response.use((res) => {
         if(error.response.status == 401) {
             if(localStorage.getItem('account') && localStorage.getItem('password')) {
                 router.go(-1);
+                router.go(1);
                 message.info('未登录或登录超时，已返回上一页面。正在自动重新登录');
                 const url = "/api/users/login";
                 let info = {

@@ -37,6 +37,32 @@
                             </span>
                         </a-table>
                     </a-tab-pane>
+                    <a-tab-pane key="print" tab="Print">
+                        <div style="padding: 20px">
+                            <a-textarea
+                                v-model="printText"
+                                placeholder="请输入需要打印的内容"
+                                :auto-size="{ minRows: 10, maxRows: 50 }"
+                            />
+                            <div style="display: flex; justify-content: flex-end">
+                                <a-button style="margin: 20px; position: relative; right: 0" type="primary" @click="queryPrint" :loading="printLoading">打印</a-button>
+                            </div>
+                            <a-divider>我的打印</a-divider>
+                            <a-table
+                                :data-source="print"
+                                :columns="printColumns"
+                                rowKey="ID"
+                            >
+                                <span slot="isPrint" slot-scope="text">
+                                    <span v-if="text == 1">已打印</span>
+                                    <span v-else>未打印</span>
+                                </span>
+                                <span slot="button" slot-scope="text, record">
+                                    <a-button type="primary" @click="queryPrintDelete(record)" >删除</a-button>
+                                </span>
+                            </a-table>
+                        </div>
+                    </a-tab-pane>
                     <a-tab-pane key="standing" tab="Standing" :forceRender="true">
                         <rank  />
                     </a-tab-pane>
@@ -124,6 +150,33 @@ export default {
                 {
                     text: "开始比赛",
                     method: "queryStart",
+                }
+            ],
+            printColumns: [
+                {
+                    title: "printID",
+                    dataIndex: "ID"
+                },
+                {
+                    title: "Uid",
+                    dataIndex: "Uid",
+                },
+                {
+                    title: "Name",
+                    dataIndex: "name",
+                },
+                {
+                    title: "创建时间",
+                    dataIndex: "time",
+                },
+                {
+                    title: "打印状态",
+                    dataIndex: "isPrint",
+                    scopedSlots: { customRender: 'isPrint' },
+                },
+                {
+                    title: "操作",
+                    scopedSlots: { customRender: 'button' },
                 }
             ],
             contestDetail: {
@@ -219,6 +272,9 @@ export default {
                 
             ],
             statisticsLoading: false,
+            print: [],
+            printText: "",
+            printLoading: false,
         }
     },
     methods: {
@@ -276,6 +332,8 @@ export default {
                     })
                 })
                 
+            } else if(tab == 'print') {
+                this.queryPrintList();
             }
         },
         handleBack() {  // 比赛题目详情回到比赛列表
@@ -354,9 +412,52 @@ export default {
         queryQuestion(ID) { // 打开题目
             this.$router.push(`/problems/${ this.$route.params.CID }/${ ID }`);
         },
-        createContest() {  // 创建比赛
-            // TODO 完成创建比赛
-
+        queryPrint() {
+            this.printLoading = true;
+            const url = `/api/contest/${ this.$route.params.CID }/print`;
+            const params = {
+                Content: this.printText, 
+            }
+            this.$axios.post(url, params).then(rep => {
+                this.printLoading = false;
+                this.$message.success(rep.data);
+            }).catch(e => {
+                this.printLoading = false;
+                return e;
+            })
+        },
+        queryPrintList() {
+            this.print = [];
+            const printUrl = `/api/contest/${ this.$route.params.CID }/print`;
+            this.$axios.get(printUrl).then(rep => {
+                const data = rep.data.data;
+                let printNeed = [];
+                let printSend = [];
+                for(let i in data) {
+                    const item = {
+                        ID: data[i].PrintId,
+                        Uid: data[i].Uid,
+                        name: data[i].Name,
+                        time: data[i].created_at,
+                        contents: data[i].Content,
+                        isPrint: data[i].IsPrint,
+                    }
+                    if(data[i].IsPrint == 1) {
+                        printSend.push(item);
+                    } else {
+                        printNeed.push(item);
+                    }
+                }
+                this.print = printNeed.concat(printSend);
+            })
+        },
+        queryPrintDelete(info) {
+            const url = `/api/contest/${ this.$route.params.CID }/print/${ info.ID }`;
+            this.$axios.delete(url).then(rep => {
+                console.log(rep);
+                this.$message.info('成功');
+                this.queryPrintList();
+            })
         }
     },
     mounted() {

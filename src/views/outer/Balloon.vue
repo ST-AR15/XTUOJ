@@ -1,68 +1,81 @@
 <template>
     <div class="balloon" id="balloon">
-        <a-spin class="no-print" :spinning="loading">
-            <h1 v-text="title + ' - 气球管理'"></h1>
-            <div class="ballon-table">
-                <a-table
-                    :data-source="ballon"
-                    :columns="columns"
-                    :pagination="pagination"
-                    rowKey="Jid"
-                >
-                    <span slot="color" slot-scope="text, record">
-                        <span v-if="record.isFB">FB气球  </span>
-                        <svg :style="{ 'height': '1em', 'vertical-align': '-0.225em', 'color': text}" aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 416 512"><path fill="currentColor" d="M96 416h224c0 17.7-14.3 32-32 32h-16c-17.7 0-32 14.3-32 32v20c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-20c0-17.7-14.3-32-32-32h-16c-17.7 0-32-14.3-32-32zm320-208c0 74.2-39 139.2-97.5 176h-221C39 347.2 0 282.2 0 208 0 93.1 93.1 0 208 0s208 93.1 208 208zm-180.1 43.9c18.3 0 33.1-14.8 33.1-33.1 0-14.4-9.3-26.3-22.1-30.9 9.6 26.8-15.6 51.3-41.9 41.9 4.6 12.8 16.5 22.1 30.9 22.1zm49.1 46.9c0-14.4-9.3-26.3-22.1-30.9 9.6 26.8-15.6 51.3-41.9 41.9 4.6 12.8 16.5 22.1 30.9 22.1 18.3 0 33.1-14.9 33.1-33.1zm64-64c0-14.4-9.3-26.3-22.1-30.9 9.6 26.8-15.6 51.3-41.9 41.9 4.6 12.8 16.5 22.1 30.9 22.1 18.3 0 33.1-14.9 33.1-33.1z"></path></svg>
-                    </span>
-                    <span slot="button" slot-scope="text, record">
-                        <a-space>
+        <h1 class="no-print" v-show="page == 'balloon'" v-text="title + ' - 气球管理'"></h1>
+        <h1 class="no-print" v-show="page == 'print'" v-text="title + ' - 打印管理'"></h1>
+        <div class="no-print" style="margin: 20px">
+            <a-radio-group v-model="page" button-style="solid">
+                <a-radio-button value="balloon">
+                    发气球
+                </a-radio-button>
+                <a-radio-button value="print">
+                    打印
+                </a-radio-button>
+            </a-radio-group>
+        </div>
+        <div class="no-print" v-show="page == 'balloon'">
+            <a-spin :spinning="loading">
+                <div class="ballon-table">
+                    <a-table
+                        :data-source="ballon"
+                        :columns="balloonColumns"
+                        :pagination="pagination"
+                        rowKey="Jid"
+                    >
+                        <span slot="color" slot-scope="text, record">
+                            <span v-if="record.isFB">FB气球  </span>
+                            <svg :style="{ 'height': '1em', 'vertical-align': '-0.225em', 'color': text}" aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 416 512"><path fill="currentColor" d="M96 416h224c0 17.7-14.3 32-32 32h-16c-17.7 0-32 14.3-32 32v20c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-20c0-17.7-14.3-32-32-32h-16c-17.7 0-32-14.3-32-32zm320-208c0 74.2-39 139.2-97.5 176h-221C39 347.2 0 282.2 0 208 0 93.1 93.1 0 208 0s208 93.1 208 208zm-180.1 43.9c18.3 0 33.1-14.8 33.1-33.1 0-14.4-9.3-26.3-22.1-30.9 9.6 26.8-15.6 51.3-41.9 41.9 4.6 12.8 16.5 22.1 30.9 22.1zm49.1 46.9c0-14.4-9.3-26.3-22.1-30.9 9.6 26.8-15.6 51.3-41.9 41.9 4.6 12.8 16.5 22.1 30.9 22.1 18.3 0 33.1-14.9 33.1-33.1zm64-64c0-14.4-9.3-26.3-22.1-30.9 9.6 26.8-15.6 51.3-41.9 41.9 4.6 12.8 16.5 22.1 30.9 22.1 18.3 0 33.1-14.9 33.1-33.1z"></path></svg>
+                        </span>
+                        <span slot="button" slot-scope="text, record">
                             <a-button type="primary" @click="querySend(record)" :disabled="record.isSend == 1">前往发放</a-button>
-                            <a-button type="primary" @click="queryPrint(record)">打印</a-button>
-                        </a-space>
-                        
+                        </span>
+                    </a-table>
+                </div>
+                <a-modal
+                    :visible = "modal.visible"
+                    :title = "modal.title"
+                    @cancel = "modal.visible = false"
+                    @ok = "modal.visible = false"
+                >
+                    <p>在把气球
+                        <svg :style="{ 'height': '1em', 'color': modal.color}" aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 416 512"><path fill="currentColor" d="M96 416h224c0 17.7-14.3 32-32 32h-16c-17.7 0-32 14.3-32 32v20c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-20c0-17.7-14.3-32-32-32h-16c-17.7 0-32-14.3-32-32zm320-208c0 74.2-39 139.2-97.5 176h-221C39 347.2 0 282.2 0 208 0 93.1 93.1 0 208 0s208 93.1 208 208zm-180.1 43.9c18.3 0 33.1-14.8 33.1-33.1 0-14.4-9.3-26.3-22.1-30.9 9.6 26.8-15.6 51.3-41.9 41.9 4.6 12.8 16.5 22.1 30.9 22.1zm49.1 46.9c0-14.4-9.3-26.3-22.1-30.9 9.6 26.8-15.6 51.3-41.9 41.9 4.6 12.8 16.5 22.1 30.9 22.1 18.3 0 33.1-14.9 33.1-33.1zm64-64c0-14.4-9.3-26.3-22.1-30.9 9.6 26.8-15.6 51.3-41.9 41.9 4.6 12.8 16.5 22.1 30.9 22.1 18.3 0 33.1-14.9 33.1-33.1z"></path></svg>
+                        发放到{{ '   ' + modal.seat + '   ' }}号座位</p>
+                </a-modal>
+            </a-spin>
+        </div>
+        <div class="no-print" v-show="page == 'print'">
+            <a-spin :spinning="printLoading">
+                <a-table
+                    :data-source="print"
+                    :columns="printColumns"
+                    :pagination="pagination"
+                    rowKey="ID"
+                >
+                    <span slot="button" slot-scope="text, record">
+                        <a-button type="primary" @click="queryPrint(record)" :disabled="record.isPrint == 1">打印</a-button>
+                        <a-button type="primary" @click="queryPrintDelete(record)" :disabled="record.isPrint == 1">删除</a-button>
                     </span>
                 </a-table>
-            </div>
-            <a-modal
-                :visible = "modal.visible"
-                :title = "modal.title"
-                @cancel = "modal.visible = false"
-                @ok = "modal.visible = false"
-            >
-                <p>在把气球
-                    <svg :style="{ 'height': '1em', 'color': modal.color}" aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 416 512"><path fill="currentColor" d="M96 416h224c0 17.7-14.3 32-32 32h-16c-17.7 0-32 14.3-32 32v20c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-20c0-17.7-14.3-32-32-32h-16c-17.7 0-32-14.3-32-32zm320-208c0 74.2-39 139.2-97.5 176h-221C39 347.2 0 282.2 0 208 0 93.1 93.1 0 208 0s208 93.1 208 208zm-180.1 43.9c18.3 0 33.1-14.8 33.1-33.1 0-14.4-9.3-26.3-22.1-30.9 9.6 26.8-15.6 51.3-41.9 41.9 4.6 12.8 16.5 22.1 30.9 22.1zm49.1 46.9c0-14.4-9.3-26.3-22.1-30.9 9.6 26.8-15.6 51.3-41.9 41.9 4.6 12.8 16.5 22.1 30.9 22.1 18.3 0 33.1-14.9 33.1-33.1zm64-64c0-14.4-9.3-26.3-22.1-30.9 9.6 26.8-15.6 51.3-41.9 41.9 4.6 12.8 16.5 22.1 30.9 22.1 18.3 0 33.1-14.9 33.1-33.1z"></path></svg>
-                    发放到{{ '   ' + modal.seat + '   ' }}号座位</p>
-            </a-modal>
-        </a-spin>
-        <!-- <div style="display: flex; align-items: center" v-for="item in balloonColor" :key="item.text">
-            <span :style="{
-                'width': '20px',
-                'height': '20px',
-                'border': '1px solid #000000',
-                'background': item.color,
-                'color': item.fontColor,
-            }">
-                12
-            </span>
-            <span style="margin-left: 8px">{{ item.text }}</span>
-        </div> -->
+            </a-spin>
+        </div>
         <div class="print">
-            <p>打印人</p>
-            <div>打印内容</div>
+            <p>{{ printContents.title }}</p>
+            <div>{{ printContents.text }}</div>
         </div>
     </div>
 </template>
 
 <script>
-// import { insertArray, fontColor } from "@/utils/tools.js"
 import { insertArray } from "@/utils/tools.js"
 export default {
     data() {
         return {
             title: "",
             loading: false,
+            printLoading: false,
             ballon: [],
-            // balloonColor: [],
-            columns: [
+            print: [],
+            page: "balloon",
+            balloonColumns: [
                 {
                     title: "学校",
                     dataIndex: "school",
@@ -85,9 +98,35 @@ export default {
                     scopedSlots: { customRender: 'button' },
                 }
             ],
+            printColumns: [
+                {
+                    title: "printID",
+                    dataIndex: "ID"
+                },
+                {
+                    title: "Uid",
+                    dataIndex: "Uid",
+                },
+                {
+                    title: "Name",
+                    dataIndex: "name",
+                },
+                {
+                    title: "创建时间",
+                    dataIndex: "time",
+                },
+                {
+                    title: "操作",
+                    scopedSlots: { customRender: 'button' },
+                }
+            ],
             pagination: {       // 页面设置
                 pageSize:15,     // 每页题目数量
                 showQuickJumper: true,  // 快速跳转
+            },
+            printContents: {
+                title: "",
+                text: "",
             },
             modal: {
                 visible: false,
@@ -119,24 +158,66 @@ export default {
 
         },
         queryPrint(info) {
-            console.log(info);
-            window.print();
+            this.printContents.title = `${ info.Uid }, ${ info.name }, ${ info.time }`;
+            this.printContents.text = info.contents;
+            this.printLoading = true;
+            const url = `api/contest/${ this.$route.params.CID }/print/${ info.ID }`;
+            const params = {
+                IsPrint: info.isPrint,
+            }
+            this.$axios.put(url, params).then(rep => {
+                this.$message.info(rep.data.data);
+                window.print();
+                this.printLoading = false;
+            }).catch(e => {
+                this.printLoading = false;
+                return e;
+            })
+        },
+        queryPrintDelete(info) {
+            const url = `/api/contest/${ this.$route.params.CID }/print/${ info.ID }`;
+            this.$axios.delete(url).then(rep => {
+                console.log(rep);
+                this.$message.info('成功');
+                this.queryPrintList();
+            })
+        },
+        queryPrintList() {
+            this.printLoading = true;
+            this.print = [];
+            const printUrl = `/api/contest/${ this.$route.params.CID }/print`;
+            this.$axios.get(printUrl).then(rep => {
+                const data = rep.data.data;
+                let printNeed = [];
+                let printSend = [];
+                for(let i in data) {
+                    const item = {
+                        ID: data[i].PrintId,
+                        Uid: data[i].Uid,
+                        name: data[i].Name,
+                        time: data[i].created_at,
+                        contents: data[i].Content,
+                        isPrint: data[i].IsPrint,
+                    }
+                    if(data[i].IsPrint == 1) {
+                        printSend.push(item);
+                    } else {
+                        printNeed.push(item);
+                    }
+                }
+                this.print = printNeed.concat(printSend);
+                this.printLoading = false;
+            })
         }
     },
     mounted: function() {
-        // this.balloonColor = [];
-        // for(let i in this.$balloonColor) {
-        //     const item = {
-        //         color: this.$balloonColor[i].color,
-        //         text: this.$balloonColor[i].text,
-        //         fontColor: fontColor(this.$balloonColor[i].color),
-        //     }
-        //     this.balloonColor.push(item);
-        // }
         let that = this;
         that.loading = true;
         that.ballon = [];
+        that.print = [];
         that.fbCheck = [];
+        // 获取打印信息
+        that.queryPrintList()
         // 获取比赛信息
         const infoUrl = `/api/match/${ that.$route.params.CID }/info`;
         that.$axios.get(infoUrl).then(rep => {
@@ -174,6 +255,7 @@ export default {
                 that.loading = false;
             })
             that.timer = setInterval(function() {
+                // 气球轮询
                 const url = `/api/contest/${ that.$route.params.CID }/balloon`;
                 that.$axios.get(url).then(rep => {
                     const data = rep.data.data;
@@ -209,6 +291,36 @@ export default {
                                 index = that.ballon.length;
                             }
                             that.ballon = insertArray(that.ballon, newArr, index);
+                        }
+                    }
+                })
+                // 打印轮询
+                const printUrl = `/api/contest/${ that.$route.params.CID }/print`;
+                that.$axios.get(printUrl).then(rep => {
+                    const data = rep.data.data;
+                    for(let i in data) {
+                        let newArr = [];
+                        if(i < that.print.length) {
+                            // 如果是原有的，就只看有没有打印
+                            that.print[that.print.findIndex(o => o.ID == data[i].PrintID)].isPrint == data[i].isPrint;
+                        } else {
+                            // 如果是后面的，就push进去
+                            const item = {
+                                ID: data[i].PrintId,
+                                Uid: data[i].Uid,
+                                name: data[i].Name,
+                                time: data[i].created_at,
+                                contents: data[i].Content,
+                                isPrint: data[i].IsPrint,
+                            }
+                            newArr.push(item);
+                            // 把newArr插入到原数组0开头的地方
+                            let index = that.print.findIndex(o => o.isSend == 1);
+                            // 如果没有一个为1，就是插在最后
+                            if(index < 0) {
+                                index = that.print.length;
+                            }
+                            that.print = insertArray(that.print, newArr, index);
                         }
                     }
                 })

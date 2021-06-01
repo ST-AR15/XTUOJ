@@ -38,17 +38,9 @@
                         {{ data }}
                     </a-select-option>
                 </a-select>
-                <a-radio-group v-model="page" button-style="solid">
-                    <a-radio-button value="balloon">
-                        发气球
-                    </a-radio-button>
-                    <a-radio-button value="ranklist">
-                        排行榜
-                    </a-radio-button>
-                </a-radio-group>
             </div>
             <a-divider />
-            <table class="list" v-show="page == 'ranklist'" :style="{ 'height': (list.score.length + list.star.length + 1 + 5 + 1) * 38 + 'px' ,'width': contestant == 0? (list.question.length + 10) * 65 + 'px': (list.question.length + 14) * 65 + 'px'}">
+            <table class="list" :style="{ 'height': (list.score.length + list.star.length + 1 + 5 + 1) * 38 + 'px' ,'width': contestant == 0? (list.question.length + 10) * 65 + 'px': (list.question.length + 14) * 65 + 'px'}">
                 <!-- 表头 -->
                 <tr class="list-header">
                     <th>Place</th>
@@ -150,24 +142,6 @@
                     <td class="blank"></td>
                 </tr>
             </table>
-            <div class="balloon" :style="{ 'width': contestant == 0? (list.question.length + 10) * 65 + 'px': (list.question.length + 14) * 65 + 'px' }" v-show="page == 'balloon'">
-                <a-table
-                    :data-source="balloon"
-                    :columns="columns"
-                    :pagination="pagination"
-                >
-                    <!-- solved -->
-                    <span slot="solved" slot-scope="text">
-                        <svg :style="{ 'height': '1em', 'vertical-align': '-0.225em', 'color': 'rgb(265,00,00)'}" aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 416 512"><path fill="currentColor" d="M96 416h224c0 17.7-14.3 32-32 32h-16c-17.7 0-32 14.3-32 32v20c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-20c0-17.7-14.3-32-32-32h-16c-17.7 0-32-14.3-32-32zm320-208c0 74.2-39 139.2-97.5 176h-221C39 347.2 0 282.2 0 208 0 93.1 93.1 0 208 0s208 93.1 208 208zm-180.1 43.9c18.3 0 33.1-14.8 33.1-33.1 0-14.4-9.3-26.3-22.1-30.9 9.6 26.8-15.6 51.3-41.9 41.9 4.6 12.8 16.5 22.1 30.9 22.1zm49.1 46.9c0-14.4-9.3-26.3-22.1-30.9 9.6 26.8-15.6 51.3-41.9 41.9 4.6 12.8 16.5 22.1 30.9 22.1 18.3 0 33.1-14.9 33.1-33.1zm64-64c0-14.4-9.3-26.3-22.1-30.9 9.6 26.8-15.6 51.3-41.9 41.9 4.6 12.8 16.5 22.1 30.9 22.1 18.3 0 33.1-14.9 33.1-33.1z"></path></svg>
-                        &nbsp;
-                        <span v-text="text"></span>
-                    </span>
-                    <!-- total -->
-                    <span slot="total" slot-scope="text">
-                        <svg v-for="i in text" :key="i" :style="{ 'height': '1em', 'vertical-align': '-0.225em', 'color': 'rgb(265,00,00)'}" aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 416 512"><path fill="currentColor" d="M96 416h224c0 17.7-14.3 32-32 32h-16c-17.7 0-32 14.3-32 32v20c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-20c0-17.7-14.3-32-32-32h-16c-17.7 0-32-14.3-32-32zm320-208c0 74.2-39 139.2-97.5 176h-221C39 347.2 0 282.2 0 208 0 93.1 93.1 0 208 0s208 93.1 208 208zm-180.1 43.9c18.3 0 33.1-14.8 33.1-33.1 0-14.4-9.3-26.3-22.1-30.9 9.6 26.8-15.6 51.3-41.9 41.9 4.6 12.8 16.5 22.1 30.9 22.1zm49.1 46.9c0-14.4-9.3-26.3-22.1-30.9 9.6 26.8-15.6 51.3-41.9 41.9 4.6 12.8 16.5 22.1 30.9 22.1 18.3 0 33.1-14.9 33.1-33.1zm64-64c0-14.4-9.3-26.3-22.1-30.9 9.6 26.8-15.6 51.3-41.9 41.9 4.6 12.8 16.5 22.1 30.9 22.1 18.3 0 33.1-14.9 33.1-33.1z"></path></svg>
-                    </span>
-                </a-table>
-            </div>
         </a-spin>
     </div>
 </template>
@@ -178,8 +152,7 @@ export default {
     data() {
         return {
             loading: false,
-            page: 'ranklist',    // 当前页面
-            title: "第1届湘潭大学程序设计竞赛正式赛",  // 比赛名字
+            title: "",  // 比赛名字
             contestant: 0,  // 0是个人赛,1是团队赛
             time: {},  // 时间刻度
             stamp: {   // 比赛开始和比赛结束的时间
@@ -235,104 +208,6 @@ export default {
             query: {
                 organization: [],  // 星标队伍
                 t: "",             // 时间进度
-            },
-            balloon: [
-                {
-                    status: "未发放",
-                    time: "01:44:01",
-                    solved: "B",
-                    school: "湘潭大学",
-                    team: "狛枝凪斗",
-                    total: ["C","B"],
-                    awards: "First to solved problem B",
-                    key: 6,
-                },
-                {
-                    status: "未发放",
-                    time: "01:39:01",
-                    solved: "C",
-                    school: "湘潭大学",
-                    team: "狛枝凪斗",
-                    total: ["C"],
-                    awards: "",
-                    key: 5,
-                },
-                {
-                    status: "未发放",
-                    time: "01:35:01",
-                    solved: "C",
-                    school: "湘潭大学",
-                    team: "七海千秋",
-                    total: ["C","B","A","D"],
-                    awards: "First to solved problem D",
-                    key: 4,
-                },
-                {
-                    status: "已发放",
-                    time: "01:22:01",
-                    solved: "C",
-                    school: "湘潭大学",
-                    team: "七海千秋",
-                    total: ["C","B","A"],
-                    awards: "First to solved problem A",
-                    key: 3,
-                },
-                {
-                    status: "未发放",
-                    time: "01:05:01",
-                    solved: "B",
-                    school: "湘潭大学",
-                    team: "七海千秋",
-                    total: ["C","B"],
-                    awards: "First to solved problem B",
-                    key: 2,
-                },
-                {
-                    status: "未发放",
-                    time: "01:00:01",
-                    solved: "C",
-                    school: "湘潭大学",
-                    team: "七海千秋",
-                    total: ["C"],
-                    awards: "First to solved problem C",
-                    key: 1,
-                },
-            ],
-            columns: [
-                {
-                    title: "status",
-                    dataIndex: "status",
-                },
-                {
-                    title: "time",
-                    dataIndex: "time"
-                },
-                {
-                    title: "solved",
-                    dataIndex: "solved",
-                    scopedSlots: { customRender: 'solved' },
-                },
-                {
-                    title: "school",
-                    dataIndex: "school",
-                },
-                {
-                    title: "team",
-                    dataIndex: "team",
-                },
-                {
-                    title: "total",
-                    dataIndex: "total",
-                    scopedSlots: { customRender: 'total' },
-                },
-                {
-                    title: "awards",
-                    dataIndex: "awards",
-                },
-            ],
-            pagination: {       // 页面设置
-                pageSize:5,     // 每页题目数量
-                showQuickJumper: true,  // 快速跳转
             },
             timer: "",  // 计时器
         }
